@@ -289,8 +289,7 @@ export function HourRecords() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between mb-6">
-        <d>
+      <div>
         <h2 className="text-3xl font-bold text-slate-800 mb-2">Registro de Horas</h2>
         <p className="text-slate-600">Registra las horas trabajadas por los empleados</p>
       </div>
