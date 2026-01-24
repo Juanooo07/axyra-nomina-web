@@ -26,7 +26,7 @@ export const useGoogleDriveAuth = () => {
       }
 
       // Generar URL de OAuth de Google
-      const scope = encodeURIComponent('https://www.googleapis.com/auth/drive.file');
+      const scope = 'https://www.googleapis.com/auth/drive.file';
       const state = Math.random().toString(36).substring(7);
       
       // Guardar estado en localStorage para validarlo después
