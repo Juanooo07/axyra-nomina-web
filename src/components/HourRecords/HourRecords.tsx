@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
-import { Save, Calendar, User, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { Save, Calendar, User, AlertCircle, CheckCircle, Clock, Download } from 'lucide-react';
 import { generateReceiptFromData } from '../../utils/pdfGenerator';
+import { ExportToDrive } from './ExportToDrive';
 
 interface Employee {
   id: string;
@@ -39,6 +40,7 @@ export function HourRecords() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showExportSection, setShowExportSection] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -289,10 +291,43 @@ export function HourRecords() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-slate-800 mb-2">Registro de Horas</h2>
-        <p className="text-slate-600">Registra las horas trabajadas por los empleados</p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-3xl font-bold text-slate-800 mb-2">Registro de Horas</h2>
+          <p className="text-slate-600">Registra las horas trabajadas por los empleados</p>
+        </div>
+        <button
+          onClick={() => setShowExportSection(!showExportSection)}
+          className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg"
+        >
+          <Download className="w-5 h-5" />
+          <span>{showExportSection ? 'Ocultar Exportación' : 'Exportar a Drive'}</span>
+        </button>
       </div>
+
+      {showExportSection && (
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6 shadow-lg">
+          <div className="flex items-center space-x-3 mb-4">
+            <Download className="w-6 h-6 text-green-600" />
+            <h3 className="text-xl font-bold text-green-800">Exportar Período a Google Drive</h3>
+          </div>
+          <p className="text-green-700 mb-4">
+            Sube tus registros de nómina directamente a Google Drive para almacenamiento seguro y acceso desde cualquier lugar.
+          </p>
+          <ExportToDrive
+            periodName={period}
+            periodData={{
+              period: period,
+              employees: employees.length,
+              timestamp: new Date().toISOString(),
+            }}
+            onExportSuccess={() => {
+              setSuccess('Período exportado exitosamente a Google Drive');
+              setTimeout(() => setSuccess(''), 3000);
+            }}
+          />
+        </div>
+      )}
 
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center space-x-3">
