@@ -41,6 +41,9 @@ export const useGoogleDriveAuth = () => {
       authUrl.searchParams.append('access_type', 'offline');
       authUrl.searchParams.append('prompt', 'consent');
 
+      console.log('Google OAuth URL:', authUrl.toString());
+      console.log('Scope:', scope);
+
       // Redirigir a Google OAuth
       window.location.href = authUrl.toString();
     } catch (err) {
