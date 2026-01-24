@@ -13,10 +13,12 @@ import {
   TrendingUp,
   TrendingDown,
   Eye,
-  Plus
+  Plus,
+  Upload
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { ExportToDrive } from '../HourRecords/ExportToDrive';
 
 // Interfaces
 interface Employee {
@@ -931,6 +933,21 @@ export function Payroll() {
                 <Printer className="w-5 h-5 flex-shrink-0" />
                 <span className="text-sm md:text-base">Imprimir / PDF</span>
               </button>
+              <div className="w-full sm:flex-1">
+                <ExportToDrive
+                  periodName={`${viewingCalculation.period_start} a ${viewingCalculation.period_end}`}
+                  periodData={{
+                    period: `${viewingCalculation.period_start} a ${viewingCalculation.period_end}`,
+                    employee: viewingCalculation.employee_name,
+                    cedula: viewingCalculation.employee_cedula,
+                    netSalary: viewingCalculation.net_salary,
+                    timestamp: new Date().toISOString(),
+                  }}
+                  onExportSuccess={() => {
+                    alert('Nómina exportada exitosamente a Google Drive');
+                  }}
+                />
+              </div>
               <button
                 onClick={() => {
                   setViewingPayroll(null);
