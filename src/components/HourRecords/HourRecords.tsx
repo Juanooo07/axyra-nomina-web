@@ -316,7 +316,7 @@ export function HourRecords() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center space-x-2">
+            <label className="flex text-sm font-semibold text-slate-700 mb-2 items-center space-x-2">
               <User className="w-4 h-4" />
               <span>Empleado *</span>
             </label>
@@ -336,7 +336,7 @@ export function HourRecords() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center space-x-2">
+            <label className="flex text-sm font-semibold text-slate-700 mb-2 items-center space-x-2">
               <Calendar className="w-4 h-4" />
               <span>Fecha *</span>
             </label>
@@ -350,7 +350,7 @@ export function HourRecords() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center space-x-2">
+            <label className="flex text-sm font-semibold text-slate-700 mb-2 items-center space-x-2">
               <Calendar className="w-4 h-4" />
               <span>Período (Año-Mes) *</span>
             </label>
