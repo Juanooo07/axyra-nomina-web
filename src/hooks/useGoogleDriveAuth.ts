@@ -94,6 +94,22 @@ export const useGoogleDriveAuth = () => {
         throw new Error(`No se pudo procesar el callback: ${errorDetail}`);
       }
 
+      // Guardar tokens en Supabase
+      const expiresAt = new Date(Date.now() + data.expires_in * 1000).toISOString();
+      
+      const { error: saveError } = await supabase
+        .from('user_google_tokens')
+        .upsert({
+          user_id: user.id,
+          access_token: data.access_token,
+          refresh_token: data.refresh_token || null,
+          expires_at: expiresAt,
+        });
+
+      if (saveError) {
+        throw new Error(`Error al guardar tokens: ${saveError.message}`);
+      }
+
       // Limpiar estado
       sessionStorage.removeItem('google_oauth_state');
 
