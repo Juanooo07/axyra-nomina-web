@@ -589,7 +589,7 @@ export function EmployeeHistory() {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             </div>
-          ) : (
+          ) : selectedEmployee ? (
             <>
               {/* Hour Records History */}
               <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 animate-fadeInUp">
@@ -873,17 +873,12 @@ export function EmployeeHistory() {
                 )}
               </div>
             </>
+          ) : (
+            <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-12 text-center animate-fadeInUp">
+              <Calendar className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-slate-600 mb-2">Selecciona un empleado</h3>
+              <p className="text-slate-500">Elige un empleado del menú superior para ver su historial completo</p>
+            </div>
           )}
-        </>
-      )}
-
-      {!selectedEmployee && (
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-12 text-center animate-fadeInUp">
-          <Calendar className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-slate-600 mb-2">Selecciona un empleado</h3>
-          <p className="text-slate-500">Elige un empleado del menú superior para ver su historial completo</p>
-        </div>
-      )}
-    </div>
   );
 }
