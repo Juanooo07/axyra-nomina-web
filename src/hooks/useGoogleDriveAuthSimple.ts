@@ -63,20 +63,24 @@ export const useGoogleDriveAuthSimple = () => {
         throw new Error('Usuario no autenticado');
       }
 
-      // Llamar a la edge function para intercambiar el código
-      const { data, error } = await supabase.functions.invoke(
-        'google-drive-token',
-        {
-          body: {
-            code,
-            redirectUri: `${window.location.origin}/auth/google/callback`,
-          },
-        }
-      );
+      // Llamar a la API de Vercel para intercambiar el código
+      const response = await fetch('/api/google-token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code,
+          redirectUri: `${window.location.origin}/auth/google/callback`,
+        }),
+      });
 
-      if (error) {
-        throw new Error(`Error en Edge Function: ${error.message || JSON.stringify(error)}`);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(`Error: ${error.error || 'Token exchange failed'}`);
       }
+
+      const data = await response.json();
 
       if (!data?.success) {
         throw new Error(data?.error || 'No se pudo obtener el token');
