@@ -66,6 +66,9 @@ export const useGoogleDriveAuthSimple = () => {
       console.log('handleGoogleCallback: Starting token exchange with code:', code.substring(0, 20) + '...');
 
       // Llamar a la API de Vercel para intercambiar el código
+      const redirectUri = `${window.location.origin}/auth/google/callback`;
+      console.log('handleGoogleCallback: Using redirectUri:', redirectUri);
+
       const response = await fetch('/api/google-token', {
         method: 'POST',
         headers: {
@@ -73,6 +76,7 @@ export const useGoogleDriveAuthSimple = () => {
         },
         body: JSON.stringify({
           code,
+          redirectUri,
         }),
       });
 
@@ -93,6 +97,10 @@ export const useGoogleDriveAuthSimple = () => {
 
       if (!data?.success) {
         throw new Error(data?.error || 'No se pudo obtener el token');
+      }
+
+      if (!data.access_token) {
+        throw new Error('API returned no access token');
       }
 
       const expiresAt = new Date(Date.now() + data.expires_in * 1000).toISOString();
