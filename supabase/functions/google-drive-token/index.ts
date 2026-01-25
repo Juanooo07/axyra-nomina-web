@@ -20,7 +20,10 @@ const corsHeaders = {
 serve(async (req: Request) => {
   // Manejar OPTIONS preflight request
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+    return new Response("ok", { 
+      status: 200,
+      headers: corsHeaders 
+    });
   }
 
   try {
