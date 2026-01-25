@@ -10,8 +10,12 @@ export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<string>('Procesando...');
+  const [processed, setProcessed] = useState(false);
 
   useEffect(() => {
+    // Prevenir que se procese múltiples veces
+    if (processed) return;
+
     const processCallback = async () => {
       try {
         setLoading(true);
@@ -38,7 +42,8 @@ export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
 
         setStatus('Intercambiando código por token...');
         console.log('GoogleCallback: Calling handleGoogleCallback...');
-        // Procesar el callback
+        
+        // Procesar el callback (SOLO UNA VEZ)
         const result = await handleGoogleCallback(code);
         
         console.log('GoogleCallback: Result', result);
@@ -64,11 +69,12 @@ export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
         }, 3000);
       } finally {
         setLoading(false);
+        setProcessed(true); // Marcar como procesado
       }
     };
 
     processCallback();
-  }, [handleGoogleCallback, onComplete]);
+  }, [handleGoogleCallback, onComplete, processed]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">

@@ -99,7 +99,6 @@ export const useGoogleDriveAuthSimple = () => {
             access_token: tokenData.access_token,
             refresh_token: tokenData.refresh_token || null,
             expires_at: expiresAt,
-            token_type: 'Bearer',
           },
           { onConflict: 'user_id' }
         )
