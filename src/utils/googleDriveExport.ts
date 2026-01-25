@@ -57,13 +57,38 @@ export const uploadFileToDrive = async (
   try {
     const fileMetadata = {
       name: fileName,
-      mimeType: 'text/csv', // CSV es simple y Excel lo puede abrir
+      mimeType: 'text/csv',
       ...(parentFolderId && { parents: [parentFolderId] }),
     };
 
-    const formData = new FormData();
-    formData.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
-    formData.append('file', fileContent, fileName);
+    // Crear multipart/related manualmente
+    const boundary = '===============7330845974216740156==';
+    const delimiter = `\r\n--${boundary}\r\n`;
+    const closeDelimiter = `\r\n--${boundary}--`;
+
+    // Parte 1: Metadatos JSON
+    const metadataPart = 
+      `Content-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(fileMetadata)}`;
+
+    // Parte 2: Archivo
+    const fileArray = await fileContent.arrayBuffer();
+    const fileBytes = new Uint8Array(fileArray);
+
+    // Construir el body multipart
+    const body = new TextEncoder().encode(
+      delimiter + metadataPart + delimiter + 'Content-Type: text/csv\r\n\r\n'
+    );
+
+    // Combinar: headers + metadata + delimiter + file + close delimiter
+    const multipartBody = new Uint8Array(
+      body.length + fileBytes.length + new TextEncoder().encode(closeDelimiter).length
+    );
+    multipartBody.set(body);
+    multipartBody.set(fileBytes, body.length);
+    multipartBody.set(
+      new TextEncoder().encode(closeDelimiter),
+      body.length + fileBytes.length
+    );
 
     const response = await fetch(
       `${GOOGLE_DRIVE_API}/files?uploadType=multipart&supportsAllDrives=true`,
@@ -71,8 +96,9 @@ export const uploadFileToDrive = async (
         method: 'POST',
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          'Content-Type': `multipart/related; boundary="${boundary}"`,
         },
-        body: formData,
+        body: multipartBody,
       }
     );
 
