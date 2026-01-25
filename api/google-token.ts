@@ -18,10 +18,10 @@ export default async function handler(
   }
 
   try {
-    const { code, redirectUri } = req.body;
+    const { code } = req.body;
 
-    if (!code || !redirectUri) {
-      return res.status(400).json({ error: 'Missing code or redirectUri' });
+    if (!code) {
+      return res.status(400).json({ error: 'Missing authorization code' });
     }
 
     const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -31,6 +31,9 @@ export default async function handler(
       console.error('Missing env vars:', { clientId: !!clientId, clientSecret: !!clientSecret });
       return res.status(500).json({ error: 'Server not configured', details: 'Missing Google credentials' });
     }
+
+    // Use fixed redirect URI matching Google Console configuration
+    const redirectUri = `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:5173'}/auth/google/callback`;
 
     // Exchange code for token with Google
     const params = new URLSearchParams({

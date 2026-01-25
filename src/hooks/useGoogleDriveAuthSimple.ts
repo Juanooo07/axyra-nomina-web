@@ -71,7 +71,6 @@ export const useGoogleDriveAuthSimple = () => {
         },
         body: JSON.stringify({
           code,
-          redirectUri: `${window.location.origin}/auth/google/callback`,
         }),
       });
 
