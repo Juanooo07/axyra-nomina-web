@@ -63,42 +63,42 @@ export const useGoogleDriveAuthSimple = () => {
         throw new Error('Usuario no autenticado');
       }
 
-      // Intercambiar código por token usando Google REST API
-      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          code,
-          client_id: GOOGLE_CLIENT_ID,
-          grant_type: 'authorization_code',
-          redirect_uri: `${window.location.origin}/auth/google/callback`,
-        }).toString(),
-      });
+      // Llamar a la edge function para intercambiar el código
+      const { data, error } = await supabase.functions.invoke(
+        'google-drive-token',
+        {
+          body: {
+            code,
+            redirectUri: `${window.location.origin}/auth/google/callback`,
+          },
+        }
+      );
 
-      if (!tokenResponse.ok) {
-        throw new Error('Error intercambiando código por token');
+      if (error) {
+        throw new Error(`Error en Edge Function: ${error.message || JSON.stringify(error)}`);
       }
 
-      const tokenData = await tokenResponse.json();
-      const expiresAt = new Date(Date.now() + tokenData.expires_in * 1000).toISOString();
+      if (!data?.success) {
+        throw new Error(data?.error || 'No se pudo obtener el token');
+      }
+
+      const expiresAt = new Date(Date.now() + data.expires_in * 1000).toISOString();
 
       // Guardar token en Supabase
-      const { error } = await supabase
+      const { error: saveError } = await supabase
         .from('user_google_tokens')
         .upsert({
           user_id: user.id,
-          access_token: tokenData.access_token,
-          refresh_token: tokenData.refresh_token || null,
+          access_token: data.access_token,
+          refresh_token: data.refresh_token || null,
           expires_at: expiresAt,
         });
 
-      if (error) {
-        throw new Error(`Error guardando tokens: ${error.message}`);
+      if (saveError) {
+        throw new Error(`Error guardando tokens: ${saveError.message}`);
       }
 
-      return { success: true, access_token: tokenData.access_token };
+      return { success: true, access_token: data.access_token };
     } catch (err) {
       console.error('Google Callback Error:', err);
       throw err;
