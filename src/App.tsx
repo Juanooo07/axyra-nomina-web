@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Login } from './components/Auth/Login';
 import { Register } from './components/Auth/Register';
+import { GoogleCallback } from './components/Auth/GoogleCallback';
 import { LandingPage } from './components/Landing/LandingPage';
 import { MainLayout } from './components/Layout/MainLayout';
 import { Dashboard } from './components/Dashboard/Dashboard';
@@ -18,6 +19,21 @@ function AppContent() {
   const [showRegister, setShowRegister] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
+
+  // Detectar si estamos procesando el callback de Google
+  const isGoogleCallback = window.location.pathname === '/auth/google/callback';
+
+  if (isGoogleCallback) {
+    return (
+      <GoogleCallback 
+        onComplete={() => {
+          // Limpiar los parámetros de la URL después de procesar
+          window.history.replaceState({}, document.title, '/');
+          // El usuario será redirigido al dashboard automáticamente
+        }} 
+      />
+    );
+  }
 
   if (loading) {
     return (
