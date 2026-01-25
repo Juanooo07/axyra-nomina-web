@@ -55,46 +55,66 @@ export const uploadFileToDrive = async (
   parentFolderId?: string
 ): Promise<string | null> => {
   try {
-    const fileMetadata = {
-      name: fileName,
-      mimeType: 'text/csv',
-      ...(parentFolderId && { parents: [parentFolderId] }),
-    };
-
-    // Usar FormData que es lo correcto para multipart
-    const formData = new FormData();
-    formData.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
-    formData.append('file', fileContent, fileName);
-
-    console.log('uploadFileToDrive: Uploading file:', {
+    console.log('uploadFileToDrive: Starting upload:', {
       fileName,
       fileSize: fileContent.size,
       fileType: fileContent.type,
       parentFolderId,
     });
 
-    const response = await fetch(
-      `${GOOGLE_DRIVE_API}/files?uploadType=multipart&supportsAllDrives=true`,
+    // Primero, crear el archivo con metadata
+    const fileMetadata = {
+      name: fileName,
+      mimeType: 'text/csv',
+      ...(parentFolderId && { parents: [parentFolderId] }),
+    };
+
+    // Paso 1: Crear el archivo con metadata (sin contenido)
+    console.log('uploadFileToDrive: Creating file with metadata...');
+    const createResponse = await fetch(
+      `${GOOGLE_DRIVE_API}/files?supportsAllDrives=true`,
       {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
         },
-        body: formData,
+        body: JSON.stringify(fileMetadata),
       }
     );
 
-    console.log('uploadFileToDrive: Response status:', response.status);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Drive API error response:', errorText);
-      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+    if (!createResponse.ok) {
+      const errorText = await createResponse.text();
+      console.error('Drive API create error:', errorText);
+      throw new Error(`Failed to create file: ${errorText}`);
     }
 
-    const data = await response.json() as { id: string };
-    console.log('uploadFileToDrive: File uploaded successfully, ID:', data.id);
-    return data.id;
+    const fileData = await createResponse.json() as { id: string };
+    const fileId = fileData.id;
+    console.log('uploadFileToDrive: File created with ID:', fileId);
+
+    // Paso 2: Subir el contenido del archivo
+    console.log('uploadFileToDrive: Uploading file content...');
+    const uploadResponse = await fetch(
+      `${GOOGLE_DRIVE_API}/files/${fileId}?uploadType=media&supportsAllDrives=true`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'text/csv',
+        },
+        body: fileContent,
+      }
+    );
+
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text();
+      console.error('Drive API upload error:', errorText);
+      throw new Error(`Failed to upload file: ${errorText}`);
+    }
+
+    console.log('uploadFileToDrive: File uploaded successfully, ID:', fileId);
+    return fileId;
   } catch (error) {
     console.error('Error uploading file to Drive:', error);
     return null;
