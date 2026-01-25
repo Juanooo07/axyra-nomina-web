@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useGoogleDriveAuth } from '../../hooks/useGoogleDriveAuth';
+import { useGoogleDriveAuthSimple } from '../../hooks/useGoogleDriveAuthSimple';
 
 interface GoogleCallbackProps {
   onComplete: () => void;
 }
 
 export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
-  const { handleGoogleCallback } = useGoogleDriveAuth();
+  const { handleGoogleCallback } = useGoogleDriveAuthSimple();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -15,10 +15,9 @@ export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
       try {
         setLoading(true);
         
-        // Obtener los parámetros de la URL
+        // Obtener el código de la URL
         const searchParams = new URLSearchParams(window.location.search);
         const code = searchParams.get('code');
-        const state = searchParams.get('state');
         const errorParam = searchParams.get('error');
 
         // Verificar si hay error de Google
@@ -26,14 +25,14 @@ export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
           throw new Error(`Google OAuth error: ${errorParam}`);
         }
 
-        if (!code || !state) {
-          throw new Error('Código o estado faltante en la URL');
+        if (!code) {
+          throw new Error('No se recibió código de autorización');
         }
 
         // Procesar el callback
-        const result = await handleGoogleCallback(code, state);
+        const result = await handleGoogleCallback(code);
         
-        if (!result) {
+        if (!result?.success) {
           throw new Error('No se pudo procesar el callback de Google');
         }
 

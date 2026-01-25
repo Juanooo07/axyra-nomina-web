@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Upload, Loader } from 'lucide-react';
-import { useGoogleDriveAuth } from '../../hooks/useGoogleDriveAuth';
+import { useGoogleDriveAuthSimple } from '../../hooks/useGoogleDriveAuthSimple';
 import { createDriveFolder, uploadFileToDrive } from '../../utils/googleDriveExport';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -17,7 +17,7 @@ interface ExportToDriveProps {
 
 export const ExportToDrive = ({ periodName, periodData, onExportSuccess }: ExportToDriveProps) => {
   const { user } = useAuth();
-  const { initiateGoogleAuth, getStoredToken } = useGoogleDriveAuth();
+  const { initiateGoogleAuth, getStoredToken } = useGoogleDriveAuthSimple();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
