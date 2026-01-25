@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useGoogleDriveAuthSimple } from '../../hooks/useGoogleDriveAuthSimple';
 
 interface GoogleCallbackProps {
@@ -10,11 +10,14 @@ export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<string>('Procesando...');
-  const [processed, setProcessed] = useState(false);
+  const processedRef = useRef(false);
 
   useEffect(() => {
-    // Prevenir que se procese múltiples veces
-    if (processed) return;
+    // Prevenir que se procese múltiples veces usando ref
+    if (processedRef.current) {
+      console.log('GoogleCallback: Ya fue procesado, ignorando...');
+      return;
+    }
 
     const processCallback = async () => {
       try {
@@ -40,10 +43,13 @@ export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
           throw new Error('No se recibió código de autorización');
         }
 
+        // Marcar como procesado ANTES de llamar a handleGoogleCallback
+        processedRef.current = true;
+
         setStatus('Intercambiando código por token...');
         console.log('GoogleCallback: Calling handleGoogleCallback...');
         
-        // Procesar el callback (SOLO UNA VEZ)
+        // Procesar el callback
         const result = await handleGoogleCallback(code);
         
         console.log('GoogleCallback: Result', result);
@@ -69,12 +75,11 @@ export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
         }, 3000);
       } finally {
         setLoading(false);
-        setProcessed(true); // Marcar como procesado
       }
     };
 
     processCallback();
-  }, [handleGoogleCallback, onComplete, processed]);
+  }, [handleGoogleCallback, onComplete]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
