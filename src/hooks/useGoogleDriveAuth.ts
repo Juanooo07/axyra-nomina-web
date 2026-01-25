@@ -83,7 +83,15 @@ export const useGoogleDriveAuth = () => {
       );
 
       if (functionError) {
-        throw new Error(functionError.message || 'Error al obtener token');
+        const errorMessage = typeof functionError === 'object' && functionError !== null && 'message' in functionError
+          ? (functionError as any).message
+          : JSON.stringify(functionError);
+        throw new Error(`Error de Edge Function: ${errorMessage}`);
+      }
+
+      if (!data || !data.success) {
+        const errorDetail = data?.error || 'No se recibió respuesta válida';
+        throw new Error(`No se pudo procesar el callback: ${errorDetail}`);
       }
 
       // Limpiar estado
