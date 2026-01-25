@@ -62,59 +62,65 @@ export const uploadFileToDrive = async (
       parentFolderId,
     });
 
-    // Primero, crear el archivo con metadata
+    // Crear metadata para el archivo
     const fileMetadata = {
       name: fileName,
       mimeType: 'text/csv',
       ...(parentFolderId && { parents: [parentFolderId] }),
     };
 
-    // Paso 1: Crear el archivo con metadata (sin contenido)
-    console.log('uploadFileToDrive: Creating file with metadata...');
-    const createResponse = await fetch(
-      `${GOOGLE_DRIVE_API}/files?supportsAllDrives=true`,
+    // Crear boundary para multipart
+    const boundary = Math.random().toString(36).substring(2, 15);
+
+    // Convertir Blob a ArrayBuffer para manipulación
+    const fileBuffer = await fileContent.arrayBuffer();
+    const fileBytes = new Uint8Array(fileBuffer);
+
+    // Construir body multipart manualmente
+    const metadataStr = JSON.stringify(fileMetadata);
+    const metadataBytes = new TextEncoder().encode(metadataStr);
+
+    // Primera parte: metadata
+    const part1 = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${metadataStr}\r\n--${boundary}\r\nContent-Type: text/csv\r\n\r\n`;
+    const part1Bytes = new TextEncoder().encode(part1);
+
+    // Última parte: cierre
+    const part2 = `\r\n--${boundary}--`;
+    const part2Bytes = new TextEncoder().encode(part2);
+
+    // Combinar todas las partes
+    const bodyArray = new Uint8Array(
+      part1Bytes.length + fileBytes.length + part2Bytes.length
+    );
+    bodyArray.set(part1Bytes);
+    bodyArray.set(fileBytes, part1Bytes.length);
+    bodyArray.set(part2Bytes, part1Bytes.length + fileBytes.length);
+
+    console.log('uploadFileToDrive: Uploading with multipart...');
+
+    const response = await fetch(
+      `${GOOGLE_DRIVE_API}/files?uploadType=multipart&supportsAllDrives=true`,
       {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
+          'Content-Type': `multipart/related; boundary=${boundary}`,
         },
-        body: JSON.stringify(fileMetadata),
+        body: bodyArray,
       }
     );
 
-    if (!createResponse.ok) {
-      const errorText = await createResponse.text();
-      console.error('Drive API create error:', errorText);
-      throw new Error(`Failed to create file: ${errorText}`);
+    console.log('uploadFileToDrive: Response status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Drive API error:', errorText);
+      throw new Error(`Upload failed: ${response.status} - ${errorText}`);
     }
 
-    const fileData = await createResponse.json() as { id: string };
-    const fileId = fileData.id;
-    console.log('uploadFileToDrive: File created with ID:', fileId);
-
-    // Paso 2: Subir el contenido del archivo
-    console.log('uploadFileToDrive: Uploading file content...');
-    const uploadResponse = await fetch(
-      `${GOOGLE_DRIVE_API}/files/${fileId}?uploadType=media&supportsAllDrives=true`,
-      {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'text/csv',
-        },
-        body: fileContent,
-      }
-    );
-
-    if (!uploadResponse.ok) {
-      const errorText = await uploadResponse.text();
-      console.error('Drive API upload error:', errorText);
-      throw new Error(`Failed to upload file: ${errorText}`);
-    }
-
-    console.log('uploadFileToDrive: File uploaded successfully, ID:', fileId);
-    return fileId;
+    const data = await response.json() as { id: string };
+    console.log('uploadFileToDrive: File uploaded successfully, ID:', data.id);
+    return data.id;
   } catch (error) {
     console.error('Error uploading file to Drive:', error);
     return null;
