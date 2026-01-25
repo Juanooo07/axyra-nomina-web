@@ -7,14 +7,56 @@ export interface GoogleAuthToken {
 }
 
 /**
- * Crear una carpeta en Google Drive
+ * Buscar carpeta existente en Google Drive por nombre
  */
-export const createDriveFolder = async (
+export const findDriveFolder = async (
   accessToken: string,
   folderName: string,
   parentFolderId?: string
 ): Promise<string | null> => {
   try {
+    const query = parentFolderId
+      ? `name='${folderName}' and parents='${parentFolderId}' and mimeType='application/vnd.google-apps.folder' and trashed=false`
+      : `name='${folderName}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
+
+    const response = await fetch(
+      `${GOOGLE_DRIVE_API}/files?q=${encodeURIComponent(query)}&spaces=drive&fields=files(id,name)&pageSize=1`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json() as { files: Array<{ id: string; name: string }> };
+    return data.files && data.files.length > 0 ? data.files[0].id : null;
+  } catch (error) {
+    console.error('Error finding Drive folder:', error);
+    return null;
+  }
+};
+
+/**
+ * Crear una carpeta en Google Drive (o retornar si ya existe)
+ */
+export const getOrCreateDriveFolder = async (
+  accessToken: string,
+  folderName: string,
+  parentFolderId?: string
+): Promise<string | null> => {
+  try {
+    // Primero, buscar si la carpeta ya existe
+    const existingId = await findDriveFolder(accessToken, folderName, parentFolderId);
+    if (existingId) {
+      console.log(`Folder '${folderName}' already exists with ID:`, existingId);
+      return existingId;
+    }
+
+    // Si no existe, crearla
     const fileMetadata: Record<string, unknown> = {
       name: folderName,
       mimeType: 'application/vnd.google-apps.folder',
@@ -38,11 +80,24 @@ export const createDriveFolder = async (
     }
 
     const data = await response.json() as { id: string };
+    console.log(`Created folder '${folderName}' with ID:`, data.id);
     return data.id;
   } catch (error) {
     console.error('Error creating Drive folder:', error);
     return null;
   }
+};
+
+/**
+ * Crear una carpeta en Google Drive
+ */
+export const createDriveFolder = async (
+  accessToken: string,
+  folderName: string,
+  parentFolderId?: string
+): Promise<string | null> => {
+  // Usar getOrCreateDriveFolder en su lugar
+  return getOrCreateDriveFolder(accessToken, folderName, parentFolderId);
 };
 
 /**
@@ -62,41 +117,17 @@ export const uploadFileToDrive = async (
       parentFolderId,
     });
 
-    // Crear metadata para el archivo
     const fileMetadata = {
       name: fileName,
       mimeType: 'text/csv',
       ...(parentFolderId && { parents: [parentFolderId] }),
     };
 
-    // Crear boundary para multipart
-    const boundary = Math.random().toString(36).substring(2, 15);
+    const formData = new FormData();
+    formData.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
+    formData.append('file', fileContent, fileName);
 
-    // Convertir Blob a ArrayBuffer para manipulación
-    const fileBuffer = await fileContent.arrayBuffer();
-    const fileBytes = new Uint8Array(fileBuffer);
-
-    // Construir body multipart manualmente
-    const metadataStr = JSON.stringify(fileMetadata);
-    const metadataBytes = new TextEncoder().encode(metadataStr);
-
-    // Primera parte: metadata
-    const part1 = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${metadataStr}\r\n--${boundary}\r\nContent-Type: text/csv\r\n\r\n`;
-    const part1Bytes = new TextEncoder().encode(part1);
-
-    // Última parte: cierre
-    const part2 = `\r\n--${boundary}--`;
-    const part2Bytes = new TextEncoder().encode(part2);
-
-    // Combinar todas las partes
-    const bodyArray = new Uint8Array(
-      part1Bytes.length + fileBytes.length + part2Bytes.length
-    );
-    bodyArray.set(part1Bytes);
-    bodyArray.set(fileBytes, part1Bytes.length);
-    bodyArray.set(part2Bytes, part1Bytes.length + fileBytes.length);
-
-    console.log('uploadFileToDrive: Uploading with multipart...');
+    console.log('uploadFileToDrive: Uploading with FormData...');
 
     const response = await fetch(
       `${GOOGLE_DRIVE_API}/files?uploadType=multipart&supportsAllDrives=true`,
@@ -104,9 +135,8 @@ export const uploadFileToDrive = async (
         method: 'POST',
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          'Content-Type': `multipart/related; boundary=${boundary}`,
         },
-        body: bodyArray,
+        body: formData,
       }
     );
 
