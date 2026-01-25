@@ -61,34 +61,17 @@ export const uploadFileToDrive = async (
       ...(parentFolderId && { parents: [parentFolderId] }),
     };
 
-    // Crear multipart/related manualmente
-    const boundary = '===============7330845974216740156==';
-    const delimiter = `\r\n--${boundary}\r\n`;
-    const closeDelimiter = `\r\n--${boundary}--`;
+    // Usar FormData que es lo correcto para multipart
+    const formData = new FormData();
+    formData.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
+    formData.append('file', fileContent, fileName);
 
-    // Parte 1: Metadatos JSON
-    const metadataPart = 
-      `Content-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(fileMetadata)}`;
-
-    // Parte 2: Archivo
-    const fileArray = await fileContent.arrayBuffer();
-    const fileBytes = new Uint8Array(fileArray);
-
-    // Construir el body multipart
-    const body = new TextEncoder().encode(
-      delimiter + metadataPart + delimiter + 'Content-Type: text/csv\r\n\r\n'
-    );
-
-    // Combinar: headers + metadata + delimiter + file + close delimiter
-    const multipartBody = new Uint8Array(
-      body.length + fileBytes.length + new TextEncoder().encode(closeDelimiter).length
-    );
-    multipartBody.set(body);
-    multipartBody.set(fileBytes, body.length);
-    multipartBody.set(
-      new TextEncoder().encode(closeDelimiter),
-      body.length + fileBytes.length
-    );
+    console.log('uploadFileToDrive: Uploading file:', {
+      fileName,
+      fileSize: fileContent.size,
+      fileType: fileContent.type,
+      parentFolderId,
+    });
 
     const response = await fetch(
       `${GOOGLE_DRIVE_API}/files?uploadType=multipart&supportsAllDrives=true`,
@@ -96,11 +79,12 @@ export const uploadFileToDrive = async (
         method: 'POST',
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          'Content-Type': `multipart/related; boundary="${boundary}"`,
         },
-        body: multipartBody,
+        body: formData,
       }
     );
+
+    console.log('uploadFileToDrive: Response status:', response.status);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -109,6 +93,7 @@ export const uploadFileToDrive = async (
     }
 
     const data = await response.json() as { id: string };
+    console.log('uploadFileToDrive: File uploaded successfully, ID:', data.id);
     return data.id;
   } catch (error) {
     console.error('Error uploading file to Drive:', error);
