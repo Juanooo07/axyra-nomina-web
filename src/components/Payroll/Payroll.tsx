@@ -106,6 +106,11 @@ export function Payroll() {
   const [calculation, setCalculation] = useState<PayrollCalculation | null>(null);
   const [viewingPayroll, setViewingPayroll] = useState<PayrollHistory | null>(null);
   const [viewingCalculation, setViewingCalculation] = useState<PayrollCalculation | null>(null);
+  const [userSettings, setUserSettings] = useState<{
+    company_name?: string;
+    company_nit?: string;
+    company_address?: string;
+  }>({});
 
   // UI state
   const [loading, setLoading] = useState(false);
@@ -134,6 +139,7 @@ export function Payroll() {
   useEffect(() => {
     if (user) {
       loadEmployees();
+      loadUserSettings();
     }
   }, [user]);
 
@@ -162,6 +168,25 @@ export function Payroll() {
     } catch (err) {
       console.error('Error loading employees:', err);
       setError('Error al cargar los empleados');
+    }
+  };
+
+  const loadUserSettings = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('user_settings')
+        .select('company_name, company_nit, company_address')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (data) {
+        setUserSettings(data);
+      }
+    } catch (err) {
+      console.error('Error loading user settings:', err);
     }
   };
 
@@ -940,8 +965,27 @@ export function Payroll() {
                     period: `${viewingCalculation.period_start} a ${viewingCalculation.period_end}`,
                     employee: viewingCalculation.employee_name,
                     cedula: viewingCalculation.employee_cedula,
-                    netSalary: viewingCalculation.net_salary,
+                    base_salary: viewingCalculation.base_salary,
+                    hour_breakdowns: viewingCalculation.hour_breakdowns,
+                    total_surcharges: viewingCalculation.total_surcharges,
+                    transport_allowance: viewingCalculation.transport_allowance,
+                    health_deduction: viewingCalculation.health_deduction,
+                    pension_deduction: viewingCalculation.pension_deduction,
+                    total_deductions: viewingCalculation.total_deductions,
+                    net_salary: viewingCalculation.net_salary,
+                    total_hours: viewingCalculation.total_hours,
                     timestamp: new Date().toISOString(),
+                  }}
+                  employeeInfo={{
+                    full_name: viewingCalculation.employee_name,
+                    cedula: viewingCalculation.employee_cedula,
+                    contract_type: employees.find(e => e.id === viewingPayroll?.employee_id)?.contract_type || 'FIJO',
+                    monthly_salary: employees.find(e => e.id === viewingPayroll?.employee_id)?.monthly_salary || 0,
+                  }}
+                  companyInfo={{
+                    company_name: userSettings.company_name || 'Mi Empresa',
+                    company_nit: userSettings.company_nit || '',
+                    company_address: userSettings.company_address || '',
                   }}
                   onExportSuccess={() => {
                     alert('Nómina exportada exitosamente a Google Drive');

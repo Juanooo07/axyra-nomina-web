@@ -481,6 +481,168 @@ export function generateSettlementPDF(data: SettlementData): void {
   }
 }
 
+/**
+ * Genera un PDF como Blob para subir a Google Drive
+ * Mismo contenido que generatePaymentReceipt pero retorna Blob
+ */
+export async function generatePaymentReceiptBlob(
+  company: CompanyInfo,
+  employee: EmployeeInfo,
+  hourDetails: HourDetail[],
+  totalHours: number,
+  totalAmount: number
+): Promise<Blob> {
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Orden de Trabajo</title>
+  <style>
+    @page {
+      size: letter;
+      margin: 1cm;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.4;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 16pt;
+      margin-bottom: 30px;
+      font-weight: bold;
+    }
+    .header-info {
+      margin-bottom: 20px;
+    }
+    .header-info p {
+      margin: 5px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th {
+      background-color: #f0f0f0;
+      padding: 8px;
+      text-align: left;
+      border: none;
+      font-weight: bold;
+      font-size: 9pt;
+    }
+    td {
+      padding: 6px 8px;
+      border: none;
+      text-align: left;
+      font-size: 9pt;
+    }
+    .number {
+      text-align: right;
+    }
+    .center {
+      text-align: center;
+    }
+    .total-section {
+      margin-top: 20px;
+      padding: 10px;
+      border-top: 2px solid #000;
+      font-weight: bold;
+    }
+    .signature-section {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <h1>ORDEN DE TRABAJO</h1>
+
+  <div class="header-info">
+    <p><strong>EMPRESA:</strong> ${company.company_name}</p>
+    <p><strong>NIT:</strong> ${company.company_nit}</p>
+    <p><strong>DIRECCIÓN:</strong> ${company.company_address}</p>
+  </div>
+
+  <div class="header-info">
+    <p><strong>TRABAJADOR:</strong> ${employee.full_name.toUpperCase()}</p>
+    <p><strong>CÉDULA:</strong> ${employee.cedula}</p>
+    <p><strong>TIPO DE CONTRATO:</strong> ${employee.contract_type}</p>
+    <p><strong>SALARIO BASE LIQUIDACIÓN:</strong> ${formatCurrency(employee.monthly_salary)}</p>
+    <p><strong>TOTAL HORAS TRABAJADAS:</strong> ${totalHours.toFixed(1)}</p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>CONCEPTO</th>
+        <th class="number">VALOR HORA</th>
+        <th class="number">VALOR RECARGO</th>
+        <th class="number">VALOR TOTAL</th>
+        <th class="center">HORAS</th>
+        <th class="number">SUBTOTAL</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${hourDetails.map(detail => \`
+        <tr>
+          <td>\${detail.concept.toUpperCase()}</td>
+          <td class="number">\${formatCurrency(detail.hourValue)}</td>
+          <td class="number">\${formatCurrency(detail.surchargeValue)}</td>
+          <td class="number">\${formatCurrency(detail.totalValue)}</td>
+          <td class="center">\${detail.hours.toFixed(1)}</td>
+          <td class="number">\${formatCurrency(detail.subtotal)}</td>
+        </tr>
+      \`).join('')}
+    </tbody>
+  </table>
+
+  <div class="total-section">
+    <p>TOTAL (CON AUXILIO): ${formatCurrency(totalAmount)}</p>
+    <p>TOTAL NETO A PAGAR: ${formatCurrency(totalAmount)}</p>
+  </div>
+
+  <div class="signature-section">
+    <p>FIRMA DEL TRABAJADOR: __________________________</p>
+    <p>CÉDULA: __________________________</p>
+  </div>
+</body>
+</html>
+`;
+
+  // Usar html2pdf para convertir a PDF
+  const element = document.createElement('div');
+  element.innerHTML = html;
+  
+  const opt = {
+    margin: 10,
+    filename: 'nomina.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'letter' }
+  };
+
+  // Importar html2pdf dinámicamente
+  const html2pdf = (await import('html2pdf.js')).default;
+  
+  return new Promise((resolve, reject) => {
+    html2pdf()
+      .set(opt)
+      .from(element)
+      .toPdf()
+      .output('blob')
+      .then((blob: Blob) => {
+        resolve(blob);
+      })
+      .catch((error: Error) => {
+        reject(error);
+      });
+  });
+}
+
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr + 'T00:00:00');
   return date.toLocaleDateString('es-CO', {

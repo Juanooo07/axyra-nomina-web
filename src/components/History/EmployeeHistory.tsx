@@ -64,7 +64,6 @@ export function EmployeeHistory() {
   const [hourSurcharges, setHourSurcharges] = useState<HourSurcharge[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [generatingPdf, setGeneratingPdf] = useState(false);
   const [downloadingPayrollPdf, setDownloadingPayrollPdf] = useState<string | null>(null);
 
   // Date filters
@@ -370,63 +369,6 @@ export function EmployeeHistory() {
     setToDate('');
   };
 
-  const handleGeneratePdf = async () => {
-    if (!user || !selectedEmployeeData || hourRecords.length === 0) {
-      setError('No hay datos suficientes para generar el PDF. Asegúrate de que el empleado tenga registros de horas.');
-      return;
-    }
-
-    setGeneratingPdf(true);
-    setError('');
-
-    try {
-      // Fetch company settings
-      const { data: companySettings, error: companyError } = await supabase
-        .from('user_settings')
-        .select('company_name, company_nit, company_address, minimum_salary')
-        .eq('user_id', user.id)
-        .single();
-
-      if (companyError) {
-        throw new Error('Error al cargar configuración de la empresa: ' + companyError.message);
-      }
-
-      if (!companySettings) {
-        throw new Error('No se encontró la configuración de la empresa. Por favor, configura tu empresa en Configuración.');
-      }
-
-      // Fetch hour surcharges
-      const { data: surcharges, error: surchargesError } = await supabase
-        .from('hour_surcharges')
-        .select('hour_type_name, surcharge_percent')
-        .eq('user_id', user.id);
-
-      if (surchargesError) {
-        throw new Error('Error al cargar recargos de horas: ' + surchargesError.message);
-      }
-
-      // Prepare hour records data
-      const hourRecordsData = hourRecords.map(record => ({
-        hour_type_name: record.hour_type_name,
-        hours: record.hours
-      }));
-
-      // Generate PDF
-      await generateReceiptFromData(
-        companySettings,
-        selectedEmployeeData,
-        hourRecordsData,
-        surcharges || []
-      );
-
-    } catch (err) {
-      console.error('Error generating PDF:', err);
-      setError(err instanceof Error ? err.message : 'Error al generar el PDF');
-    } finally {
-      setGeneratingPdf(false);
-    }
-  };
-
   const handleDownloadPayrollPdf = async (payrollId: string) => {
     if (!user || !selectedEmployeeData) {
       setError('No se pudo cargar la información del empleado');
@@ -575,18 +517,6 @@ export function EmployeeHistory() {
               </div>
             </div>
 
-            {/* PDF Generation Button */}
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={handleGeneratePdf}
-                disabled={generatingPdf || hourRecords.length === 0}
-                className="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
-              >
-                <FileText className="w-5 h-5" />
-                <span>{generatingPdf ? 'Generando PDF...' : 'Generar PDF de Comprobante'}</span>
-              </button>
-            </div>
-          </div>
 
           {/* Date Range Filter */}
           <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 animate-fadeInUp">
