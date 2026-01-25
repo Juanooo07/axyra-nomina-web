@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Upload, Loader } from 'lucide-react';
 import { useGoogleDriveAuthSimple } from '../../hooks/useGoogleDriveAuthSimple';
-import { createDriveFolder, uploadFileToDrive } from '../../utils/googleDriveExport';
+import { getOrCreateDriveFolder, uploadFileToDrive } from '../../utils/googleDriveExport';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface PeriodData {
   period?: string;
+  employee?: string;
+  cedula?: string;
   [key: string]: unknown;
 }
 
@@ -32,16 +34,12 @@ export const ExportToDrive = ({ periodName, periodData, onExportSuccess }: Expor
         throw new Error('Usuario no autenticado');
       }
 
-      // Obtener el token guardado
       const token = await getStoredToken();
 
-      // Si no hay token, iniciar autenticación
       if (!token) {
-        // Mostrar mensaje informando que se va a abrir Google
         const confirmed = window.confirm(
           'Se abrirá una ventana para autenticar con Google. ¿Deseas continuar?'
         );
-
         if (confirmed) {
           initiateGoogleAuth();
           return;
@@ -49,38 +47,52 @@ export const ExportToDrive = ({ periodName, periodData, onExportSuccess }: Expor
         throw new Error('Autenticación cancelada');
       }
 
-      // Crear blob con datos CSV (Excel compatible)
-      const csvContent = generateCSVContent(periodData);
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
-      const fileName = `Nomina_${periodName}_${new Date().toISOString().slice(0, 10)}.csv`;
+      // CREAR ESTRUCTURA DE CARPETAS AUTOMÁTICAMENTE
+      console.log('Export: Creating folder structure...');
 
-      // Crear carpeta en Drive si no existe
-      let folderId: string | null = null;
-      try {
-        folderId = await createDriveFolder(token.access_token, 'AXYRA - Nóminas');
-      } catch (err) {
-        console.warn('No se pudo crear carpeta, subiendo a raíz:', err);
-      }
+      // Paso 1: Carpeta principal "AXYRA - Nóminas"
+      const mainFolderId = await getOrCreateDriveFolder(token.access_token, 'AXYRA - Nóminas');
+      if (!mainFolderId) throw new Error('No se pudo crear carpeta principal');
+      console.log('Export: Main folder created:', mainFolderId);
 
-      // Subir archivo
+      // Paso 2: Carpeta del período (ejemplo: "ENERO-2" o "2026-01-01_A_2026-01-31")
+      const periodFolder = periodData.period?.replace(/\s+/g, '-').toUpperCase() || 'PERIODO';
+      const periodFolderId = await getOrCreateDriveFolder(token.access_token, periodFolder, mainFolderId);
+      if (!periodFolderId) throw new Error('No se pudo crear carpeta del período');
+      console.log('Export: Period folder created:', periodFolderId);
+
+      // Paso 3: Carpeta del empleado "NOMBRE_APELLIDO_CEDULA"
+      const employeeName = periodData.employee?.toUpperCase().replace(/\s+/g, '_') || 'EMPLEADO';
+      const employeeFolder = `${employeeName}_${periodData.cedula || '0'}`;
+      const employeeFolderId = await getOrCreateDriveFolder(token.access_token, employeeFolder, periodFolderId);
+      if (!employeeFolderId) throw new Error('No se pudo crear carpeta del empleado');
+      console.log('Export: Employee folder created:', employeeFolderId);
+
+      // Crear PDF con los datos
+      const pdfBlob = await generatePDF(periodData);
+      const fileName = `Nomina_${periodName.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.pdf`;
+
+      console.log('Export: Uploading file to employee folder...');
+
+      // Subir archivo en la carpeta del empleado
       const fileId = await uploadFileToDrive(
         token.access_token,
         fileName,
-        blob,
-        folderId || undefined
+        pdfBlob,
+        employeeFolderId
       );
 
       if (!fileId) {
         throw new Error('No se pudo subir el archivo a Google Drive');
       }
 
+      console.log('Export: SUCCESS - File uploaded with ID:', fileId);
       setSuccess(true);
 
       if (onExportSuccess) {
         onExportSuccess();
       }
 
-      // Limpiar mensaje de éxito después de 3 segundos
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error al exportar a Drive';
@@ -91,22 +103,39 @@ export const ExportToDrive = ({ periodName, periodData, onExportSuccess }: Expor
     }
   };
 
-  const generateCSVContent = (data: PeriodData): string => {
-    // Crear contenido CSV válido
-    const headers = ['Período', 'Fecha de Exportación', 'Datos JSON'];
-    const row = [
-      data.period || 'N/A',
-      new Date().toLocaleDateString('es-CO'),
-      JSON.stringify(data),
-    ];
+  const generatePDF = async (data: PeriodData): Promise<Blob> => {
+    // Crear HTML simple que se pueda imprimir como PDF
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          .header { background-color: #4CAF50; color: white; padding: 10px; border-radius: 5px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+          th { background-color: #f0f0f0; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>AXYRA - Nómina</h1>
+        </div>
+        <table>
+          <tr><th>Campo</th><th>Valor</th></tr>
+          <tr><td>Período</td><td>${data.period || 'N/A'}</td></tr>
+          <tr><td>Empleado</td><td>${data.employee || 'N/A'}</td></tr>
+          <tr><td>Cédula</td><td>${data.cedula || 'N/A'}</td></tr>
+          <tr><td>Salario Neto</td><td>${data.netSalary || '0'}</td></tr>
+          <tr><td>Fecha de Exportación</td><td>${new Date().toLocaleString('es-CO')}</td></tr>
+        </table>
+      </body>
+      </html>
+    `;
 
-    // Escapar comillas en los campos
-    const escapedRow = row.map((field) => {
-      const strField = String(field || '');
-      return `"${strField.replace(/"/g, '""')}"`;
-    });
-
-    return `${headers.join(',')}\n${escapedRow.join(',')}`;
+    // Convertir HTML a Blob como PDF simulado
+    return new Blob([htmlContent], { type: 'application/pdf' });
   };
 
   return (

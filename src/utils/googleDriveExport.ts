@@ -112,10 +112,18 @@ export const uploadFileToDrive = async (
   try {
     console.log('uploadFileToDrive: Step 1 - Creating file metadata');
 
+    // Detectar tipo MIME basado en la extensión del archivo
+    let mimeType = 'application/octet-stream';
+    if (fileName.endsWith('.pdf')) {
+      mimeType = 'application/pdf';
+    } else if (fileName.endsWith('.csv')) {
+      mimeType = 'text/csv';
+    }
+
     // PASO 1: Crear archivo con metadata
     const fileMetadata = {
       name: fileName,
-      mimeType: 'text/csv',
+      mimeType: mimeType,
       ...(parentFolderId && { parents: [parentFolderId] }),
     };
 
@@ -150,7 +158,7 @@ export const uploadFileToDrive = async (
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'text/csv',
+          'Content-Type': mimeType,
         },
         body: fileContent,
       }
