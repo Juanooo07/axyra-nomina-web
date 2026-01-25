@@ -55,18 +55,15 @@ export const uploadFileToDrive = async (
   parentFolderId?: string
 ): Promise<string | null> => {
   try {
-    const formData = new FormData();
-
     const fileMetadata = {
       name: fileName,
+      mimeType: 'application/vnd.ms-excel',
       ...(parentFolderId && { parents: [parentFolderId] }),
     };
 
-    formData.append(
-      'metadata',
-      new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' })
-    );
-    formData.append('file', fileContent);
+    const formData = new FormData();
+    formData.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
+    formData.append('file', fileContent, fileName);
 
     const response = await fetch(
       `${GOOGLE_DRIVE_API}/files?uploadType=multipart&supportsAllDrives=true`,
@@ -80,7 +77,9 @@ export const uploadFileToDrive = async (
     );
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Drive API error response:', errorText);
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json() as { id: string };
