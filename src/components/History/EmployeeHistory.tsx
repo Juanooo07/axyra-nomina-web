@@ -517,7 +517,6 @@ export function EmployeeHistory() {
               </div>
             </div>
 
-
           {/* Date Range Filter */}
           <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 animate-fadeInUp">
             <div className="flex items-center space-x-3 mb-4">
