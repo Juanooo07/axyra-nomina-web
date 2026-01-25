@@ -35,6 +35,14 @@ export default async function handler(
     // Use fixed redirect URI matching Google Console configuration
     const redirectUri = `${process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:5173'}/auth/google/callback`;
 
+    console.log('Google Token Exchange Debug:', {
+      hasCode: !!code,
+      hasClientId: !!clientId,
+      hasClientSecret: !!clientSecret,
+      redirectUri,
+      vercelUrl: process.env.VERCEL_URL,
+    });
+
     // Exchange code for token with Google
     const params = new URLSearchParams({
       code,

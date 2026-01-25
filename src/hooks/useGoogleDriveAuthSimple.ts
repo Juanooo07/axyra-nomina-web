@@ -63,6 +63,8 @@ export const useGoogleDriveAuthSimple = () => {
         throw new Error('Usuario no autenticado');
       }
 
+      console.log('handleGoogleCallback: Starting token exchange with code:', code.substring(0, 20) + '...');
+
       // Llamar a la API de Vercel para intercambiar el código
       const response = await fetch('/api/google-token', {
         method: 'POST',
@@ -74,12 +76,20 @@ export const useGoogleDriveAuthSimple = () => {
         }),
       });
 
+      console.log('handleGoogleCallback: API response status:', response.status);
+
       if (!response.ok) {
         const error = await response.json();
+        console.error('handleGoogleCallback: API error:', error);
         throw new Error(`Error: ${error.error || 'Token exchange failed'}`);
       }
 
       const data = await response.json();
+      console.log('handleGoogleCallback: Token response received:', { 
+        success: data.success,
+        hasAccessToken: !!data.access_token,
+        expiresIn: data.expires_in,
+      });
 
       if (!data?.success) {
         throw new Error(data?.error || 'No se pudo obtener el token');
@@ -88,6 +98,7 @@ export const useGoogleDriveAuthSimple = () => {
       const expiresAt = new Date(Date.now() + data.expires_in * 1000).toISOString();
 
       // Guardar token en Supabase
+      console.log('handleGoogleCallback: Saving token to Supabase...');
       const { error: saveError } = await supabase
         .from('user_google_tokens')
         .upsert({
@@ -101,6 +112,7 @@ export const useGoogleDriveAuthSimple = () => {
         throw new Error(`Error guardando tokens: ${saveError.message}`);
       }
 
+      console.log('handleGoogleCallback: Token saved successfully');
       return { success: true, access_token: data.access_token };
     } catch (err) {
       console.error('Google Callback Error:', err);

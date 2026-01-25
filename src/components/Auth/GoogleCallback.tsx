@@ -20,6 +20,11 @@ export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
         const code = searchParams.get('code');
         const errorParam = searchParams.get('error');
 
+        console.log('GoogleCallback: Received params', { 
+          code: code ? `${code.substring(0, 20)}...` : null, 
+          errorParam 
+        });
+
         // Verificar si hay error de Google
         if (errorParam) {
           throw new Error(`Google OAuth error: ${errorParam}`);
@@ -29,9 +34,11 @@ export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
           throw new Error('No se recibió código de autorización');
         }
 
+        console.log('GoogleCallback: Calling handleGoogleCallback...');
         // Procesar el callback
         const result = await handleGoogleCallback(code);
         
+        console.log('GoogleCallback: Result', result);
         if (!result?.success) {
           throw new Error('No se pudo procesar el callback de Google');
         }
