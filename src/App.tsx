@@ -27,9 +27,11 @@ function AppContent() {
     return (
       <GoogleCallback 
         onComplete={() => {
-          // Limpiar los parámetros de la URL después de procesar
+          // Limpiar los parámetros de la URL y redirigir al dashboard
+          console.log('GoogleCallback: onComplete called, redirecting to dashboard');
           window.history.replaceState({}, document.title, '/');
-          // El usuario será redirigido al dashboard automáticamente
+          // Recargar la página para que React actualice el estado
+          window.location.href = '/';
         }} 
       />
     );
