@@ -57,7 +57,7 @@ export const uploadFileToDrive = async (
   try {
     const fileMetadata = {
       name: fileName,
-      mimeType: 'application/vnd.ms-excel',
+      mimeType: 'text/csv', // CSV es simple y Excel lo puede abrir
       ...(parentFolderId && { parents: [parentFolderId] }),
     };
 

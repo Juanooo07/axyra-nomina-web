@@ -49,10 +49,10 @@ export const ExportToDrive = ({ periodName, periodData, onExportSuccess }: Expor
         throw new Error('Autenticación cancelada');
       }
 
-      // Crear blob Excel con los datos
-      const excelContent = generateExcelContent(periodData);
-      const blob = new Blob([excelContent], { type: 'application/vnd.ms-excel' });
-      const fileName = `Nomina_${periodName}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      // Crear blob con datos CSV (Excel compatible)
+      const csvContent = generateCSVContent(periodData);
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+      const fileName = `Nomina_${periodName}_${new Date().toISOString().slice(0, 10)}.csv`;
 
       // Crear carpeta en Drive si no existe
       let folderId: string | null = null;
@@ -91,30 +91,22 @@ export const ExportToDrive = ({ periodName, periodData, onExportSuccess }: Expor
     }
   };
 
-  const generateExcelContent = (data: PeriodData): string => {
-    // Crear contenido HTML que Excel pueda leer
-    const html = `
-      <html>
-        <head>
-          <meta charset="UTF-8">
-        </head>
-        <body>
-          <table border="1">
-            <tr style="background-color: #4CAF50; color: white; font-weight: bold;">
-              <td>Período</td>
-              <td>Fecha Exportación</td>
-              <td>Datos</td>
-            </tr>
-            <tr>
-              <td>${data.period || 'N/A'}</td>
-              <td>${new Date().toLocaleDateString('es-CO')}</td>
-              <td>${JSON.stringify(data)}</td>
-            </tr>
-          </table>
-        </body>
-      </html>
-    `;
-    return html;
+  const generateCSVContent = (data: PeriodData): string => {
+    // Crear contenido CSV válido
+    const headers = ['Período', 'Fecha de Exportación', 'Datos JSON'];
+    const row = [
+      data.period || 'N/A',
+      new Date().toLocaleDateString('es-CO'),
+      JSON.stringify(data),
+    ];
+
+    // Escapar comillas en los campos
+    const escapedRow = row.map((field) => {
+      const strField = String(field || '');
+      return `"${strField.replace(/"/g, '""')}"`;
+    });
+
+    return `${headers.join(',')}\n${escapedRow.join(',')}`;
   };
 
   return (
