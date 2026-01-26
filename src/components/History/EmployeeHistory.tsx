@@ -516,6 +516,7 @@ export function EmployeeHistory() {
                 <p className="text-lg font-bold text-emerald-900">{formatCurrency(totalEarnings)}</p>
               </div>
             </div>
+          </div>
 
           {/* Date Range Filter */}
           <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 animate-fadeInUp">
@@ -879,5 +880,8 @@ export function EmployeeHistory() {
               <p className="text-slate-500">Elige un empleado del menú superior para ver su historial completo</p>
             </div>
           )}
+        </>
+      )}
+    </div>
   );
 }
