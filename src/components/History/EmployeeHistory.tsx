@@ -64,6 +64,7 @@ export function EmployeeHistory() {
   const [hourSurcharges, setHourSurcharges] = useState<HourSurcharge[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [downloadingPayrollPdf, setDownloadingPayrollPdf] = useState<string | null>(null);
 
   // Date filters
@@ -444,6 +445,46 @@ export function EmployeeHistory() {
     }
   };
 
+  const handleDeletePayroll = async (payrollId: string) => {
+    if (!user) {
+      setError('Usuario no autenticado');
+      return;
+    }
+
+    const confirmed = window.confirm(
+      '¿Estás seguro de que deseas eliminar esta nómina? Esta acción no se puede deshacer.'
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError('');
+
+      const { error } = await supabase
+        .from('payroll_history')
+        .delete()
+        .eq('id', payrollId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        throw new Error('Error al eliminar la nómina: ' + error.message);
+      }
+
+      // Recargar el historial
+      await loadPayrollHistory();
+      setSuccess('Nómina eliminada correctamente');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      console.error('Error deleting payroll:', err);
+      setError(err instanceof Error ? err.message : 'Error al eliminar la nómina');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fadeIn">
       <div className="animate-fadeInDown">
@@ -457,6 +498,13 @@ export function EmployeeHistory() {
         <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-center space-x-3 animate-fadeIn">
           <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
           <p className="text-red-800">{error}</p>
+        </div>
+      )}
+
+      {success && (
+        <div className="bg-green-50 border border-green-200 rounded-2xl p-4 flex items-center space-x-3 animate-fadeIn">
+          <div className="w-5 h-5 text-green-600 flex-shrink-0">✓</div>
+          <p className="text-green-800">{success}</p>
         </div>
       )}
 
@@ -769,6 +817,9 @@ export function EmployeeHistory() {
                         <th className="px-4 py-3 text-center text-sm font-bold text-slate-700">
                           PDF
                         </th>
+                        <th className="px-4 py-3 text-center text-sm font-bold text-slate-700">
+                          Acciones
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -804,6 +855,17 @@ export function EmployeeHistory() {
                                 ) : (
                                   <FileText className="w-5 h-5" />
                                 )}
+                              </button>
+                            </td>
+                            <td className="px-4 py-3 text-center">
+                              <button
+                                onClick={() => handleDeletePayroll(payroll.id)}
+                                className="inline-flex items-center justify-center p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                title="Eliminar esta nómina"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
                               </button>
                             </td>
                           </tr>
@@ -857,6 +919,15 @@ export function EmployeeHistory() {
                               <span>Ver Nómina</span>
                             </>
                           )}
+                        </button>
+                        <button
+                          onClick={() => handleDeletePayroll(payroll.id)}
+                          className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-semibold transition-all mt-2"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          <span>Eliminar</span>
                         </button>
                       </div>
                     ))
