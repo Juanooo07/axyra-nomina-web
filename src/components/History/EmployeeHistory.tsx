@@ -460,7 +460,6 @@ export function EmployeeHistory() {
     }
 
     try {
-      setLoading(true);
       setError('');
 
       const { error } = await supabase
@@ -473,40 +472,14 @@ export function EmployeeHistory() {
         throw new Error('Error al eliminar la nómina: ' + error.message);
       }
 
-      // Recargar el historial filtrando nuevamente
-      if (!selectedEmployee) return;
-
-      try {
-        let payrollQuery = supabase
-          .from('payroll_history')
-          .select('*')
-          .eq('employee_id', selectedEmployee);
-
-        if (fromDate) {
-          payrollQuery = payrollQuery.gte('period_start', fromDate);
-        }
-        if (toDate) {
-          payrollQuery = payrollQuery.lte('period_end', toDate);
-        }
-
-        const { data: payrollData, error: payrollError } = await payrollQuery.order('created_at', { ascending: false });
-
-        if (payrollError) {
-          throw payrollError;
-        }
-
-        setPayrollHistory(payrollData || []);
-      } catch (err) {
-        console.error('Error reloading payroll history:', err);
-      }
-
+      // Remover directamente del estado para actualización inmediata
+      setPayrollHistory(prevHistory => prevHistory.filter(p => p.id !== payrollId));
+      
       setSuccess('Nómina eliminada correctamente');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       console.error('Error deleting payroll:', err);
       setError(err instanceof Error ? err.message : 'Error al eliminar la nómina');
-    } finally {
-      setLoading(false);
     }
   };
 
