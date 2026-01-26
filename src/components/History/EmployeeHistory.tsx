@@ -472,6 +472,7 @@ export function EmployeeHistory() {
       const { error: hoursError } = await supabase
         .from('hour_records')
         .delete()
+        .eq('user_id', user.id)
         .eq('employee_id', selectedEmployee)
         .gte('date', payroll.period_start)
         .lte('date', payroll.period_end);
