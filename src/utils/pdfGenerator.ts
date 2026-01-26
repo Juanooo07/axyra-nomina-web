@@ -587,16 +587,16 @@ export async function generatePaymentReceiptBlob(
       </tr>
     </thead>
     <tbody>
-      ${hourDetails.map(detail => \`
+      ${hourDetails.map(detail => `
         <tr>
-          <td>\${detail.concept.toUpperCase()}</td>
-          <td class="number">\${formatCurrency(detail.hourValue)}</td>
-          <td class="number">\${formatCurrency(detail.surchargeValue)}</td>
-          <td class="number">\${formatCurrency(detail.totalValue)}</td>
-          <td class="center">\${detail.hours.toFixed(1)}</td>
-          <td class="number">\${formatCurrency(detail.subtotal)}</td>
+          <td>${detail.concept.toUpperCase()}</td>
+          <td class="number">${formatCurrency(detail.hourValue)}</td>
+          <td class="number">${formatCurrency(detail.surchargeValue)}</td>
+          <td class="number">${formatCurrency(detail.totalValue)}</td>
+          <td class="center">${detail.hours.toFixed(1)}</td>
+          <td class="number">${formatCurrency(detail.subtotal)}</td>
         </tr>
-      \`).join('')}
+      `).join('')}
     </tbody>
   </table>
 
