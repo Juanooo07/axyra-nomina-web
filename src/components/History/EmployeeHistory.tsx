@@ -452,7 +452,7 @@ export function EmployeeHistory() {
     }
 
     const confirmed = window.confirm(
-      '¿Estás seguro de que deseas eliminar esta nómina y TODOS sus registros de horas? Esta acción no se puede deshacer.'
+      '¿Estás seguro de que deseas eliminar esta nómina y TODOS sus registros de horas, comprobantes y detalles? Esta acción no se puede deshacer.'
     );
 
     if (!confirmed) {
@@ -468,7 +468,7 @@ export function EmployeeHistory() {
         throw new Error('Nómina no encontrada');
       }
 
-      // Primero, eliminar todos los registros de horas en ese período
+      // Eliminar todos los registros de horas en ese período
       const { error: hoursError } = await supabase
         .from('hour_records')
         .delete()
@@ -481,7 +481,7 @@ export function EmployeeHistory() {
         throw new Error('Error al eliminar registros de horas: ' + hoursError.message);
       }
 
-      // Luego, eliminar la nómina
+      // Eliminar la nómina
       const { error: payrollError } = await supabase
         .from('payroll_history')
         .delete()
@@ -490,6 +490,20 @@ export function EmployeeHistory() {
 
       if (payrollError) {
         throw new Error('Error al eliminar la nómina: ' + payrollError.message);
+      }
+
+      // Eliminar registros de payroll (detalles de la nómina)
+      const { error: payrollDetailsError } = await supabase
+        .from('payroll')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('employee_id', selectedEmployee)
+        .gte('period_start', payroll.period_start)
+        .lte('period_end', payroll.period_end);
+
+      if (payrollDetailsError) {
+        console.error('Error al eliminar detalles de nómina:', payrollDetailsError);
+        // No lanzamos error, continuamos
       }
 
       // Remover la nómina del estado
@@ -505,7 +519,7 @@ export function EmployeeHistory() {
         })
       );
       
-      setSuccess('Nómina y todos sus registros de horas eliminados correctamente');
+      setSuccess('Nómina y todos sus registros (horas, comprobantes y detalles) eliminados correctamente');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       console.error('Error deleting payroll:', err);
