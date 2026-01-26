@@ -473,8 +473,33 @@ export function EmployeeHistory() {
         throw new Error('Error al eliminar la nómina: ' + error.message);
       }
 
-      // Recargar el historial
-      await loadPayrollHistory();
+      // Recargar el historial filtrando nuevamente
+      if (!selectedEmployee) return;
+
+      try {
+        let payrollQuery = supabase
+          .from('payroll_history')
+          .select('*')
+          .eq('employee_id', selectedEmployee);
+
+        if (fromDate) {
+          payrollQuery = payrollQuery.gte('period_start', fromDate);
+        }
+        if (toDate) {
+          payrollQuery = payrollQuery.lte('period_end', toDate);
+        }
+
+        const { data: payrollData, error: payrollError } = await payrollQuery.order('created_at', { ascending: false });
+
+        if (payrollError) {
+          throw payrollError;
+        }
+
+        setPayrollHistory(payrollData || []);
+      } catch (err) {
+        console.error('Error reloading payroll history:', err);
+      }
+
       setSuccess('Nómina eliminada correctamente');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
