@@ -452,7 +452,7 @@ export function EmployeeHistory() {
     }
 
     const confirmed = window.confirm(
-      '¿Estás seguro de que deseas eliminar esta nómina? Esta acción no se puede deshacer.'
+      '¿Estás seguro de que deseas eliminar esta nómina y TODOS sus registros de horas? Esta acción no se puede deshacer.'
     );
 
     if (!confirmed) {
@@ -462,20 +462,49 @@ export function EmployeeHistory() {
     try {
       setError('');
 
-      const { error } = await supabase
+      // Encontrar la nómina para obtener el período
+      const payroll = payrollHistory.find(p => p.id === payrollId);
+      if (!payroll) {
+        throw new Error('Nómina no encontrada');
+      }
+
+      // Primero, eliminar todos los registros de horas en ese período
+      const { error: hoursError } = await supabase
+        .from('hour_records')
+        .delete()
+        .eq('employee_id', selectedEmployee)
+        .gte('date', payroll.period_start)
+        .lte('date', payroll.period_end);
+
+      if (hoursError) {
+        throw new Error('Error al eliminar registros de horas: ' + hoursError.message);
+      }
+
+      // Luego, eliminar la nómina
+      const { error: payrollError } = await supabase
         .from('payroll_history')
         .delete()
         .eq('id', payrollId)
         .eq('user_id', user.id);
 
-      if (error) {
-        throw new Error('Error al eliminar la nómina: ' + error.message);
+      if (payrollError) {
+        throw new Error('Error al eliminar la nómina: ' + payrollError.message);
       }
 
-      // Remover directamente del estado para actualización inmediata
+      // Remover la nómina del estado
       setPayrollHistory(prevHistory => prevHistory.filter(p => p.id !== payrollId));
       
-      setSuccess('Nómina eliminada correctamente');
+      // Remover los registros de horas del estado
+      setHourRecords(prevRecords => 
+        prevRecords.filter(record => {
+          const recordDate = new Date(record.date);
+          const periodStart = new Date(payroll.period_start);
+          const periodEnd = new Date(payroll.period_end);
+          return recordDate < periodStart || recordDate > periodEnd;
+        })
+      );
+      
+      setSuccess('Nómina y todos sus registros de horas eliminados correctamente');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       console.error('Error deleting payroll:', err);
