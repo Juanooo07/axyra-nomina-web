@@ -228,11 +228,11 @@ export async function generateReceiptFromData(
     let subtotal = 0;
 
     if (isFijo && concept === 'Hora Ordinaria') {
-      hours = 84;
+      hours = 1; // Mostrar como 1 hora para que subtotal = hourValue
       const ordinarySalary = (minimumSalary || 1315000) / 2;
-      hourValue = ordinarySalary / 84;
+      hourValue = ordinarySalary;
       surchargeValue = 0;
-      totalValue = ordinarySalary / 84;
+      totalValue = ordinarySalary;
       subtotal = ordinarySalary;
     } else if (isFijo && concept !== 'Hora Ordinaria') {
       hourValue = baseHourValue;
