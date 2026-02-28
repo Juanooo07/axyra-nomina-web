@@ -228,12 +228,13 @@ export async function generateReceiptFromData(
     let subtotal = 0;
 
     if (isFijo && concept === 'Hora Ordinaria') {
-      hours = 1; // Mostrar como 1 hora para que subtotal = hourValue
+      // ORDINARIAS para FIJO: valor hora = baseHourValue, horas = 84, subtotal = salario_minimo/2
+      hours = 84;
       const ordinarySalary = (minimumSalary || 1315000) / 2;
-      hourValue = ordinarySalary;
+      hourValue = baseHourValue; // Mismo valor que horas sin recargo
       surchargeValue = 0;
-      totalValue = ordinarySalary;
-      subtotal = ordinarySalary;
+      totalValue = baseHourValue;
+      subtotal = ordinarySalary; // Override: mostrar salario mínimo / 2
     } else if (isFijo && concept !== 'Hora Ordinaria') {
       hourValue = baseHourValue;
       surchargeValue = baseHourValue * (surchargePercent / 100);

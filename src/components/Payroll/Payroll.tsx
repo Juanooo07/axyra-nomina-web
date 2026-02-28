@@ -351,13 +351,13 @@ export function Payroll() {
           }
         });
 
-        // Add Hora Ordinaria to breakdown (always displayed as 1 unit representing full salary)
+        // Add Hora Ordinaria to breakdown (always 84 hours with baseHourValue)
         const ordinarySalaryValue = userSettings.minimum_salary / 2;
         hourBreakdowns.unshift({
           hour_type: 'Hora Ordinaria',
-          hours: 1,
+          hours: 84,
           surcharge_percent: 0,
-          hourly_rate: ordinarySalaryValue,
+          hourly_rate: hourlyRate,
           total: ordinarySalaryValue,
         });
 
@@ -556,13 +556,13 @@ export function Payroll() {
           }
         });
 
-        // Add Hora Ordinaria (always displayed as 1 unit representing full salary)
+        // Add Hora Ordinaria (always 84 hours with baseHourValue)
         const ordinarySalaryValue = settings.minimum_salary / 2;
         hourBreakdowns.unshift({
           hour_type: 'Hora Ordinaria',
-          hours: 1,
+          hours: 84,
           surcharge_percent: 0,
-          hourly_rate: ordinarySalaryValue,
+          hourly_rate: hourlyRate,
           total: ordinarySalaryValue,
         });
       } else {
