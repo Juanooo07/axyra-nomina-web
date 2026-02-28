@@ -313,10 +313,23 @@ export function Payroll() {
         hoursMap.set(record.hour_type_name, current + Number(record.hours));
       });
 
+      // Validation for FIJO: Hora Ordinaria cannot exceed 84 hours
+      if (isFijo) {
+        const ordinaryHoursRecorded = hoursMap.get('Hora Ordinaria') || 0;
+        if (ordinaryHoursRecorded > 84) {
+          setError('Error: Las horas ordinarias no pueden exceder 84 horas quincenales para empleados FIJO');
+          setLoading(false);
+          return;
+        }
+      }
+
       if (isFijo) {
         // FIJO employee calculation
-        baseSalary = monthlySalary / 2;
-        totalHours = 88; // Always 88 hours for ordinary hours
+        // Ordinary hours: 84 hours at (minimum_salary / 2) total
+        const ordinarySalary = userSettings.minimum_salary / 2;
+        const ordinaryHourValue = ordinarySalary / 84;
+        baseSalary = ordinarySalary;
+        totalHours = 84; // Always 84 hours for ordinary hours
 
         // Calculate surcharges for extra hours (all types except Hora Ordinaria)
         hoursMap.forEach((hours, hourType) => {
@@ -338,17 +351,16 @@ export function Payroll() {
           }
         });
 
-        // Add Hora Ordinaria to breakdown if exists
-        const ordinaryHours = hoursMap.get('Hora Ordinaria') || 0;
-        if (ordinaryHours > 0) {
-          hourBreakdowns.unshift({
-            hour_type: 'Hora Ordinaria',
-            hours: 88,
-            surcharge_percent: 0,
-            hourly_rate: 0,
-            total: 0,
-          });
-        }
+        // Add Hora Ordinaria to breakdown (always 84 hours, based on minimum_salary)
+        const ordinarySalaryValue = userSettings.minimum_salary / 2;
+        const ordinaryHourValueForDisplay = ordinarySalaryValue / 84;
+        hourBreakdowns.unshift({
+          hour_type: 'Hora Ordinaria',
+          hours: 84,
+          surcharge_percent: 0,
+          hourly_rate: ordinaryHourValueForDisplay,
+          total: ordinarySalaryValue,
+        });
 
         // Transport allowance for FIJO (half)
         if (employee.receives_transport_allowance && monthlySalary < (2 * userSettings.minimum_salary)) {
@@ -545,17 +557,16 @@ export function Payroll() {
           }
         });
 
-        // Add Hora Ordinaria if exists
-        const ordinaryHours = hoursMap.get('Hora Ordinaria') || 0;
-        if (ordinaryHours > 0) {
-          hourBreakdowns.unshift({
-            hour_type: 'Hora Ordinaria',
-            hours: 88,
-            surcharge_percent: 0,
-            hourly_rate: 0,
-            total: 0,
-          });
-        }
+        // Add Hora Ordinaria (always 84 hours, based on minimum_salary)
+        const ordinarySalaryValue = settings.minimum_salary / 2;
+        const ordinaryHourValueForDisplay = ordinarySalaryValue / 84;
+        hourBreakdowns.unshift({
+          hour_type: 'Hora Ordinaria',
+          hours: 84,
+          surcharge_percent: 0,
+          hourly_rate: ordinaryHourValueForDisplay,
+          total: ordinarySalaryValue,
+        });
       } else {
         // TEMPORAL employee - all hours calculated the same way
         hoursMap.forEach((hours, hourType) => {

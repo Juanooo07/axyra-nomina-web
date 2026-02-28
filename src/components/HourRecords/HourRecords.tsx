@@ -259,7 +259,8 @@ export function HourRecords() {
             companyData,
             employeeData,
             hourRecordsData,
-            surcharges
+            surcharges,
+            settings?.minimum_salary
           );
         } catch (pdfError) {
           console.error('Error generating PDF:', pdfError);

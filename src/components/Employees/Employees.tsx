@@ -96,7 +96,8 @@ export function Employees() {
         const { error: updateError } = await supabase
           .from('employees')
           .update(employeeData)
-          .eq('id', editingEmployee.id);
+          .eq('id', editingEmployee.id)
+          .eq('user_id', user?.id);
 
         if (updateError) {
           console.error('Error updating employee:', updateError);

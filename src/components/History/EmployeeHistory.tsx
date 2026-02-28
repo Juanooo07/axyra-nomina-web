@@ -434,7 +434,8 @@ export function EmployeeHistory() {
         companySettings,
         selectedEmployeeData,
         hourRecordsData,
-        surcharges || []
+        surcharges || [],
+        companySettings.minimum_salary
       );
 
     } catch (err) {
@@ -490,20 +491,6 @@ export function EmployeeHistory() {
 
       if (payrollError) {
         throw new Error('Error al eliminar la nómina: ' + payrollError.message);
-      }
-
-      // Eliminar registros de payroll (detalles de la nómina)
-      const { error: payrollDetailsError } = await supabase
-        .from('payroll')
-        .delete()
-        .eq('user_id', user.id)
-        .eq('employee_id', selectedEmployee)
-        .gte('period_start', payroll.period_start)
-        .lte('period_end', payroll.period_end);
-
-      if (payrollDetailsError) {
-        console.error('Error al eliminar detalles de nómina:', payrollDetailsError);
-        // No lanzamos error, continuamos
       }
 
       // Remover la nómina del estado

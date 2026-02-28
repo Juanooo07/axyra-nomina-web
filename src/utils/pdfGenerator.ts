@@ -186,7 +186,8 @@ export async function generateReceiptFromData(
   companyData: CompanyInfo,
   employeeData: EmployeeInfo,
   hourRecords: Array<{ hour_type_name: string; hours: number }>,
-  surcharges: Array<{ hour_type_name: string; surcharge_percent: number }>
+  surcharges: Array<{ hour_type_name: string; surcharge_percent: number }>,
+  minimumSalary?: number
 ): Promise<void> {
   const monthlySalary = employeeData.monthly_salary;
   const baseHourValue = monthlySalary / 220;
@@ -227,18 +228,17 @@ export async function generateReceiptFromData(
     let subtotal = 0;
 
     if (isFijo && concept === 'Hora Ordinaria') {
-      hours = 88;
-      const biweeklySalary = monthlySalary / 2;
-      const ordinaryHourValue = biweeklySalary / 88;
-      hourValue = ordinaryHourValue;
+      hours = 84;
+      const ordinarySalary = (minimumSalary || 1315000) / 2;
+      hourValue = ordinarySalary / 84;
       surchargeValue = 0;
-      totalValue = ordinaryHourValue;
-      subtotal = biweeklySalary;
+      totalValue = ordinarySalary / 84;
+      subtotal = ordinarySalary;
     } else if (isFijo && concept !== 'Hora Ordinaria') {
       hourValue = baseHourValue;
       surchargeValue = baseHourValue * (surchargePercent / 100);
       totalValue = hourValue + surchargeValue;
-      subtotal = surchargeValue * hours;
+      subtotal = totalValue * hours;
     } else {
       subtotal = totalValue * hours;
     }
@@ -257,7 +257,7 @@ export async function generateReceiptFromData(
   let totalAmount = 0;
 
   if (isFijo) {
-    totalHours = 88 + hourDetails.slice(1).reduce((sum, detail) => sum + detail.hours, 0);
+    totalHours = 84 + hourDetails.slice(1).reduce((sum, detail) => sum + detail.hours, 0);
     totalAmount = hourDetails.reduce((sum, detail) => sum + detail.subtotal, 0);
   } else {
     totalHours = hourDetails.reduce((sum, detail) => sum + detail.hours, 0);
