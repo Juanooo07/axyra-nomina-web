@@ -251,57 +251,17 @@ export function EmployeeHistory() {
     return sortData(payrollHistory, payrollSortField as keyof PayrollHistory, payrollSortDirection);
   }, [payrollHistory, payrollSortField, payrollSortDirection]);
 
-  // Calculate total earnings from hour records
+  // Calculate total earnings using stored payroll records
+  // rather than trying to recalc from hour entries.  The previous
+  // implementation recomputed a "gross" amount (monthly/2 + extras)
+  // which did not account for transport allowance and deductions and
+  // could differ from the value actually saved in payroll_history.
   const calculateTotalEarnings = () => {
-    if (!selectedEmployeeData || hourRecords.length === 0 || hourSurcharges.length === 0) {
+    if (payrollHistory.length === 0) {
       return 0;
     }
 
-    const monthlySalary = Number(selectedEmployeeData.monthly_salary);
-    const hourlyRate = monthlySalary / 220;
-    const isFijo = selectedEmployeeData.contract_type === 'FIJO';
-
-    if (isFijo) {
-      const baseSalary = monthlySalary / 2;
-
-      const extraHoursTotal = hourRecords.reduce((total, record) => {
-        if (record.hour_type_name === 'Hora Ordinaria') {
-          return total;
-        }
-
-        const surcharge = hourSurcharges.find(
-          (s) => s.hour_type_name === record.hour_type_name
-        );
-
-        if (!surcharge) {
-          return total;
-        }
-
-        const surchargePercent = Number(surcharge.surcharge_percent);
-        const hours = Number(record.hours || 0);
-        const earnings = hourlyRate * (surchargePercent / 100) * hours;
-
-        return total + earnings;
-      }, 0);
-
-      return baseSalary + extraHoursTotal;
-    } else {
-      return hourRecords.reduce((total, record) => {
-        const surcharge = hourSurcharges.find(
-          (s) => s.hour_type_name === record.hour_type_name
-        );
-
-        if (!surcharge) {
-          return total;
-        }
-
-        const surchargePercent = Number(surcharge.surcharge_percent);
-        const hours = Number(record.hours || 0);
-        const earnings = hourlyRate * (1 + surchargePercent / 100) * hours;
-
-        return total + earnings;
-      }, 0);
-    }
+    return payrollHistory.reduce((sum, p) => sum + Number(p.net_salary || 0), 0);
   };
 
   // Calculate totals

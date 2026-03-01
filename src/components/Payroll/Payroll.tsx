@@ -325,8 +325,9 @@ export function Payroll() {
 
       if (isFijo) {
         // FIJO employee calculation
-        // Ordinary hours: 84 hours at (minimum_salary / 2) total
-        const ordinarySalary = userSettings.minimum_salary / 2;
+        // Ordinary hours: 84 hours at half of the employee's monthly salary
+        // (previous implementation mistakenly used the global minimum salary)
+        const ordinarySalary = monthlySalary / 2;
         const ordinaryHourValue = ordinarySalary / 84;
         baseSalary = ordinarySalary;
         totalHours = 84; // Always 84 hours for ordinary hours
