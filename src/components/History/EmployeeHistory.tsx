@@ -485,6 +485,10 @@ export function EmployeeHistory() {
       // Ahora eliminamos la nómina mediante una función RPC segura
       const { error: rpcError } = await supabase.rpc('delete_payroll_history_row', { p_id: payrollId });
       if (rpcError) {
+        if (rpcError.message && rpcError.message.includes('Could not find function')) {
+          setError('Función RPC no encontrada en la base de datos. Ejecuta las migraciones en Supabase para añadir las funciones RPC.');
+          return;
+        }
         throw new Error('Error al eliminar la nómina (RPC): ' + rpcError.message);
       }
 
