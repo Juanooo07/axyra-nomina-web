@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, Clock, DollarSign, TrendingUp, Calendar, CheckCircle, RefreshCw, FileText } from 'lucide-react';
+import { Users, Clock, DollarSign, TrendingUp, Calendar, CheckCircle, RefreshCw, FileText, Trash2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 
@@ -262,6 +262,36 @@ export function Dashboard({ onViewChange }: DashboardProps) {
     },
   ];
 
+  const handleResetContract = async (contractType: string) => {
+    if (!user) return;
+    if (!window.confirm(`¿Confirmas reiniciar (eliminar) las nóminas de tipo ${contractType} para este mes?`)) return;
+    try {
+      // compute month range
+      const now = new Date();
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+
+      const { error: rpcError } = await supabase.rpc('delete_payrolls_by_contract', { p_contract: contractType, p_start: firstDay, p_end: lastDay });
+      if (rpcError) {
+        if (rpcError.message && rpcError.message.includes('Could not find function')) {
+          setError('Función RPC no encontrada en la base de datos. Ejecuta las migraciones en Supabase.');
+          return;
+        }
+        throw rpcError;
+      }
+
+      await loadStats();
+    } catch (err) {
+      console.error('Error resetting contract totals', err);
+      setError(err instanceof Error ? err.message : 'Error al reiniciar totales');
+      setTimeout(() => setError(''), 5000);
+    }
+  };
+
+  const handleRefreshContract = async (contractType: string) => {
+    await loadStats();
+  };
+
   const quickStartSteps = [
     { title: 'Registra tus empleados', description: 'Agrega la información de tu personal', view: 'employees', completed: stats.employees > 0 },
     { title: 'Registra las horas trabajadas', description: 'Ingresa las horas de cada tipo', view: 'hour-records', completed: stats.hoursThisMonth > 0 },
@@ -296,6 +326,27 @@ export function Dashboard({ onViewChange }: DashboardProps) {
                 <p className="text-sm font-medium text-slate-600 mb-1">{stat.name}</p>
                 <p className="text-3xl font-bold text-slate-800">{stat.value}</p>
               </div>
+              {/* Controls for contract stats: reset (delete) and refresh */}
+              {(stat.name.includes('FIJO') || stat.name.includes('TEMPORAL')) && (
+                <div className="mt-4 flex items-center space-x-2">
+                  <button
+                    onClick={() => handleResetContract(stat.name.includes('FIJO') ? 'FIJO' : 'TEMPORAL')}
+                    className="inline-flex items-center px-3 py-1 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all"
+                    title={`Reiniciar ${stat.name}`}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    <span className="text-sm">Reiniciar</span>
+                  </button>
+                  <button
+                    onClick={() => handleRefreshContract(stat.name.includes('FIJO') ? 'FIJO' : 'TEMPORAL')}
+                    className="inline-flex items-center px-3 py-1 bg-slate-50 text-slate-700 rounded-lg hover:bg-slate-100 transition-all"
+                    title={`Actualizar ${stat.name}`}
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    <span className="text-sm">Actualizar</span>
+                  </button>
+                </div>
+              )}
             </div>
           );
         })}
