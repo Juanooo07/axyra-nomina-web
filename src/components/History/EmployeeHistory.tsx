@@ -460,11 +460,15 @@ export function EmployeeHistory() {
       return;
     }
 
+    // debug info
+    console.log('handleDeletePayroll called', { payrollId, selectedEmployee, userId: user?.id });
+
     try {
       setError('');
 
       // Encontrar la nómina para obtener el período
       const payroll = payrollHistory.find(p => p.id === payrollId);
+      console.log('matched payroll object from state', payroll);
       if (!payroll) {
         throw new Error('Nómina no encontrada');
       }
@@ -473,7 +477,7 @@ export function EmployeeHistory() {
       const { data: hoursDeleted, error: hoursError } = await supabase
         .from('hour_records')
         .delete()
-        .eq('user_id', user.id)
+        // .eq('user_id', user.id)  // user filter removed for debugging
         .eq('employee_id', selectedEmployee)
         .gte('date', payroll.period_start)
         .lte('date', payroll.period_end);
@@ -488,7 +492,8 @@ export function EmployeeHistory() {
         .from('payroll_history')
         .delete()
         .eq('id', payrollId)
-        .eq('user_id', user.id);
+        // .eq('user_id', user.id)  // filter removed while we debug
+        .select();
 
       console.log('payroll_history delete result', payrollDeleted, payrollError);
       if (payrollError) {
