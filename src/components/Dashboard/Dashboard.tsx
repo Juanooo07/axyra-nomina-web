@@ -30,6 +30,15 @@ export function Dashboard({ onViewChange }: DashboardProps) {
       loadStats();
       loadRecentActivity();
     }
+
+    // refresh stats whenever a payroll is deleted elsewhere in the app
+    const handlePayrollDeleted = () => {
+      loadStats();
+    };
+    window.addEventListener('payrollDeleted', handlePayrollDeleted);
+    return () => {
+      window.removeEventListener('payrollDeleted', handlePayrollDeleted);
+    };
   }, [user]);
 
   const loadStats = async () => {

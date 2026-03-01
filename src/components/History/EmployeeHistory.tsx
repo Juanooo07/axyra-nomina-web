@@ -470,7 +470,7 @@ export function EmployeeHistory() {
       }
 
       // Eliminar todos los registros de horas en ese período
-      const { error: hoursError } = await supabase
+      const { data: hoursDeleted, error: hoursError } = await supabase
         .from('hour_records')
         .delete()
         .eq('user_id', user.id)
@@ -478,25 +478,36 @@ export function EmployeeHistory() {
         .gte('date', payroll.period_start)
         .lte('date', payroll.period_end);
 
+      console.log('hour_records delete result', hoursDeleted, hoursError);
       if (hoursError) {
         throw new Error('Error al eliminar registros de horas: ' + hoursError.message);
       }
 
       // Eliminar la nómina
-      const { error: payrollError } = await supabase
+      const { data: payrollDeleted, error: payrollError } = await supabase
         .from('payroll_history')
         .delete()
         .eq('id', payrollId)
         .eq('user_id', user.id);
 
+      console.log('payroll_history delete result', payrollDeleted, payrollError);
       if (payrollError) {
         throw new Error('Error al eliminar la nómina: ' + payrollError.message);
       }
 
-      // Remover la nómina del estado
+      if (!payrollDeleted || (Array.isArray(payrollDeleted) && payrollDeleted.length === 0)) {
+        throw new Error('No se eliminó ninguna nómina de la base de datos.');
+      }
+
+      // Refrescar datos desde el servidor para asegurarnos que la eliminación persiste
+      await loadHistoricalData();
+      // notificar a otras partes (dashboard) que cambió el historial
+      window.dispatchEvent(new Event('payrollDeleted'));
+
+      // Remover la nómina del estado local si aún existe
       setPayrollHistory(prevHistory => prevHistory.filter(p => p.id !== payrollId));
       
-      // Remover los registros de horas del estado
+      // Remover los registros de horas del estado local también
       setHourRecords(prevRecords => 
         prevRecords.filter(record => {
           const recordDate = new Date(record.date);
