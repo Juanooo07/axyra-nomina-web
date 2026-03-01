@@ -251,73 +251,18 @@ export function EmployeeHistory() {
     return sortData(payrollHistory, payrollSortField as keyof PayrollHistory, payrollSortDirection);
   }, [payrollHistory, payrollSortField, payrollSortDirection]);
 
-  // Calculate total earnings from the employee's recorded hours.
-  // This is intended to show the gross money associated with the
-  // payrolls (base salary + recargos) rather than the net salary
-  // after deductions.  The earlier version summed the stored
-  // net_salary values which made the UI appear lower; users expect
-  // the "1.200.000" base value to be included, so we replicate the
-  // original gross formula here.  The logic also uses the employee's
-  // own monthly salary (not the global minimum) for FIJO contracts.
+  // Calculate total earnings by summing the net_salary values stored
+  // in payroll_history.  This ensures the number shown in the history and
+  // dashboard exactly matches the PDF that was generated and saved.
   const calculateTotalEarnings = () => {
-    if (!selectedEmployeeData || hourRecords.length === 0 || hourSurcharges.length === 0) {
+    if (payrollHistory.length === 0) {
       return 0;
     }
-
-    const monthlySalary = Number(selectedEmployeeData.monthly_salary);
-    const hourlyRate = monthlySalary / 220;
-    const isFijo = selectedEmployeeData.contract_type === 'FIJO';
-
-    if (isFijo) {
-      const baseSalary = monthlySalary / 2;
-
-      const extraHoursTotal = hourRecords.reduce((total, record) => {
-        if (record.hour_type_name === 'Hora Ordinaria') {
-          return total;
-        }
-
-        const surcharge = hourSurcharges.find(
-          (s) => s.hour_type_name === record.hour_type_name
-        );
-
-        if (!surcharge) {
-          return total;
-        }
-
-        const surchargePercent = Number(surcharge.surcharge_percent);
-        const hours = Number(record.hours || 0);
-        const earnings = hourlyRate * (surchargePercent / 100) * hours;
-
-        return total + earnings;
-      }, 0);
-
-      return baseSalary + extraHoursTotal;
-    } else {
-      return hourRecords.reduce((total, record) => {
-        const surcharge = hourSurcharges.find(
-          (s) => s.hour_type_name === record.hour_type_name
-        );
-
-        if (!surcharge) {
-          return total;
-        }
-
-        const surchargePercent = Number(surcharge.surcharge_percent);
-        const hours = Number(record.hours || 0);
-        const earnings = hourlyRate * (1 + surchargePercent / 100) * hours;
-
-        return total + earnings;
-      }, 0);
-    }
+    return payrollHistory.reduce((sum, p) => sum + Number(p.net_salary || 0), 0);
   };
 
   // Calculate totals
-  let totalHours = hourRecords.reduce((sum, record) => sum + Number(record.hours || 0), 0);
-  if (selectedEmployeeData?.contract_type === 'FIJO') {
-    // FIJO employees always have 84 ordinary hours even if they are not
-    // stored in the history table; include them for summaries.
-    totalHours += 84;
-  }
+  const totalHours = hourRecords.reduce((sum, record) => sum + Number(record.hours || 0), 0);
   const totalPayrolls = payrollHistory.length;
   const totalEarnings = calculateTotalEarnings();
 
