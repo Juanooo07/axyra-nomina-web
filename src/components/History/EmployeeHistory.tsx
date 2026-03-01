@@ -460,27 +460,16 @@ export function EmployeeHistory() {
       return;
     }
 
-    // debug info
-    console.log('handleDeletePayroll called', { payrollId, selectedEmployee, userId: user?.id });
-
     try {
       setError('');
 
-      // Encontrar la nómina para obtener el período
+      // Encontrar la nómina para obtener el período (usar estado local solo para las horas)
       const payroll = payrollHistory.find(p => p.id === payrollId);
-      console.log('matched payroll object from state', payroll);
       if (!payroll) {
         throw new Error('Nómina no encontrada');
       }
 
-      // attempt a fresh SELECT to see if row exists/accessible
-      const { data: existing, error: selectError } = await supabase
-        .from('payroll_history')
-        .select('*')
-        .eq('id', payrollId);
-      console.log('select before delete result', existing, selectError);
-
-      // Eliminar todos los registros de horas en ese período (con filtro de usuario de nuevo)
+      // Primero borramos los registros de horas correspondientes
       const { data: hoursDeleted, error: hoursError } = await supabase
         .from('hour_records')
         .delete()
@@ -489,45 +478,22 @@ export function EmployeeHistory() {
         .gte('date', payroll.period_start)
         .lte('date', payroll.period_end);
 
-      console.log('hour_records delete result', hoursDeleted, hoursError);
       if (hoursError) {
         throw new Error('Error al eliminar registros de horas: ' + hoursError.message);
       }
 
-      // Ejecutar el borrado principal (no encadenar .select() para evitar posibles bugs)
-      const { error: payrollError } = await supabase
-        .from('payroll_history')
-        .delete()
-        .eq('id', payrollId)
-        .eq('user_id', user.id);
-
-      console.log('payroll_history delete error', payrollError);
-      if (payrollError) {
-        throw new Error('Error al eliminar la nómina: ' + payrollError.message);
-      }
-
-      // verificar que la fila realmente desaparece
-      const { data: after, error: afterError } = await supabase
-        .from('payroll_history')
-        .select('*')
-        .eq('id', payrollId);
-      console.log('select after delete result', after, afterError);
-      if (afterError) {
-        throw new Error('Error verificando eliminación: ' + afterError.message);
-      }
-      if (after && after.length > 0) {
-        throw new Error('La nómina no pudo borrarse (persistió tras el delete)');
+      // Ahora eliminamos la nómina mediante una función RPC segura
+      const { error: rpcError } = await supabase.rpc('delete_payroll_history_row', { p_id: payrollId });
+      if (rpcError) {
+        throw new Error('Error al eliminar la nómina (RPC): ' + rpcError.message);
       }
 
       // Refrescar datos desde el servidor para asegurarnos que la eliminación persiste
       await loadHistoricalData();
-      // notificar a otras partes (dashboard) que cambió el historial
       window.dispatchEvent(new Event('payrollDeleted'));
 
-      // Remover la nómina del estado local si aún existe
+      // Actualizar estados locales también
       setPayrollHistory(prevHistory => prevHistory.filter(p => p.id !== payrollId));
-      
-      // Remover los registros de horas del estado local también
       setHourRecords(prevRecords => 
         prevRecords.filter(record => {
           const recordDate = new Date(record.date);
