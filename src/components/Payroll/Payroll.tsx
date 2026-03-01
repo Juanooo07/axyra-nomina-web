@@ -337,8 +337,8 @@ export function Payroll() {
           const surchargePercent = surchargeMap.get(hourType) || 0;
 
           if (hourType !== 'Hora Ordinaria') {
-            // For extra hours: hourlyRate * (surchargePercent / 100) * hours
-            const earnings = hourlyRate * (surchargePercent / 100) * hours;
+            // For extra hours: hourlyRate * (1 + surchargePercent / 100) * hours (base + surcharge)
+            const earnings = hourlyRate * (1 + surchargePercent / 100) * hours;
             totalSurcharges += earnings;
             totalHours += hours;
 
@@ -346,7 +346,7 @@ export function Payroll() {
               hour_type: hourType,
               hours,
               surcharge_percent: surchargePercent,
-              hourly_rate: hourlyRate * (surchargePercent / 100),
+              hourly_rate: hourlyRate * (1 + surchargePercent / 100),
               total: earnings,
             });
           }
@@ -556,12 +556,12 @@ export function Payroll() {
         (surchargeMap as any).forEach((surchargePercent: number, hourType: string) => {
           if (hourType !== 'Hora Ordinaria') {
             const hours = hoursMap.get(hourType) || 0;
-            const earnings = hourlyRate * (surchargePercent / 100) * hours;
+            const earnings = hourlyRate * (1 + surchargePercent / 100) * hours;
             hourBreakdowns.push({
               hour_type: hourType,
               hours,
               surcharge_percent: surchargePercent,
-              hourly_rate: hourlyRate * (surchargePercent / 100),
+              hourly_rate: hourlyRate * (1 + surchargePercent / 100),
               total: earnings,
             });
           }
