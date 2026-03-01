@@ -352,14 +352,13 @@ export function Payroll() {
           }
         });
 
-        // Add Hora Ordinaria to breakdown (always 84 hours with baseHourValue)
-        const ordinarySalaryValue = userSettings.minimum_salary / 2;
+        // Add Hora Ordinaria to breakdown (always 84 hours with employee's ordinaria salary)
         hourBreakdowns.unshift({
           hour_type: 'Hora Ordinaria',
           hours: 84,
           surcharge_percent: 0,
           hourly_rate: hourlyRate,
-          total: ordinarySalaryValue,
+          total: ordinarySalary,
         });
 
         // Transport allowance for FIJO (half)

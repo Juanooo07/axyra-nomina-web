@@ -24,6 +24,9 @@ export function Dashboard({ onViewChange }: DashboardProps) {
     monthlyHistory: [] as Array<{ month: string; fijoTotal: number; temporalTotal: number; totalGeneral: number }>,
   });
   const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -266,34 +269,48 @@ export function Dashboard({ onViewChange }: DashboardProps) {
     if (!user) return;
     if (!window.confirm(`¿Confirmas reiniciar (eliminar) las nóminas de tipo ${contractType} para este mes?`)) return;
     try {
+      setError('');
+      setLoading(true);
+      
       // compute month range
       const now = new Date();
       const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
       const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
 
+      // Try RPC first
       const { error: rpcError } = await supabase.rpc('delete_payrolls_by_contract', { p_contract: contractType, p_start: firstDay, p_end: lastDay });
+      
       if (rpcError) {
-        if (rpcError.message && rpcError.message.includes('Could not find function')) {
-          // fallback: eliminar directamente con filtros
+        // Fallback: get employees by contract type, then delete their payrolls
+        const { data: employeeIds, error: empError } = await supabase
+          .from('employees')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('contract_type', contractType);
+
+        if (empError) throw empError;
+
+        const ids = (employeeIds || []).map((e: any) => e.id);
+        if (ids.length > 0) {
           const { error: delErr } = await supabase
             .from('payroll_history')
             .delete()
             .eq('user_id', user.id)
-            .in('employee_id', allEmployeesResult.data?.filter(e => e.contract_type === contractType).map(e => e.id) || [])
+            .in('employee_id', ids)
             .gte('created_at', firstDay)
             .lte('created_at', lastDay);
-          if (delErr) {
-            setError('Error al eliminar nóminas directamente: ' + delErr.message);
-            return;
-          }
-        } else {
-          throw rpcError;
+          
+          if (delErr) throw delErr;
         }
       }
 
+      setSuccess(`Nóminas de tipo ${contractType} eliminadas correctamente`);
       await loadStats();
+      setLoading(false);
+      setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       console.error('Error resetting contract totals', err);
+      setLoading(false);
       setError(err instanceof Error ? err.message : 'Error al reiniciar totales');
       setTimeout(() => setError(''), 5000);
     }
