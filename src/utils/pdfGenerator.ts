@@ -143,7 +143,7 @@ export function generatePaymentReceipt(
           <td class="number">${formatCurrency(detail.surchargeValue)}</td>
           <td class="number">${formatCurrency(detail.totalValue)}</td>
           <td class="center">${detail.hours.toFixed(1)}</td>
-          <td class="number">${detail.concept === 'ORDINARIAS' && employee.contract_type === 'FIJO' ? `${formatCurrency(detail.subtotal)} (Salario mínimo / 2)` : formatCurrency(detail.subtotal)}</td>
+          <td class="number">${formatCurrency(detail.subtotal)}</td>
         </tr>
       `).join('')}
     </tbody>
@@ -595,7 +595,7 @@ export async function generatePaymentReceiptBlob(
           <td class="number">${formatCurrency(detail.surchargeValue)}</td>
           <td class="number">${formatCurrency(detail.totalValue)}</td>
           <td class="center">${detail.hours.toFixed(1)}</td>
-          <td class="number">${detail.concept === 'ORDINARIAS' && employee.contract_type === 'FIJO' ? `${formatCurrency(detail.subtotal)} (Salario mínimo / 2)` : formatCurrency(detail.subtotal)}</td>
+          <td class="number">${formatCurrency(detail.subtotal)}</td>
         </tr>
       `).join('')}
     </tbody>
