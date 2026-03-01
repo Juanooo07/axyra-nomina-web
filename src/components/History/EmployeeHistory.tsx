@@ -439,28 +439,17 @@ export function EmployeeHistory() {
         throw new Error('Error al eliminar registros de horas: ' + hoursError.message);
       }
 
-      // Intentar eliminar la nómina mediante RPC primero
-      let deleteSuccess = false;
-      const { error: rpcError } = await supabase.rpc('delete_payroll_history_row', { p_id: payrollId });
+      // Eliminar la nómina directamente de la tabla
+      // Este enfoque no depende de funciones RPC, funciona con las RLS normales
+      const { error: delErr } = await supabase
+        .from('payroll_history')
+        .delete()
+        .eq('id', payrollId)
+        .eq('user_id', user.id);
       
-      if (rpcError) {
-        // Si falla RPC, intentar borrado directo
-        const { error: delErr } = await supabase
-          .from('payroll_history')
-          .delete()
-          .eq('id', payrollId)
-          .eq('user_id', user.id);
-        
-        if (delErr) {
-          throw new Error('No se pudo eliminar la nómina: ' + delErr.message);
-        }
-        deleteSuccess = true;
-      } else {
-        deleteSuccess = true;
-      }
-
-      if (!deleteSuccess) {
-        throw new Error('Error al eliminar la nómina');
+      if (delErr) {
+        console.error('Delete error:', delErr);
+        throw new Error('No se pudo eliminar la nómina: ' + delErr.message);
       }
 
       // Refrescar datos desde el servidor para asegurarnos que la eliminación persiste

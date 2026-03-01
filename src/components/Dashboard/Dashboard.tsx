@@ -272,35 +272,34 @@ export function Dashboard({ onViewChange }: DashboardProps) {
       setError('');
       setLoading(true);
       
-      // compute month range
+      // Compute month range
       const now = new Date();
       const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
       const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
 
-      // Try RPC first
-      const { error: rpcError } = await supabase.rpc('delete_payrolls_by_contract', { p_contract: contractType, p_start: firstDay, p_end: lastDay });
-      
-      if (rpcError) {
-        // Fallback: get employees by contract type, then delete their payrolls
-        const { data: employeeIds, error: empError } = await supabase
-          .from('employees')
-          .select('id')
+      // Get employees by contract type
+      const { data: employeeIds, error: empError } = await supabase
+        .from('employees')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('contract_type', contractType);
+
+      if (empError) throw empError;
+
+      // Delete payrolls for these employees in the date range
+      const ids = (employeeIds || []).map((e: any) => e.id);
+      if (ids.length > 0) {
+        const { error: delErr } = await supabase
+          .from('payroll_history')
+          .delete()
           .eq('user_id', user.id)
-          .eq('contract_type', contractType);
-
-        if (empError) throw empError;
-
-        const ids = (employeeIds || []).map((e: any) => e.id);
-        if (ids.length > 0) {
-          const { error: delErr } = await supabase
-            .from('payroll_history')
-            .delete()
-            .eq('user_id', user.id)
-            .in('employee_id', ids)
-            .gte('created_at', firstDay)
-            .lte('created_at', lastDay);
-          
-          if (delErr) throw delErr;
+          .in('employee_id', ids)
+          .gte('created_at', firstDay)
+          .lte('created_at', lastDay);
+        
+        if (delErr) {
+          console.error('Delete error:', delErr);
+          throw delErr;
         }
       }
 
