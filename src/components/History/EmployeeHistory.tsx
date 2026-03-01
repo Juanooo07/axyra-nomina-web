@@ -251,21 +251,73 @@ export function EmployeeHistory() {
     return sortData(payrollHistory, payrollSortField as keyof PayrollHistory, payrollSortDirection);
   }, [payrollHistory, payrollSortField, payrollSortDirection]);
 
-  // Calculate total earnings using stored payroll records
-  // rather than trying to recalc from hour entries.  The previous
-  // implementation recomputed a "gross" amount (monthly/2 + extras)
-  // which did not account for transport allowance and deductions and
-  // could differ from the value actually saved in payroll_history.
+  // Calculate total earnings from the employee's recorded hours.
+  // This is intended to show the gross money associated with the
+  // payrolls (base salary + recargos) rather than the net salary
+  // after deductions.  The earlier version summed the stored
+  // net_salary values which made the UI appear lower; users expect
+  // the "1.200.000" base value to be included, so we replicate the
+  // original gross formula here.  The logic also uses the employee's
+  // own monthly salary (not the global minimum) for FIJO contracts.
   const calculateTotalEarnings = () => {
-    if (payrollHistory.length === 0) {
+    if (!selectedEmployeeData || hourRecords.length === 0 || hourSurcharges.length === 0) {
       return 0;
     }
 
-    return payrollHistory.reduce((sum, p) => sum + Number(p.net_salary || 0), 0);
+    const monthlySalary = Number(selectedEmployeeData.monthly_salary);
+    const hourlyRate = monthlySalary / 220;
+    const isFijo = selectedEmployeeData.contract_type === 'FIJO';
+
+    if (isFijo) {
+      const baseSalary = monthlySalary / 2;
+
+      const extraHoursTotal = hourRecords.reduce((total, record) => {
+        if (record.hour_type_name === 'Hora Ordinaria') {
+          return total;
+        }
+
+        const surcharge = hourSurcharges.find(
+          (s) => s.hour_type_name === record.hour_type_name
+        );
+
+        if (!surcharge) {
+          return total;
+        }
+
+        const surchargePercent = Number(surcharge.surcharge_percent);
+        const hours = Number(record.hours || 0);
+        const earnings = hourlyRate * (surchargePercent / 100) * hours;
+
+        return total + earnings;
+      }, 0);
+
+      return baseSalary + extraHoursTotal;
+    } else {
+      return hourRecords.reduce((total, record) => {
+        const surcharge = hourSurcharges.find(
+          (s) => s.hour_type_name === record.hour_type_name
+        );
+
+        if (!surcharge) {
+          return total;
+        }
+
+        const surchargePercent = Number(surcharge.surcharge_percent);
+        const hours = Number(record.hours || 0);
+        const earnings = hourlyRate * (1 + surchargePercent / 100) * hours;
+
+        return total + earnings;
+      }, 0);
+    }
   };
 
   // Calculate totals
-  const totalHours = hourRecords.reduce((sum, record) => sum + Number(record.hours || 0), 0);
+  let totalHours = hourRecords.reduce((sum, record) => sum + Number(record.hours || 0), 0);
+  if (selectedEmployeeData?.contract_type === 'FIJO') {
+    // FIJO employees always have 84 ordinary hours even if they are not
+    // stored in the history table; include them for summaries.
+    totalHours += 84;
+  }
   const totalPayrolls = payrollHistory.length;
   const totalEarnings = calculateTotalEarnings();
 
@@ -442,14 +494,25 @@ export function EmployeeHistory() {
         throw new Error('Error al eliminar registros de horas: ' + hoursError.message);
       }
 
-      // Ahora eliminamos la nómina mediante una función RPC segura
+      // Ahora intentamos eliminar la nómina mediante la función RPC.
+      // Si por alguna razón la función no existe (migraciones no aplicadas),
+      // caemos a una eliminación normal con delete().
       const { error: rpcError } = await supabase.rpc('delete_payroll_history_row', { p_id: payrollId });
       if (rpcError) {
         if (rpcError.message && rpcError.message.includes('Could not find function')) {
-          setError('Función RPC no encontrada en la base de datos. Ejecuta las migraciones en Supabase para añadir las funciones RPC.');
-          return;
+          // intentar borrado directo en la tabla; asumimos que las RLS
+          // permiten al usuario eliminar su propio registro.
+          const { error: delErr } = await supabase
+            .from('payroll_history')
+            .delete()
+            .eq('id', payrollId)
+            .eq('user_id', user.id);
+          if (delErr) {
+            throw new Error('Error al eliminar la nómina directamente: ' + delErr.message);
+          }
+        } else {
+          throw new Error('Error al eliminar la nómina (RPC): ' + rpcError.message);
         }
-        throw new Error('Error al eliminar la nómina (RPC): ' + rpcError.message);
       }
 
       // Refrescar datos desde el servidor para asegurarnos que la eliminación persiste

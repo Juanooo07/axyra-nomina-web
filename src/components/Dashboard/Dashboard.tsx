@@ -274,10 +274,21 @@ export function Dashboard({ onViewChange }: DashboardProps) {
       const { error: rpcError } = await supabase.rpc('delete_payrolls_by_contract', { p_contract: contractType, p_start: firstDay, p_end: lastDay });
       if (rpcError) {
         if (rpcError.message && rpcError.message.includes('Could not find function')) {
-          setError('Función RPC no encontrada en la base de datos. Ejecuta las migraciones en Supabase.');
-          return;
+          // fallback: eliminar directamente con filtros
+          const { error: delErr } = await supabase
+            .from('payroll_history')
+            .delete()
+            .eq('user_id', user.id)
+            .in('employee_id', allEmployeesResult.data?.filter(e => e.contract_type === contractType).map(e => e.id) || [])
+            .gte('created_at', firstDay)
+            .lte('created_at', lastDay);
+          if (delErr) {
+            setError('Error al eliminar nóminas directamente: ' + delErr.message);
+            return;
+          }
+        } else {
+          throw rpcError;
         }
-        throw rpcError;
       }
 
       await loadStats();
