@@ -541,11 +541,21 @@ export function Payroll() {
       const hourBreakdowns: HourBreakdown[] = [];
 
       if (isFijo) {
-        // FIJO employee - reconstruct breakdowns
-        hoursMap.forEach((hours, hourType) => {
-          const surchargePercent = surchargeMap.get(hourType) || 0;
+        // FIJO employee - reconstruct breakdowns showing ALL hour types
+        // First add Hora Ordinaria (always 84 hours)
+        const ordinarySalary = monthlySalary / 2;
+        hourBreakdowns.push({
+          hour_type: 'Hora Ordinaria',
+          hours: 84,
+          surcharge_percent: 0,
+          hourly_rate: hourlyRate,
+          total: ordinarySalary,
+        });
 
+        // Then add all other hour types (even if 0 hours, to match PDF)
+        (surchargeMap as any).forEach((surchargePercent: number, hourType: string) => {
           if (hourType !== 'Hora Ordinaria') {
+            const hours = hoursMap.get(hourType) || 0;
             const earnings = hourlyRate * (surchargePercent / 100) * hours;
             hourBreakdowns.push({
               hour_type: hourType,
@@ -555,16 +565,6 @@ export function Payroll() {
               total: earnings,
             });
           }
-        });
-
-        // Add Hora Ordinaria (always 84 hours with employee's monthly salary)
-        const ordinarySalary = monthlySalary / 2;
-        hourBreakdowns.unshift({
-          hour_type: 'Hora Ordinaria',
-          hours: 84,
-          surcharge_percent: 0,
-          hourly_rate: hourlyRate,
-          total: ordinarySalary,
         });
       } else {
         // TEMPORAL employee - all hours calculated the same way
