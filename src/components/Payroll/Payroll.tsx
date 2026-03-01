@@ -325,8 +325,8 @@ export function Payroll() {
 
       if (isFijo) {
         // FIJO employee calculation
-        // Ordinary hours: 84 hours at half of the employee's monthly salary
-        // (previous implementation mistakenly used the global minimum salary)
+        // Para FIJO: SIEMPRE 84 horas ordinarias, sin importar las registradas
+        // Las horas ordinarias registradas se ignoran y se usan 84 fijas
         const ordinarySalary = monthlySalary / 2;
         const ordinaryHourValue = ordinarySalary / 84;
         baseSalary = ordinarySalary;
@@ -353,6 +353,7 @@ export function Payroll() {
         });
 
         // Add Hora Ordinaria to breakdown (always 84 hours with employee's ordinaria salary)
+        // Ignore whatever was registered, use fixed 84 hours
         hourBreakdowns.unshift({
           hour_type: 'Hora Ordinaria',
           hours: 84,
@@ -961,8 +962,9 @@ export function Payroll() {
             </div>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <button
-                onClick={() => alert('Funcionalidad de impresión/PDF en desarrollo')}
+                onClick={() => window.print()}
                 className="w-full sm:flex-1 flex items-center justify-center space-x-2 bg-slate-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-slate-700 transition-all touch-manipulation min-h-[48px]"
+                title="Abre el diálogo de impresión para guardar como PDF o imprimir"
               >
                 <Printer className="w-5 h-5 flex-shrink-0" />
                 <span className="text-sm md:text-base">Imprimir / PDF</span>
