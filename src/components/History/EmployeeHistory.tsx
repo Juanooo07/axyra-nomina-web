@@ -454,7 +454,10 @@ export function EmployeeHistory() {
 
       // Refrescar datos desde el servidor para asegurarnos que la eliminación persiste
       await loadHistoricalData();
+      
+      // Disparar evento para que el Dashboard se entere de la eliminación
       window.dispatchEvent(new Event('payrollDeleted'));
+      window.dispatchEvent(new CustomEvent('payrollDeleted', { detail: { deletedAt: new Date().toISOString() } }));
 
       // Actualizar estados locales también
       setPayrollHistory(prevHistory => prevHistory.filter(p => p.id !== payrollId));

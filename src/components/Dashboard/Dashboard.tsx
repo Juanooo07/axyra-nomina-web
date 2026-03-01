@@ -34,9 +34,19 @@ export function Dashboard({ onViewChange }: DashboardProps) {
       loadRecentActivity();
     }
 
-    // refresh stats whenever a payroll is deleted elsewhere in the app
+    // refresh stats and add activity when payroll is deleted
     const handlePayrollDeleted = () => {
       loadStats();
+      // Agregar actividad de eliminación
+      setRecentActivity(prev => [
+        {
+          id: `payroll-deleted-${Date.now()}`,
+          type: 'payroll',
+          description: 'Nómina eliminada',
+          created_at: new Date().toISOString(),
+        },
+        ...prev,
+      ].slice(0, 5)); // Mantener solo las últimas 5
     };
     window.addEventListener('payrollDeleted', handlePayrollDeleted);
     return () => {
