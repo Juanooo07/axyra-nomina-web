@@ -473,6 +473,13 @@ export function EmployeeHistory() {
         throw new Error('Nómina no encontrada');
       }
 
+      // attempt a fresh SELECT to see if row exists/accessible
+      const { data: existing, error: selectError } = await supabase
+        .from('payroll_history')
+        .select('*')
+        .eq('id', payrollId);
+      console.log('select before delete result', existing, selectError);
+
       // Eliminar todos los registros de horas en ese período
       const { data: hoursDeleted, error: hoursError } = await supabase
         .from('hour_records')
