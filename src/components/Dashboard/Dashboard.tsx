@@ -18,9 +18,10 @@ export function Dashboard({ onViewChange }: DashboardProps) {
   const { profile, user } = useAuth();
   const [stats, setStats] = useState({
     employees: 0,
-    hoursThisMonth: 0,
-    payrollsProcessed: 0,
-    monthlyPayrollTotal: 0,
+    fijoTotal: 0,
+    temporalTotal: 0,
+    totalGeneral: 0,
+    monthlyHistory: [] as Array<{ month: string; fijoTotal: number; temporalTotal: number; totalGeneral: number }>,
   });
   const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
 
@@ -41,21 +42,87 @@ export function Dashboard({ onViewChange }: DashboardProps) {
     const firstDayStr = firstDayOfMonth.toISOString().split('T')[0];
     const lastDayStr = lastDayOfMonth.toISOString().split('T')[0];
 
-    const [employeesResult, hoursResult, payrollsResult, monthlyPayrollResult] = await Promise.all([
-      supabase.from('employees').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'active'),
-      supabase.from('hour_records').select('hours').eq('user_id', user.id).gte('date', firstDayStr).lte('date', lastDayStr),
-      supabase.from('payroll_history').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
-      supabase.from('payroll_history').select('net_salary').eq('user_id', user.id).gte('created_at', firstDayStr).lte('created_at', lastDayStr),
-    ]);
+    // Get employees count
+    const employeesResult = await supabase
+      .from('employees')
+      .select('id, contract_type')
+      .eq('user_id', user.id)
+      .eq('status', 'active');
 
-    const totalHours = hoursResult.data?.reduce((sum, record) => sum + Number(record.hours || 0), 0) || 0;
-    const monthlyTotal = monthlyPayrollResult.data?.reduce((sum, record) => sum + Number(record.net_salary || 0), 0) || 0;
+    // Get payroll for this month separated by contract type
+    const payrollsResult = await supabase
+      .from('payroll_history')
+      .select('net_salary, employee_id')
+      .eq('user_id', user.id)
+      .gte('created_at', firstDayStr)
+      .lte('created_at', lastDayStr);
+
+    // Get all employees to map contract types
+    const allEmployeesResult = await supabase
+      .from('employees')
+      .select('id, contract_type')
+      .eq('user_id', user.id);
+
+    let fijoTotal = 0;
+    let temporalTotal = 0;
+
+    if (payrollsResult.data) {
+      payrollsResult.data.forEach(record => {
+        const employee = allEmployeesResult.data?.find(e => e.id === record.employee_id);
+        const amount = Number(record.net_salary || 0);
+        if (employee?.contract_type === 'FIJO') {
+          fijoTotal += amount;
+        } else {
+          temporalTotal += amount;
+        }
+      });
+    }
+
+    const totalGeneral = fijoTotal + temporalTotal;
+
+    // Calculate monthly history (last 12 months)
+    const monthlyHistory = [];
+    for (let i = 11; i >= 0; i--) {
+      const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthFirstDay = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1).toISOString().split('T')[0];
+      const monthLastDay = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).toISOString().split('T')[0];
+
+      const historicalPayroll = await supabase
+        .from('payroll_history')
+        .select('net_salary, employee_id')
+        .eq('user_id', user.id)
+        .gte('created_at', monthFirstDay)
+        .lte('created_at', monthLastDay);
+
+      let monthFijoTotal = 0;
+      let monthTemporalTotal = 0;
+
+      if (historicalPayroll.data) {
+        historicalPayroll.data.forEach(record => {
+          const employee = allEmployeesResult.data?.find(e => e.id === record.employee_id);
+          const amount = Number(record.net_salary || 0);
+          if (employee?.contract_type === 'FIJO') {
+            monthFijoTotal += amount;
+          } else {
+            monthTemporalTotal += amount;
+          }
+        });
+      }
+
+      monthlyHistory.push({
+        month: monthDate.toLocaleDateString('es-CO', { month: 'short', year: '2-digit' }),
+        fijoTotal: monthFijoTotal,
+        temporalTotal: monthTemporalTotal,
+        totalGeneral: monthFijoTotal + monthTemporalTotal,
+      });
+    }
 
     setStats({
       employees: employeesResult.count || 0,
-      hoursThisMonth: totalHours,
-      payrollsProcessed: payrollsResult.count || 0,
-      monthlyPayrollTotal: monthlyTotal,
+      fijoTotal,
+      temporalTotal,
+      totalGeneral,
+      monthlyHistory,
     });
   };
 
@@ -110,53 +177,7 @@ export function Dashboard({ onViewChange }: DashboardProps) {
 
   const handleResetMonthlyTotal = () => {
     if (confirm('¿Estás seguro de que deseas reiniciar el contador del mes? Esta acción no eliminará datos, solo reiniciará la visualización del mes actual.')) {
-      setStats(prev => ({ ...prev, monthlyPayrollTotal: 0 }));
-    }
-  };
-
-  const handleResetHours = async () => {
-    if (!user) return;
-
-    const confirmed = confirm('¿Estás seguro de que deseas ELIMINAR todos los registros de horas? Esta acción NO se puede deshacer.');
-    if (!confirmed) return;
-
-    const doubleConfirm = confirm('ÚLTIMA ADVERTENCIA: Se eliminarán TODOS los registros de horas permanentemente. ¿Continuar?');
-    if (!doubleConfirm) return;
-
-    const { error } = await supabase
-      .from('hour_records')
-      .delete()
-      .eq('user_id', user.id);
-
-    if (error) {
-      alert('Error al eliminar registros: ' + error.message);
-    } else {
-      alert('Todos los registros de horas han sido eliminados');
-      loadStats();
-      loadRecentActivity();
-    }
-  };
-
-  const handleResetPayrolls = async () => {
-    if (!user) return;
-
-    const confirmed = confirm('¿Estás seguro de que deseas ELIMINAR todas las nóminas? Esta acción NO se puede deshacer.');
-    if (!confirmed) return;
-
-    const doubleConfirm = confirm('ÚLTIMA ADVERTENCIA: Se eliminarán TODAS las nóminas permanentemente. ¿Continuar?');
-    if (!doubleConfirm) return;
-
-    const { error } = await supabase
-      .from('payroll_history')
-      .delete()
-      .eq('user_id', user.id);
-
-    if (error) {
-      alert('Error al eliminar nóminas: ' + error.message);
-    } else {
-      alert('Todas las nóminas han sido eliminadas');
-      loadStats();
-      loadRecentActivity();
+      setStats(prev => ({ ...prev, fijoTotal: 0, temporalTotal: 0, totalGeneral: 0 }));
     }
   };
 
@@ -212,22 +233,22 @@ export function Dashboard({ onViewChange }: DashboardProps) {
       name: 'Empleados Total',
       value: stats.employees.toString(),
       icon: Users,
+      bgColor: 'bg-blue-50',
+      textColor: 'text-blue-600'
+    },
+    {
+      name: 'Total Nómina FIJO',
+      value: formatCurrency(stats.fijoTotal),
+      icon: DollarSign,
       bgColor: 'bg-green-50',
       textColor: 'text-green-600'
     },
     {
-      name: 'Horas Registradas (Mes)',
-      value: stats.hoursThisMonth.toFixed(1),
-      icon: Clock,
+      name: 'Total Nómina TEMPORAL',
+      value: formatCurrency(stats.temporalTotal),
+      icon: DollarSign,
       bgColor: 'bg-orange-50',
       textColor: 'text-orange-600'
-    },
-    {
-      name: 'Nóminas Procesadas',
-      value: stats.payrollsProcessed.toString(),
-      icon: DollarSign,
-      bgColor: 'bg-emerald-50',
-      textColor: 'text-emerald-600'
     },
   ];
 
@@ -249,8 +270,6 @@ export function Dashboard({ onViewChange }: DashboardProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((stat, index) => {
           const Icon = stat.icon;
-          const showResetButton = stat.name === 'Horas Registradas (Mes)' || stat.name === 'Nóminas Procesadas';
-          const handleReset = stat.name === 'Horas Registradas (Mes)' ? handleResetHours : handleResetPayrolls;
 
           return (
             <div
@@ -262,19 +281,10 @@ export function Dashboard({ onViewChange }: DashboardProps) {
                 <div className={`${stat.bgColor} p-3 rounded-xl shadow-md`}>
                   <Icon className={`w-6 h-6 ${stat.textColor}`} />
                 </div>
-                {showResetButton && (
-                  <button
-                    onClick={handleReset}
-                    className="p-2 hover:bg-slate-100 rounded-lg transition-all"
-                    title={`Eliminar todos los ${stat.name.toLowerCase()}`}
-                  >
-                    <RefreshCw className="w-4 h-4 text-slate-400 hover:text-red-600" />
-                  </button>
-                )}
               </div>
               <div>
                 <p className="text-sm font-medium text-slate-600 mb-1">{stat.name}</p>
-                <p className="text-4xl font-bold text-slate-800">{stat.value}</p>
+                <p className="text-3xl font-bold text-slate-800">{stat.value}</p>
               </div>
             </div>
           );
@@ -285,20 +295,20 @@ export function Dashboard({ onViewChange }: DashboardProps) {
           style={{ animationDelay: '0.3s' }}
         >
           <div className="flex items-center justify-between mb-4">
-            <div className="bg-blue-50 p-3 rounded-xl shadow-md">
-              <DollarSign className="w-6 h-6 text-blue-600" />
+            <div className="bg-purple-50 p-3 rounded-xl shadow-md">
+              <DollarSign className="w-6 h-6 text-purple-600" />
             </div>
             <button
               onClick={handleResetMonthlyTotal}
               className="p-2 hover:bg-slate-100 rounded-lg transition-all"
               title="Limpiar total del mes"
             >
-              <RefreshCw className="w-4 h-4 text-slate-400 hover:text-blue-600" />
+              <RefreshCw className="w-4 h-4 text-slate-400 hover:text-purple-600" />
             </button>
           </div>
           <div>
-            <p className="text-sm font-medium text-slate-600 mb-1">Total Nómina Mes</p>
-            <p className="text-3xl font-bold text-slate-800">{formatCurrency(stats.monthlyPayrollTotal)}</p>
+            <p className="text-sm font-medium text-slate-600 mb-1">Total General Nómina</p>
+            <p className="text-3xl font-bold text-slate-800">{formatCurrency(stats.totalGeneral)}</p>
             <p className="text-xs text-slate-500 mt-1">{new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric' })}</p>
           </div>
         </div>
@@ -362,20 +372,50 @@ export function Dashboard({ onViewChange }: DashboardProps) {
               </div>
             </button>
             <button
-              onClick={() => onViewChange('hour-records')}
-              className="w-full text-left p-4 bg-gradient-to-r from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 rounded-xl transition-all border border-orange-200 transform hover:scale-[1.02] hover:shadow-md"
+              onClick={() => onViewChange('payroll')}
+              className="w-full text-left p-4 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-xl transition-all border border-blue-200 transform hover:scale-[1.02] hover:shadow-md"
             >
               <div className="flex items-center space-x-3">
                 <div className="bg-white p-2 rounded-lg shadow-sm">
-                  <Clock className="w-6 h-6 text-orange-600" />
+                  <DollarSign className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="font-bold text-orange-900">Registrar Horas</p>
-                  <p className="text-sm text-orange-600">Registra horas trabajadas</p>
+                  <p className="font-bold text-blue-900">Generar Nómina</p>
+                  <p className="text-sm text-blue-600">Calcula y genera recibos de nómina</p>
                 </div>
               </div>
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* Monthly History Section */}
+      <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 animate-fadeInUp animation-delay-700">
+        <div className="flex items-center space-x-2 mb-4">
+          <Calendar className="w-5 h-5 text-slate-600" />
+          <h3 className="text-xl font-bold text-slate-800">Historial Mensual de Nómina</h3>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-200">
+                <th className="px-4 py-3 text-left font-semibold text-slate-700">Mes</th>
+                <th className="px-4 py-3 text-right font-semibold text-slate-700">FIJO</th>
+                <th className="px-4 py-3 text-right font-semibold text-slate-700">TEMPORAL</th>
+                <th className="px-4 py-3 text-right font-semibold text-slate-700">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stats.monthlyHistory.map((monthData, index) => (
+                <tr key={index} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                  <td className="px-4 py-3 text-slate-800 font-medium">{monthData.month}</td>
+                  <td className="px-4 py-3 text-right text-green-600 font-semibold">{formatCurrency(monthData.fijoTotal)}</td>
+                  <td className="px-4 py-3 text-right text-orange-600 font-semibold">{formatCurrency(monthData.temporalTotal)}</td>
+                  <td className="px-4 py-3 text-right text-purple-600 font-semibold">{formatCurrency(monthData.totalGeneral)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
