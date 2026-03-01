@@ -42,8 +42,15 @@ export function Dashboard({ onViewChange }: DashboardProps) {
     const firstDayStr = firstDayOfMonth.toISOString().split('T')[0];
     const lastDayStr = lastDayOfMonth.toISOString().split('T')[0];
 
-    // Get employees count
+    // Get employees count (active employees)
     const employeesResult = await supabase
+      .from('employees')
+      .select('id, contract_type')
+      .eq('user_id', user.id)
+      .eq('status', 'active');
+
+    // Get all active employees to map contract types
+    const allEmployeesResult = await supabase
       .from('employees')
       .select('id, contract_type')
       .eq('user_id', user.id)
@@ -56,12 +63,6 @@ export function Dashboard({ onViewChange }: DashboardProps) {
       .eq('user_id', user.id)
       .gte('created_at', firstDayStr)
       .lte('created_at', lastDayStr);
-
-    // Get all employees to map contract types
-    const allEmployeesResult = await supabase
-      .from('employees')
-      .select('id, contract_type')
-      .eq('user_id', user.id);
 
     let fijoTotal = 0;
     let temporalTotal = 0;
@@ -118,7 +119,7 @@ export function Dashboard({ onViewChange }: DashboardProps) {
     }
 
     setStats({
-      employees: employeesResult.count || 0,
+      employees: employeesResult.data?.length || 0,
       fijoTotal,
       temporalTotal,
       totalGeneral,
