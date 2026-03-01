@@ -228,14 +228,15 @@ export async function generateReceiptFromData(
     let subtotal = 0;
 
     if (isFijo && concept === 'Hora Ordinaria') {
-      // ORDINARIAS para FIJO: usar la mitad del SALARIO BASE LIQUIDACIÓN como subtotal
-      // y distribuir ese valor en 84 horas para obtener el valor por hora ordinaria.
+      // ORDINARIAS para FIJO: subtotal = mitad del SALARIO BASE LIQUIDACIÓN, horas = 84.
+      // El valor por hora se mantiene como el valor base calculado (monthlySalary / 220),
+      // para mantener consistencia en la columna "VALOR HORA".
       hours = 84;
-      const ordinarySubtotal = (monthlySalary || minimumSalary || 1315000) / 2;
-      hourValue = ordinarySubtotal / 84; // valor por hora basado en la mitad del salario base
+      const ordinarySubtotal = (monthlySalary) / 2; // mitad del salario base de liquidación
+      hourValue = baseHourValue; // conservar el valor hora base
       surchargeValue = 0;
       totalValue = hourValue;
-      subtotal = ordinarySubtotal; // Mostrar la mitad del salario base como subtotal
+      subtotal = ordinarySubtotal;
     } else if (isFijo && concept !== 'Hora Ordinaria') {
       hourValue = baseHourValue;
       surchargeValue = baseHourValue * (surchargePercent / 100);
