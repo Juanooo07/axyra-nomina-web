@@ -556,14 +556,14 @@ export function Payroll() {
           }
         });
 
-        // Add Hora Ordinaria (always 84 hours with baseHourValue)
-        const ordinarySalaryValue = settings.minimum_salary / 2;
+        // Add Hora Ordinaria (always 84 hours with employee's monthly salary)
+        const ordinarySalary = monthlySalary / 2;
         hourBreakdowns.unshift({
           hour_type: 'Hora Ordinaria',
           hours: 84,
           surcharge_percent: 0,
           hourly_rate: hourlyRate,
-          total: ordinarySalaryValue,
+          total: ordinarySalary,
         });
       } else {
         // TEMPORAL employee - all hours calculated the same way
