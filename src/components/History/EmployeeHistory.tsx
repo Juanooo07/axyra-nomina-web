@@ -480,11 +480,11 @@ export function EmployeeHistory() {
         .eq('id', payrollId);
       console.log('select before delete result', existing, selectError);
 
-      // Eliminar todos los registros de horas en ese período
+      // Eliminar todos los registros de horas en ese período (con filtro de usuario de nuevo)
       const { data: hoursDeleted, error: hoursError } = await supabase
         .from('hour_records')
         .delete()
-        // .eq('user_id', user.id)  // user filter removed for debugging
+        .eq('user_id', user.id)
         .eq('employee_id', selectedEmployee)
         .gte('date', payroll.period_start)
         .lte('date', payroll.period_end);
@@ -494,21 +494,29 @@ export function EmployeeHistory() {
         throw new Error('Error al eliminar registros de horas: ' + hoursError.message);
       }
 
-      // Eliminar la nómina
-      const { data: payrollDeleted, error: payrollError } = await supabase
+      // Ejecutar el borrado principal (no encadenar .select() para evitar posibles bugs)
+      const { error: payrollError } = await supabase
         .from('payroll_history')
         .delete()
         .eq('id', payrollId)
-        // .eq('user_id', user.id)  // filter removed while we debug
-        .select();
+        .eq('user_id', user.id);
 
-      console.log('payroll_history delete result', payrollDeleted, payrollError);
+      console.log('payroll_history delete error', payrollError);
       if (payrollError) {
         throw new Error('Error al eliminar la nómina: ' + payrollError.message);
       }
 
-      if (!payrollDeleted || (Array.isArray(payrollDeleted) && payrollDeleted.length === 0)) {
-        throw new Error('No se eliminó ninguna nómina de la base de datos.');
+      // verificar que la fila realmente desaparece
+      const { data: after, error: afterError } = await supabase
+        .from('payroll_history')
+        .select('*')
+        .eq('id', payrollId);
+      console.log('select after delete result', after, afterError);
+      if (afterError) {
+        throw new Error('Error verificando eliminación: ' + afterError.message);
+      }
+      if (after && after.length > 0) {
+        throw new Error('La nómina no pudo borrarse (persistió tras el delete)');
       }
 
       // Refrescar datos desde el servidor para asegurarnos que la eliminación persiste
