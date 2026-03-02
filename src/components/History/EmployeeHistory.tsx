@@ -125,6 +125,131 @@ export function EmployeeHistory() {
     setSelectedEmployeeData(data);
   };
 
+  // Auto-recalculate employee payrolls and update database if needed
+  const recalcEmployeePayrolls = async (empData: Employee) => {
+    if (!user) return;
+
+    try {
+      // Load payrolls for this employee
+      let payrollQuery = supabase
+        .from('payroll_history')
+        .select('*')
+        .eq('employee_id', selectedEmployee);
+
+      if (fromDate) {
+        payrollQuery = payrollQuery.gte('period_start', fromDate);
+      }
+      if (toDate) {
+        payrollQuery = payrollQuery.lte('period_end', toDate);
+      }
+
+      const { data: payrolls } = await payrollQuery;
+
+      if (!payrolls || payrolls.length === 0) return;
+
+      // Load hour records, surcharges, and settings
+      const { data: hourRecords } = await supabase
+        .from('hour_records')
+        .select('hour_type_name, hours, date')
+        .eq('employee_id', selectedEmployee);
+
+      const { data: surcharges } = await supabase
+        .from('hour_surcharges')
+        .select('hour_type_name, surcharge_percent')
+        .eq('user_id', user.id);
+
+      const { data: settings } = await supabase
+        .from('user_settings')
+        .select('health_deduction_percent, pension_deduction_percent')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      const surchargeMap = new Map<string, number>();
+      (surcharges || []).forEach((s: any) => {
+        surchargeMap.set(s.hour_type_name, s.surcharge_percent);
+      });
+
+      const healthPercent = settings?.health_deduction_percent || 4.0;
+      const pensionPercent = settings?.pension_deduction_percent || 4.0;
+
+      const monthlySalary = Number(empData.monthly_salary);
+      const hourlyRate = monthlySalary / 220;
+      const isFijo = empData.contract_type === 'FIJO';
+
+      // Recalculate each payroll
+      for (const payroll of payrolls) {
+        // Get hours for this specific payroll period
+        const periodHours = (hourRecords || []).filter(
+          (r: any) => new Date(r.date) >= new Date(payroll.period_start) &&
+                       new Date(r.date) <= new Date(payroll.period_end)
+        );
+
+        const hoursMap = new Map<string, number>();
+        periodHours.forEach((r: any) => {
+          const curr = hoursMap.get(r.hour_type_name) || 0;
+          hoursMap.set(r.hour_type_name, curr + Number(r.hours));
+        });
+
+        // Compute base and surcharges
+        let computedBase = 0;
+        let computedSurcharges = 0;
+
+        if (isFijo) {
+          computedBase = monthlySalary / 2;
+          surchargeMap.forEach((sPct, hType) => {
+            if (hType !== 'Hora Ordinaria') {
+              const hrs = hoursMap.get(hType) || 0;
+              computedSurcharges += hourlyRate * (1 + sPct / 100) * hrs;
+            }
+          });
+        } else {
+          surchargeMap.forEach((sPct, hType) => {
+            const hrs = hoursMap.get(hType) || 0;
+            computedSurcharges += hourlyRate * (1 + sPct / 100) * hrs;
+          });
+        }
+
+        let transportAllowance = 0;
+        if (empData.receives_transport_allowance && monthlySalary < 2 * 1423500) {
+          transportAllowance = 200000 / 2;
+        }
+
+        const gross = computedBase + computedSurcharges + transportAllowance;
+        const healthDeduction = gross * (healthPercent / 100);
+        const pensionDeduction = gross * (pensionPercent / 100);
+        const totalDeductions = healthDeduction + pensionDeduction;
+        const computedNet = gross - totalDeductions;
+
+        // Check if needs update
+        const needsUpdate =
+          payroll.base_salary !== computedBase ||
+          payroll.total_surcharges !== computedSurcharges ||
+          payroll.transport_allowance !== transportAllowance ||
+          payroll.health_deduction !== healthDeduction ||
+          payroll.pension_deduction !== pensionDeduction ||
+          payroll.total_deductions !== totalDeductions ||
+          payroll.net_salary !== computedNet;
+
+        if (needsUpdate) {
+          await supabase
+            .from('payroll_history')
+            .update({
+              base_salary: computedBase,
+              total_surcharges: computedSurcharges,
+              transport_allowance: transportAllowance,
+              health_deduction: healthDeduction,
+              pension_deduction: pensionDeduction,
+              total_deductions: totalDeductions,
+              net_salary: computedNet,
+            })
+            .eq('id', payroll.id);
+        }
+      }
+    } catch (err) {
+      console.error('Error recalculating employee payrolls:', err);
+    }
+  };
+
   const loadHistoricalData = async () => {
     if (!selectedEmployee || !user) return;
 
@@ -169,7 +294,12 @@ export function EmployeeHistory() {
 
       setHourSurcharges(surchargesData || []);
 
-      // Load payroll history
+      // Auto-recalculate payrolls first if we have employee data
+      if (selectedEmployeeData) {
+        await recalcEmployeePayrolls(selectedEmployeeData);
+      }
+
+      // Load payroll history (now with corrected values)
       let payrollQuery = supabase
         .from('payroll_history')
         .select('*')
