@@ -22,6 +22,7 @@ interface Employee {
   cedula: string;
   contract_type: string;
   monthly_salary: number;
+  receives_transport_allowance?: boolean;
 }
 
 interface HourRecord {
@@ -96,7 +97,7 @@ export function EmployeeHistory() {
     setError('');
     const { data, error: fetchError } = await supabase
       .from('employees')
-      .select('id, full_name, cedula, contract_type, monthly_salary')
+      .select('id, full_name, cedula, contract_type, monthly_salary, receives_transport_allowance')
       .eq('user_id', user.id)
       .order('full_name');
 
@@ -113,7 +114,7 @@ export function EmployeeHistory() {
 
     const { data, error: fetchError } = await supabase
       .from('employees')
-      .select('id, full_name, cedula, contract_type, monthly_salary')
+      .select('id, full_name, cedula, contract_type, monthly_salary, receives_transport_allowance')
       .eq('id', selectedEmployee)
       .single();
 
