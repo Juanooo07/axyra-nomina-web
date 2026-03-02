@@ -54,6 +54,123 @@ export function Dashboard({ onViewChange }: DashboardProps) {
     };
   }, [user]);
 
+  // Helper to recalculate ALL payrolls for a date range and update the DB if needed
+  const recalculatePayrollsForRange = async (startDate: string, endDate: string, employees: any[]) => {
+    try {
+      // Get all payroll records for this range
+      const { data: payrolls } = await supabase
+        .from('payroll_history')
+        .select('id, employee_id, period_start, period_end, total_hours, base_salary, total_surcharges, transport_allowance, health_deduction, pension_deduction, total_deductions, net_salary')
+        .eq('user_id', user.id)
+        .gte('created_at', startDate)
+        .lte('created_at', endDate);
+
+      if (!payrolls || payrolls.length === 0) return;
+
+      // Get surcharges and settings once
+      const { data: surcharges } = await supabase
+        .from('hour_surcharges')
+        .select('hour_type_name, surcharge_percent')
+        .eq('user_id', user.id);
+
+      const { data: settings } = await supabase
+        .from('user_settings')
+        .select('health_deduction_percent, pension_deduction_percent')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      const surchargeMap = new Map<string, number>();
+      (surcharges || []).forEach((s: any) => {
+        surchargeMap.set(s.hour_type_name, s.surcharge_percent);
+      });
+
+      const healthPercent = settings?.health_deduction_percent || 4.0;
+      const pensionPercent = settings?.pension_deduction_percent || 4.0;
+
+      // Recalculate each payroll
+      for (const payroll of payrolls) {
+        const employee = employees.find((e: any) => e.id === payroll.employee_id);
+        if (!employee) continue;
+
+        const monthlySalary = Number(employee.monthly_salary);
+        const hourlyRate = monthlySalary / 220;
+        const isFijo = employee.contract_type === 'FIJO';
+
+        // Get hours for this payroll period
+        const { data: hourRecords } = await supabase
+          .from('hour_records')
+          .select('hour_type_name, hours')
+          .eq('user_id', user.id)
+          .eq('employee_id', payroll.employee_id)
+          .gte('date', payroll.period_start)
+          .lte('date', payroll.period_end);
+
+        const hoursMap = new Map<string, number>();
+        (hourRecords || []).forEach((r: any) => {
+          const curr = hoursMap.get(r.hour_type_name) || 0;
+          hoursMap.set(r.hour_type_name, curr + Number(r.hours));
+        });
+
+        // Compute base, surcharges
+        let computedBase = 0;
+        let computedSurcharges = 0;
+
+        if (isFijo) {
+          computedBase = monthlySalary / 2;
+          surchargeMap.forEach((sPct, hType) => {
+            if (hType !== 'Hora Ordinaria') {
+              const hrs = hoursMap.get(hType) || 0;
+              computedSurcharges += hourlyRate * (1 + sPct / 100) * hrs;
+            }
+          });
+        } else {
+          surchargeMap.forEach((sPct, hType) => {
+            const hrs = hoursMap.get(hType) || 0;
+            computedSurcharges += hourlyRate * (1 + sPct / 100) * hrs;
+          });
+        }
+
+        let transportAllowance = 0;
+        if (employee.receives_transport_allowance && monthlySalary < 2 * 1423500) {
+          transportAllowance = 200000 / 2;
+        }
+
+        const gross = computedBase + computedSurcharges + transportAllowance;
+        const healthDeduction = gross * (healthPercent / 100);
+        const pensionDeduction = gross * (pensionPercent / 100);
+        const totalDeductions = healthDeduction + pensionDeduction;
+        const computedNet = gross - totalDeductions;
+
+        // Check if needs update
+        const needsUpdate =
+          payroll.base_salary !== computedBase ||
+          payroll.total_surcharges !== computedSurcharges ||
+          payroll.transport_allowance !== transportAllowance ||
+          payroll.health_deduction !== healthDeduction ||
+          payroll.pension_deduction !== pensionDeduction ||
+          payroll.total_deductions !== totalDeductions ||
+          payroll.net_salary !== computedNet;
+
+        if (needsUpdate) {
+          await supabase
+            .from('payroll_history')
+            .update({
+              base_salary: computedBase,
+              total_surcharges: computedSurcharges,
+              transport_allowance: transportAllowance,
+              health_deduction: healthDeduction,
+              pension_deduction: pensionDeduction,
+              total_deductions: totalDeductions,
+              net_salary: computedNet,
+            })
+            .eq('id', payroll.id);
+        }
+      }
+    } catch (err) {
+      console.error('Error recalculating payrolls for range:', err);
+    }
+  };
+
   const loadStats = async () => {
     if (!user) return;
 
@@ -67,18 +184,18 @@ export function Dashboard({ onViewChange }: DashboardProps) {
     // Get employees count (active employees)
     const employeesResult = await supabase
       .from('employees')
-      .select('id, contract_type')
+      .select('id, contract_type, monthly_salary, receives_transport_allowance, status')
       .eq('user_id', user.id)
       .eq('status', 'active');
 
-    // Get all active employees to map contract types
-    const allEmployeesResult = await supabase
-      .from('employees')
-      .select('id, contract_type')
-      .eq('user_id', user.id)
-      .eq('status', 'active');
+    const allEmployeesResult = employeesResult;
 
-    // Get payroll for this month separated by contract type
+    // Auto-recalculate all payrolls for this month before summing
+    if (allEmployeesResult.data) {
+      await recalculatePayrollsForRange(firstDayStr, lastDayStr, allEmployeesResult.data);
+    }
+
+    // Get payroll for this month separated by contract type (now with corrected values)
     const payrollsResult = await supabase
       .from('payroll_history')
       .select('net_salary, employee_id')
@@ -109,6 +226,11 @@ export function Dashboard({ onViewChange }: DashboardProps) {
       const monthDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthFirstDay = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1).toISOString().split('T')[0];
       const monthLastDay = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).toISOString().split('T')[0];
+
+      // Auto-recalculate payrolls for this month before summing
+      if (allEmployeesResult.data) {
+        await recalculatePayrollsForRange(monthFirstDay, monthLastDay, allEmployeesResult.data);
+      }
 
       const historicalPayroll = await supabase
         .from('payroll_history')
