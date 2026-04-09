@@ -1,96 +1,36 @@
 {
-  "name": "axyra-sistema-gestion",
-  "version": "2.0.0",
-  "description": "Sistema de Gestión Empresarial AXYRA - Optimizado para Producción",
-  "main": "frontend/index.html",
+  "name": "vite-react-typescript-starter",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'Build completed - Static site'",
-    "start": "vercel start",
-    "deploy": "vercel --prod",
-    "deploy:firebase": "firebase deploy",
-    "deploy:all": "./scripts/deploy-production.sh",
-    "test": "node scripts/test-criticas.js",
-    "test:health": "node scripts/health-check.js",
-    "backup": "node scripts/backup-system.js create",
-    "backup:list": "node scripts/backup-system.js list",
-    "backup:schedule": "node scripts/backup-system.js schedule",
-    "lint": "echo 'No linting configured'",
-    "setup": "npm install && firebase login && vercel login",
-    "dev:firebase": "firebase emulators:start",
-    "dev:vercel": "vercel dev",
-    "logs:firebase": "firebase functions:log",
-    "logs:vercel": "vercel logs",
-    "backup:firestore": "firebase firestore:export gs://axyra-48238-backups/firestore/$(date +%Y%m%d_%H%M%S)",
-    "clean": "rm -rf node_modules package-lock.json && npm install",
-    "optimize": "node scripts/optimize-project.js",
-    "validate": "node scripts/validate-config.js",
-    "check-env": "node scripts/check-env-variables.js",
-    "validate-final": "node scripts/validate-final-system.js"
-  },
-  "keywords": [
-    "sistema-gestion",
-    "empresarial",
-    "nomina",
-    "empleados",
-    "firebase",
-    "vercel",
-    "wompi",
-    "paypal",
-    "cuadre-caja",
-    "inventario",
-    "produccion"
-  ],
-  "author": "AXYRA Team",
-  "license": "MIT",
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json"
   },
   "dependencies": {
-    "crypto": "^1.0.1",
-    "dotenv": "^17.2.2",
-    "firebase": "^10.7.1",
-    "firebase-admin": "^13.5.0",
-    "node-fetch": "^2.6.7"
+    "@supabase/supabase-js": "^2.57.4",
+    "html2pdf.js": "^0.14.0",
+    "lucide-react": "^0.344.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "firebase-tools": "^13.0.0",
-    "vercel": "^32.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/axyra/axyra-sistema-gestion.git"
-  },
-  "bugs": {
-    "url": "https://github.com/axyra/axyra-sistema-gestion/issues"
-  },
-  "homepage": "https://axyra.vercel.app",
-  "funding": {
-    "type": "individual",
-    "url": "https://github.com/sponsors/axyra"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
-  "files": [
-    "frontend/**/*",
-    "api/**/*",
-    "functions/**/*",
-    "firestore.rules",
-    "firestore.indexes.json",
-    "firebase.json",
-    "vercel.json",
-    "storage.rules",
-    "deploy-production.sh",
-    "README-PRODUCTION.md"
-  ],
-  "config": {
-    "vercel": {
-      "version": 2
-    },
-    "firebase": {
-      "project": "axyra-48238"
-    }
+    "@eslint/js": "^9.9.1",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.18",
+    "eslint": "^9.9.1",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.11",
+    "globals": "^15.9.0",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^8.3.0",
+    "vite": "^5.4.2"
   }
 }

@@ -1,98 +1,23 @@
-# ========================================
-# AXYRA SISTEMA DE GESTIÓN - .gitignore
-# ========================================
-
-# Variables de entorno (NUNCA subir a Git)
-.env
-.env.local
-.env.production
-.env.development
-.env.staging
-.env.test
-
-# Archivos de backup
-*.backup
-*.bak
-*.tmp
-*.temp
-
-# Logs
-logs/
+logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Dependencias
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+node_modules
+dist
+dist-ssr
+*.local
 
-# Archivos de sistema
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# Archivos de build
-dist/
-build/
-out/
-
-# Archivos de cache
-.cache/
-.parcel-cache/
-.next/
-.nuxt/
-
-# Archivos de testing
-coverage/
-.nyc_output/
-
-# Archivos de Firebase
-.firebase/
-firebase-debug.log
-firestore-debug.log
-
-# Archivos de Vercel
-.vercel/
-
-# Archivos de configuración local
-config.local.json
-settings.local.json
-
-# Archivos de base de datos local
-*.db
-*.sqlite
-*.sqlite3
-
-# Archivos de uploads
-uploads/
-public/uploads/
-
-# Archivos de backup del sistema
-backups/
-*.backup
-
-# Archivos de documentación temporal
-docs/temp/
-docs/draft/
-
-# Archivos de desarrollo
-dev/
-test/
-debug/
-
-# Archivos de configuración específicos del entorno
-.env.*.local
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env
