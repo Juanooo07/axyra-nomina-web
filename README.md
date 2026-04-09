@@ -1,4 +1,4 @@
-# AXYRA Nómina V2
+# AXYRA Nómina
 
 Sistema completo de gestión y cálculo de nómina colombiana con arquitectura multi-tenant (SaaS).
 
@@ -34,30 +34,6 @@ Sistema completo de gestión y cálculo de nómina colombiana con arquitectura m
 7. **payrolls** - Nóminas calculadas y guardadas
 8. **company_settings** - Configuración por empresa
 
-## Configuración
-
-1. **Variables de entorno** (`.env`):
-   ```
-   VITE_SUPABASE_URL=tu_url_de_supabase
-   VITE_SUPABASE_ANON_KEY=tu_anon_key
-   ```
-
-2. **Instalar dependencias**:
-   ```bash
-   npm install
-   ```
-
-3. **Ejecutar migraciones**: Las migraciones ya están aplicadas en Supabase
-
-4. **Iniciar desarrollo**:
-   ```bash
-   npm run dev
-   ```
-
-5. **Construir para producción**:
-   ```bash
-   npm run build
-   ```
 
 ## Uso del Sistema
 
