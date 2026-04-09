@@ -1,0 +1,85 @@
+<!-- HEADER COMPARTIDO AXYRA - Incluir en todos los módulos -->
+<style>
+  .axyra-logout-btn {
+    background: linear-gradient(135deg, #e53e3e, #c53030);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
+  }
+
+  .axyra-logout-btn:hover {
+    background: linear-gradient(135deg, #c53030, #a52a2a);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+  }
+
+  .axyra-logout-btn:active {
+    transform: translateY(0);
+  }
+
+  .axyra-logout-text {
+    display: inline;
+  }
+
+  /* Estilos para el logo */
+  .axyra-logo {
+    width: 40px !important;
+    height: 40px !important;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .axyra-logo:hover {
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 768px) {
+    .axyra-logout-text {
+      display: none;
+    }
+    
+    .axyra-logo {
+      width: 32px !important;
+      height: 32px !important;
+    }
+  }
+</style>
+<header class="axyra-header">
+  <div class="axyra-header-content">
+    <div class="axyra-logo-title">
+             <img src="../../logo.png" alt="AXYRA Logo" class="axyra-logo" style="width: 40px; height: 40px; object-fit: contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+             <i class="fas fa-building" style="display: none; font-size: 32px; color: #4299e1; margin-right: 12px;" class="axyra-logo-fallback"></i>
+      <div class="axyra-title-section">
+        <h1 class="axyra-title">AXYRA</h1>
+        <span class="axyra-subtitle" id="pageSubtitle">Dashboard</span>
+      </div>
+      <div class="axyra-role-badge" id="roleBadge">
+        <i class="fas fa-user-shield"></i>
+        <span class="axyra-role-badge-text">Empleado</span>
+      </div>
+    </div>
+    
+    <nav class="axyra-nav" id="axyraNav">
+      <!-- Los enlaces se generarán dinámicamente según la página actual -->
+    </nav>
+    
+    <div class="axyra-user-section">
+      <span class="axyra-user-email" id="userEmail">Usuario</span>
+      <button class="axyra-logout-btn" data-action="logout">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="axyra-logout-text">Cerrar</span>
+      </button>
+    </div>
+  </div>
+</header>

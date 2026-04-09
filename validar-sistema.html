@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Validación Integral - AXYRA Sistema</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .seccion {
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+            padding-left: 20px;
+        }
+        
+        .seccion h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .instrucciones {
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .instrucciones code {
+            background: #667eea;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .botones {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #e8e8e8;
+        }
+        
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+        
+        .console {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        
+        .console-log {
+            color: #00ff00;
+        }
+        
+        .console-error {
+            color: #ff6b6b;
+        }
+        
+        .console-warn {
+            color: #ffb347;
+        }
+        
+        .console-info {
+            color: #87ceeb;
+        }
+        
+        .status-box {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+        .status-ok {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        
+        .status-title {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            border-top: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Validación Integral del Sistema</h1>
+            <p>AXYRA 2026 - Pruebas Completas sin Riesgos</p>
+        </div>
+        
+        <div class="content">
+            <!-- SECCIÓN 1: DESCRIPCIÓN -->
+            <div class="seccion">
+                <h2>📋 ¿Qué es esta Validación?</h2>
+                <p style="color: #666; line-height: 1.6; margin-bottom: 10px;">
+                    Esta página ejecuta <strong>5 validaciones completas</strong> para verificar que:
+                </p>
+                <ul style="color: #666; margin-left: 20px; line-height: 1.8;">
+                    <li>✅ La sintaxis de ambos módulos es correcta</li>
+                    <li>✅ Las clases se instancian correctamente</li>
+                    <li>✅ Los cálculos de horas funcionan perfectamente</li>
+                    <li>✅ Los cálculos de salarios son exactos</li>
+                    <li>✅ El sistema de empleados fijos es robusto</li>
+                </ul>
+                <p style="color: #666; margin-top: 10px;">
+                    <strong>NO modifica</strong> datos de producción. Solo hace pruebas en memoria.
+                </p>
+            </div>
+            
+            <!-- SECCIÓN 2: EJECUCIÓN -->
+            <div class="seccion">
+                <h2>🚀 Iniciar Validación</h2>
+                <div class="instrucciones">
+                    <strong>Paso 1:</strong> Haz clic en el botón "Ejecutar Validación Completa"<br>
+                    <strong>Paso 2:</strong> Espera a que terminen las 5 validaciones<br>
+                    <strong>Paso 3:</strong> Revisa el resultado en la consola
+                </div>
+                
+                <div class="botones">
+                    <button class="btn-primary" onclick="ejecutarValidacion()">
+                        ▶️ Ejecutar Validación Completa
+                    </button>
+                    <button class="btn-secondary" onclick="limpiarConsola()">
+                        🗑️ Limpiar Consola
+                    </button>
+                </div>
+                
+                <div class="console" id="consola">
+                    <div class="console-info">📌 Consola lista. Haz clic en "Ejecutar Validación Completa"</div>
+                </div>
+            </div>
+            
+            <!-- SECCIÓN 3: RESULTADO -->
+            <div class="seccion">
+                <h2>📊 Resultado de Validación</h2>
+                <div id="statusBox" class="status-box" style="display: none;">
+                    <div class="status-title" id="statusTitle"></div>
+                    <div id="statusContent"></div>
+                </div>
+                <p id="esperandoValidacion" style="color: #999; text-align: center; padding: 40px 20px;">
+                    👉 Ejecuta la validación para ver resultados aquí...
+                </p>
+            </div>
+            
+            <!-- SECCIÓN 4: PRUEBAS INDIVIDUALES -->
+            <div class="seccion">
+                <h2>🔧 Pruebas Individuales</h2>
+                <p style="color: #666; margin-bottom: 15px;">
+                    Después de la validación completa, puedes hacer pruebas específicas:
+                </p>
+                <div class="botones">
+                    <button class="btn-secondary" onclick="pruebaHoras()">
+                        ⏰ Prueba Cálculo de Horas
+                    </button>
+                    <button class="btn-secondary" onclick="pruebaEmpleados()">
+                        👤 Prueba Empleados Fijos
+                    </button>
+                    <button class="btn-secondary" onclick="pruebaNomina()">
+                        📋 Prueba Generación Nómina
+                    </button>
+                    <button class="btn-danger" onclick="limpiarLocalStorage()">
+                        ⚠️ Limpiar LocalStorage
+                    </button>
+                </div>
+            </div>
+            
+            <!-- SECCIÓN 5: PRÓXIMOS PASOS -->
+            <div class="seccion">
+                <h2>➡️ Próximos Pasos</h2>
+                <div style="background: #e8f4f8; padding: 15px; border-radius: 5px; color: #333;">
+                    <strong>Si TODAS las validaciones pasan (100% éxito):</strong><br>
+                    ✅ Es seguro integrar en producción<br>
+                    ✅ Los módulos están listos para usar<br>
+                    ✅ Proceed a la integración en gestion_personal.html<br>
+                    <br>
+                    <strong>Si alguna validación falla:</strong><br>
+                    ❌ Revisar errores en la consola<br>
+                    ❌ Contactar soporte técnico<br>
+                    ❌ NO integrar en producción
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>AXYRA Sistema de Gestión © 2026 | Validación v1.0</p>
+        </div>
+    </div>
+
+    <!-- Cargar módulos -->
+    <script src="../scripts/test-porcentajes-horas.js"></script>
+    <script src="../frontend/modulos/gestion_personal/empleados-fijos-mejorado.js"></script>
+    <script src="../scripts/validacion-integral.js"></script>
+
+    <script>
+        // Log capturado
+        let logsCapturados = [];
+        
+        // Capturar console.log
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalLog(...args);
+            const mensaje = args.join(' ');
+            logsCapturados.push({ tipo: 'log', mensaje });
+            actualizarConsola();
+        };
+        
+        console.error = function(...args) {
+            originalError(...args);
+            const mensaje = args.join(' ');
+            logsCapturados.push({ tipo: 'error', mensaje });
+            actualizarConsola();
+        };
+        
+        console.warn = function(...args) {
+            originalWarn(...args);
+            const mensaje = args.join(' ');
+            logsCapturados.push({ tipo: 'warn', mensaje });
+            actualizarConsola();
+        };
+
+        function actualizarConsola() {
+            const consola = document.getElementById('consola');
+            consola.innerHTML = logsCapturados.map(log => {
+                const clase = `console-${log.tipo}`;
+                return `<div class="${clase}">${log.mensaje}</div>`;
+            }).join('');
+            consola.scrollTop = consola.scrollHeight;
+        }
+
+        function limpiarConsola() {
+            logsCapturados = [];
+            document.getElementById('consola').innerHTML = '✨ Consola limpia';
+        }
+
+        async function ejecutarValidacion() {
+            document.getElementById('esperandoValidacion').style.display = 'block';
+            const statusBox = document.getElementById('statusBox');
+            statusBox.style.display = 'none';
+            
+            logsCapturados = [{ tipo: 'info', mensaje: '🚀 Iniciando validación integral...' }];
+            actualizarConsola();
+
+            try {
+                const resultado = await window.validador.ejecutarTodas();
+                mostrarResultado(resultado);
+            } catch (error) {
+                mostrarError(error);
+            }
+        }
+
+        function mostrarResultado(resultado) {
+            const statusBox = document.getElementById('statusBox');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusContent = document.getElementById('statusContent');
+            const esperando = document.getElementById('esperandoValidacion');
+
+            esperando.style.display = 'none';
+            statusBox.style.display = 'block';
+
+            if (resultado.todoOk) {
+                statusBox.className = 'status-box status-ok';
+                statusTitle.innerHTML = '✅ ¡VALIDACIÓN EXITOSA! (100%)';
+                statusContent.innerHTML = `
+                    <p><strong>Validaciones Pasadas:</strong> ${resultado.exitosos}/${resultado.totales}</p>
+                    <p><strong>Porcentaje de Éxito:</strong> ${resultado.porcentaje}%</p>
+                    <p style="margin-top: 10px; color: green;"><strong>✅ El sistema está listo para integrar en producción</strong></p>
+                `;
+            } else {
+                statusBox.className = 'status-box status-error';
+                statusTitle.innerHTML = '⚠️ VALIDACIÓN INCOMPLETA';
+                statusContent.innerHTML = `
+                    <p><strong>Validaciones Pasadas:</strong> ${resultado.exitosos}/${resultado.totales}</p>
+                    <p><strong>Porcentaje de Éxito:</strong> ${resultado.porcentaje}%</p>
+                    ${resultado.errores.length > 0 ? `
+                        <p style="margin-top: 10px;"><strong>Errores:</strong></p>
+                        <ul>${resultado.errores.map(e => `<li>${e}</li>`).join('')}</ul>
+                    ` : ''}
+                    <p style="margin-top: 10px; color: red;"><strong>❌ Revisar errores antes de integrar</strong></p>
+                `;
+            }
+        }
+
+        function mostrarError(error) {
+            const statusBox = document.getElementById('statusBox');
+            statusBox.className = 'status-box status-error';
+            statusBox.style.display = 'block';
+            document.getElementById('esperandoValidacion').style.display = 'none';
+            document.getElementById('statusTitle').innerHTML = '❌ Error en Validación';
+            document.getElementById('statusContent').innerHTML = `<p>${error.message}</p>`;
+        }
+
+        function pruebaHoras() {
+            window.testHoras.ejecutar();
+        }
+
+        function pruebaEmpleados() {
+            const emp = window.axyraEmpleadosFijos.agregarEmpleadoFijo({
+                nombre: 'Prueba Individual',
+                cedula: '1111111111',
+                salarioFijo: 2000000,
+                bonificacion: 100000
+            });
+            console.log('✅ Empleado creado:', emp);
+            const calculo = window.axyraEmpleadosFijos.calcularSalarioMensual(emp.id);
+            console.log('💰 Cálculo de salario:', calculo);
+        }
+
+        function pruebaNomina() {
+            const nomina = window.axyraEmpleadosFijos.generarNominaMensual(4, 2026);
+            console.log('📋 Nómina generada:', nomina);
+        }
+
+        function limpiarLocalStorage() {
+            if (confirm('¿Borrar datos de localStorage? Esto es SOLO para pruebas.')) {
+                localStorage.clear();
+                console.log('✅ LocalStorage limpiado');
+            }
+        }
+    </script>
+</body>
+</html>

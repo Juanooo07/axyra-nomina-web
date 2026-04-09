@@ -1,0 +1,521 @@
+/**
+ * ⚙️ ESTILOS CONFIGURACIÓN MEJORADO - AXYRA SISTEMA DE GESTIÓN
+ * Layout reorganizado con mejor estructura y márgenes
+ */
+
+/* ===== LAYOUT PRINCIPAL ===== */
+.axyra-config-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.axyra-config-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 30px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.axyra-config-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.axyra-config-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ===== GRID DE CONFIGURACIÓN ===== */
+.axyra-config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.axyra-config-section {
+  background: white;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+}
+
+.axyra-config-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.axyra-config-section-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.axyra-config-section-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+}
+
+.axyra-config-section-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.axyra-config-section-subtitle {
+  color: #6b7280;
+  margin: 5px 0 0 0;
+  font-size: 0.9rem;
+}
+
+/* ===== FORMULARIOS ===== */
+.axyra-config-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.axyra-config-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.axyra-config-form-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.axyra-config-form-input,
+.axyra-config-form-select,
+.axyra-config-form-textarea {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background: white;
+  font-family: inherit;
+}
+
+.axyra-config-form-input:focus,
+.axyra-config-form-select:focus,
+.axyra-config-form-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.axyra-config-form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* ===== BOTONES ===== */
+.axyra-config-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  justify-content: center;
+  margin: 5px;
+}
+
+.axyra-config-btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.axyra-config-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.axyra-config-btn-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.axyra-config-btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.axyra-config-btn-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.axyra-config-btn-warning:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+.axyra-config-btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.axyra-config-btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* ===== SWITCHES Y TOGGLES ===== */
+.axyra-config-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.axyra-config-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.axyra-config-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.axyra-config-slider:before {
+  position: absolute;
+  content: '';
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .axyra-config-slider {
+  background-color: #667eea;
+}
+
+input:checked + .axyra-config-slider:before {
+  transform: translateX(26px);
+}
+
+/* ===== TARJETAS DE CONFIGURACIÓN ===== */
+.axyra-config-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.axyra-config-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.axyra-config-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.axyra-config-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.axyra-config-card-description {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin: 5px 0 0 0;
+}
+
+/* ===== ESTADÍSTICAS ===== */
+.axyra-config-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.axyra-config-stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.axyra-config-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.axyra-config-stat-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  margin: 0 auto 15px auto;
+}
+
+.axyra-config-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 5px;
+}
+
+.axyra-config-stat-label {
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* ===== NOTIFICACIONES ===== */
+.axyra-config-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-left: 4px solid #10b981;
+  padding: 20px;
+  max-width: 400px;
+  z-index: 10000;
+  animation: slideInRight 0.3s ease;
+}
+
+.axyra-config-notification-error {
+  border-left-color: #ef4444;
+}
+
+.axyra-config-notification-warning {
+  border-left-color: #f59e0b;
+}
+
+.axyra-config-notification-info {
+  border-left-color: #3b82f6;
+}
+
+.axyra-config-notification-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.axyra-config-notification-icon {
+  width: 24px;
+  height: 24px;
+  background: #10b981;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+}
+
+.axyra-config-notification-title {
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.axyra-config-notification-content {
+  color: #6b7280;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.axyra-config-notification-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.axyra-config-notification-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.axyra-config-notification-btn-primary {
+  background: #10b981;
+  color: white;
+}
+
+.axyra-config-notification-btn-primary:hover {
+  background: #059669;
+}
+
+.axyra-config-notification-btn-secondary {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.axyra-config-notification-btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+  .axyra-config-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .axyra-config-container {
+    padding: 15px;
+  }
+
+  .axyra-config-title {
+    font-size: 2rem;
+  }
+
+  .axyra-config-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .axyra-config-section {
+    padding: 20px;
+  }
+
+  .axyra-config-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .axyra-config-header {
+    padding: 20px;
+  }
+
+  .axyra-config-title {
+    font-size: 1.8rem;
+  }
+
+  .axyra-config-section {
+    padding: 15px;
+  }
+
+  .axyra-config-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .axyra-config-btn {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.axyra-config-section {
+  animation: fadeIn 0.5s ease;
+}
+
+/* ===== SCROLLBAR PERSONALIZADO ===== */
+.axyra-config-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.axyra-config-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.axyra-config-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.axyra-config-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

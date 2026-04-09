@@ -1,0 +1,612 @@
+/* ========================================
+   ESTILOS PARA MEMBRESÍAS DETALLADAS AXYRA
+   ======================================== */
+
+.axyra-membership-hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 100px 0;
+  text-align: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.axyra-membership-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  animation: heroBackground 20s ease-in-out infinite;
+}
+
+@keyframes heroBackground {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+.axyra-membership-hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.axyra-membership-hero-title {
+  font-size: 4rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.axyra-hero-main {
+  display: block;
+  font-size: 4.5rem;
+  margin-bottom: 10px;
+  animation: heroPulse 2s ease-in-out infinite;
+}
+
+@keyframes heroPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.axyra-hero-sub {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 300;
+  opacity: 0.9;
+  animation: heroFloat 3s ease-in-out infinite;
+}
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.axyra-membership-hero-description {
+  font-size: 1.3rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.axyra-memberships-detailed {
+  padding: 100px 0;
+  background: #f8f9fa;
+}
+
+.axyra-memberships-grid-detailed {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.axyra-membership-card-detailed {
+  background: white;
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.axyra-membership-card-detailed::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.05), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.axyra-membership-card-detailed:hover::before {
+  transform: translateX(100%);
+}
+
+.axyra-membership-card-detailed:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.axyra-membership-card-detailed.axyra-membership-popular {
+  border-color: rgba(102, 126, 234, 0.3);
+  transform: scale(1.02);
+}
+
+.axyra-membership-card-detailed.axyra-membership-featured-detailed {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+  border: 2px solid rgba(102, 126, 234, 0.4);
+  transform: scale(1.05);
+  animation: featuredPulse 2s ease-in-out infinite;
+}
+
+@keyframes featuredPulse {
+  0%, 100% { 
+    box-shadow: 
+      0 0 0 0 rgba(102, 126, 234, 0.2),
+      0 20px 40px rgba(102, 126, 234, 0.15);
+  }
+  50% { 
+    box-shadow: 
+      0 0 0 10px rgba(102, 126, 234, 0),
+      0 20px 40px rgba(102, 126, 234, 0.15);
+  }
+}
+
+.axyra-membership-card-detailed.axyra-membership-enterprise-detailed {
+  border-color: rgba(254, 202, 87, 0.3);
+  background: linear-gradient(135deg, rgba(254, 202, 87, 0.05), rgba(255, 159, 243, 0.05));
+}
+
+.axyra-membership-badge-detailed {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  animation: badgeBounce 2s ease-in-out infinite;
+}
+
+.axyra-badge-popular {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.axyra-badge-featured-detailed {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.axyra-badge-enterprise-detailed {
+  background: linear-gradient(45deg, #feca57, #ff9ff3);
+  box-shadow: 0 4px 15px rgba(254, 202, 87, 0.4);
+}
+
+.axyra-membership-header-detailed {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.axyra-membership-header-detailed h3 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.axyra-membership-price-detailed {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+.axyra-price-currency-detailed {
+  font-size: 1.5rem;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.axyra-price-amount-detailed {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #667eea;
+  text-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+.axyra-price-period-detailed {
+  font-size: 1rem;
+  color: #666;
+  opacity: 0.8;
+}
+
+.axyra-membership-description {
+  font-size: 1rem;
+  color: #666;
+  font-style: italic;
+}
+
+.axyra-membership-features-detailed,
+.axyra-membership-benefits,
+.axyra-membership-limitations {
+  margin-bottom: 25px;
+}
+
+.axyra-membership-features-detailed h4,
+.axyra-membership-benefits h4,
+.axyra-membership-limitations h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #667eea;
+}
+
+.axyra-membership-features-detailed ul,
+.axyra-membership-benefits ul,
+.axyra-membership-limitations ul {
+  list-style: none;
+  padding: 0;
+}
+
+.axyra-membership-features-detailed li,
+.axyra-membership-benefits li,
+.axyra-membership-limitations li {
+  padding: 8px 0;
+  font-size: 14px;
+  color: #555;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.axyra-membership-features-detailed li:last-child,
+.axyra-membership-benefits li:last-child,
+.axyra-membership-limitations li:last-child {
+  border-bottom: none;
+}
+
+.axyra-membership-btn-detailed {
+  width: 100%;
+  padding: 18px 30px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+.axyra-membership-btn-detailed::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.axyra-membership-btn-detailed:hover::before {
+  left: 100%;
+}
+
+.axyra-membership-btn-detailed:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.axyra-terms-section {
+  background: #f8f9fa;
+  padding: 60px 0;
+  border-top: 1px solid #eee;
+}
+
+.axyra-terms-content {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.axyra-terms-content h2 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.axyra-terms-text {
+  font-size: 1.1rem;
+  color: #666;
+  line-height: 1.8;
+}
+
+.axyra-terms-text ul {
+  text-align: left;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.axyra-terms-text li {
+  margin-bottom: 10px;
+  padding-left: 10px;
+}
+
+/* Modal de Pago */
+.axyra-payment-content {
+  padding: 20px;
+}
+
+.axyra-payment-summary {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.axyra-payment-summary h4 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.axyra-plan-summary h5 {
+  font-size: 1.5rem;
+  color: #667eea;
+  margin-bottom: 10px;
+}
+
+.axyra-plan-price {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.axyra-plan-summary ul {
+  list-style: none;
+  padding: 0;
+}
+
+.axyra-plan-summary li {
+  padding: 5px 0;
+  color: #666;
+}
+
+.axyra-payment-methods h4 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.axyra-payment-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.axyra-payment-option {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.axyra-payment-option:hover {
+  border-color: #667eea;
+  background: #f8f9fa;
+}
+
+.axyra-payment-option.selected {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.axyra-payment-icon {
+  font-size: 2rem;
+}
+
+.axyra-payment-text h5 {
+  margin: 0 0 5px 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.axyra-payment-text p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.axyra-payment-terms {
+  margin-bottom: 30px;
+}
+
+.axyra-checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+}
+
+.axyra-checkbox-container input[type="checkbox"] {
+  display: none;
+}
+
+.axyra-checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.axyra-checkbox-container input[type="checkbox"]:checked + .axyra-checkmark {
+  background: #667eea;
+  border-color: #667eea;
+}
+
+.axyra-checkbox-container input[type="checkbox"]:checked + .axyra-checkmark::after {
+  content: '✓';
+  color: white;
+  font-weight: bold;
+}
+
+.axyra-payment-actions {
+  text-align: center;
+}
+
+.axyra-payment-actions .axyra-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Notificaciones de Pago */
+.axyra-payment-success,
+.axyra-payment-error {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10001;
+  transform: translateX(400px);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  max-width: 400px;
+  overflow: hidden;
+}
+
+.axyra-payment-success.show,
+.axyra-payment-error.show {
+  transform: translateX(0);
+}
+
+.axyra-payment-success {
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
+  color: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.axyra-payment-error {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  color: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.axyra-payment-success-content,
+.axyra-payment-error-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 20px;
+  position: relative;
+}
+
+.axyra-payment-success-icon,
+.axyra-payment-error-icon {
+  font-size: 2.5rem;
+  animation: paymentIconBounce 1s ease-in-out infinite;
+}
+
+@keyframes paymentIconBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.axyra-payment-success-text h3,
+.axyra-payment-error-text h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.axyra-payment-success-text p,
+.axyra-payment-error-text p {
+  margin: 0 0 15px 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.axyra-payment-details {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.axyra-payment-details p {
+  margin: 5px 0;
+  font-family: monospace;
+}
+
+.axyra-payment-success-close,
+.axyra-payment-error-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.axyra-payment-success-close:hover,
+.axyra-payment-error-close:hover {
+  opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .axyra-membership-hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .axyra-hero-main {
+    font-size: 3rem;
+  }
+  
+  .axyra-hero-sub {
+    font-size: 1.8rem;
+  }
+  
+  .axyra-memberships-grid-detailed {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .axyra-membership-card-detailed {
+    padding: 30px 20px;
+  }
+  
+  .axyra-membership-card-detailed.axyra-membership-featured-detailed {
+    transform: scale(1);
+  }
+  
+  .axyra-payment-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .axyra-payment-success,
+  .axyra-payment-error {
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+}

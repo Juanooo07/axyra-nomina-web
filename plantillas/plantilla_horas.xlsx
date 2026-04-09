@@ -1,0 +1,6 @@
+# Este es un archivo de plantilla Excel para gestión de horas
+# En un sistema real, este archivo contendría:
+# - Encabezados: Empleado, Fecha, Hora Entrada, Hora Salida, Tipo, Observaciones
+# - Fórmulas para cálculo automático de horas
+# - Validaciones de datos
+# - Formato profesional para impresión

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXYRA - Redirigiendo...</title>
+    <link rel="icon" href="nomina.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+        .redirect-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid white;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 2rem;
+        }
+        p {
+            margin: 0;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="redirect-container">
+        <div class="spinner"></div>
+        <h1>🔄 Redirigiendo...</h1>
+        <p>Te estamos llevando a la página de inicio de sesión</p>
+    </div>
+
+    <script src="js/session-redirect-system.js"></script>
+    <script>
+        // Redirigir inmediatamente a login-optimized.html
+        console.log('🔄 Redirigiendo de login.html a login-optimized.html...');
+        window.location.replace('login-optimized.html');
+    </script>
+</body>
+</html>

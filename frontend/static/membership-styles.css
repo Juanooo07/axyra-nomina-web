@@ -1,0 +1,491 @@
+/* ========================================
+   ESTILOS BRUTALES PARA MEMBRESÍAS AXYRA
+   ======================================== */
+
+.axyra-memberships-brutal {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+  padding: 100px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.axyra-memberships-brutal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+  animation: membershipBackground 20s ease-in-out infinite;
+}
+
+@keyframes membershipBackground {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+.axyra-memberships-header {
+  text-align: center;
+  margin-bottom: 80px;
+  position: relative;
+  z-index: 2;
+}
+
+.axyra-memberships-title {
+  font-size: 4rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+  background: linear-gradient(45deg, #667eea, #764ba2, #4ecdc4, #45b7d1);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 3s ease-in-out infinite;
+  text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.axyra-title-main {
+  display: block;
+  font-size: 4.5rem;
+  margin-bottom: 10px;
+  animation: titlePulse 2s ease-in-out infinite;
+}
+
+@keyframes titlePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.axyra-title-sub {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #333333;
+  opacity: 0.8;
+  animation: titleFloat 3s ease-in-out infinite;
+}
+
+@keyframes titleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.axyra-memberships-subtitle {
+  font-size: 1.3rem;
+  color: #666666;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+  animation: subtitleFade 2s ease-in-out;
+}
+
+@keyframes subtitleFade {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 0.8; transform: translateY(0); }
+}
+
+.axyra-memberships-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.axyra-membership-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 20px;
+  padding: 40px 30px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  animation: cardFloat 6s ease-in-out infinite;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.axyra-membership-card:nth-child(1) { animation-delay: 0s; }
+.axyra-membership-card:nth-child(2) { animation-delay: 1s; }
+.axyra-membership-card:nth-child(3) { animation-delay: 2s; }
+.axyra-membership-card:nth-child(4) { animation-delay: 3s; }
+
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-10px) rotate(1deg); }
+  50% { transform: translateY(-5px) rotate(0deg); }
+  75% { transform: translateY(-15px) rotate(-1deg); }
+}
+
+.axyra-membership-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.axyra-membership-card:hover::before {
+  transform: translateX(100%);
+}
+
+.axyra-membership-card:hover {
+  transform: translateY(-20px) scale(1.05);
+  box-shadow: 
+    0 20px 40px rgba(102, 126, 234, 0.2),
+    0 0 0 1px rgba(102, 126, 234, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-color: rgba(102, 126, 234, 0.4);
+}
+
+.axyra-membership-card.axyra-membership-featured {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+  border: 2px solid rgba(102, 126, 234, 0.5);
+  transform: scale(1.1);
+  animation: featuredPulse 2s ease-in-out infinite;
+}
+
+@keyframes featuredPulse {
+  0%, 100% { 
+    box-shadow: 
+      0 0 0 0 rgba(102, 126, 234, 0.4),
+      0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+  50% { 
+    box-shadow: 
+      0 0 0 20px rgba(102, 126, 234, 0),
+      0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.axyra-membership-badge {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  animation: badgeBounce 2s ease-in-out infinite;
+}
+
+@keyframes badgeBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.axyra-badge-featured {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.axyra-badge-enterprise {
+  background: linear-gradient(45deg, #feca57, #ff9ff3);
+  box-shadow: 0 4px 15px rgba(254, 202, 87, 0.4);
+}
+
+.axyra-membership-header {
+  margin-bottom: 30px;
+}
+
+.axyra-membership-header h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 15px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.axyra-membership-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 20px;
+}
+
+.axyra-price-currency {
+  font-size: 1.5rem;
+  color: #4ecdc4;
+  font-weight: 600;
+}
+
+.axyra-price-amount {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #667eea;
+  text-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+  animation: priceGlow 2s ease-in-out infinite;
+}
+
+@keyframes priceGlow {
+  0%, 100% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
+  50% { text-shadow: 0 0 30px rgba(255, 255, 255, 0.6); }
+}
+
+.axyra-price-period {
+  font-size: 1rem;
+  color: #666666;
+  opacity: 0.8;
+}
+
+.axyra-membership-features {
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+.axyra-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  padding: 10px 0;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  padding-left: 10px;
+}
+
+.axyra-feature-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(10px);
+}
+
+.axyra-feature-icon {
+  font-size: 18px;
+  color: #4ecdc4;
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.axyra-feature-text {
+  color: #333333;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.axyra-membership-btn {
+  width: 100%;
+  padding: 18px 30px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+.axyra-membership-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.axyra-membership-btn:hover::before {
+  left: 100%;
+}
+
+.axyra-membership-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.axyra-btn-gradient {
+  background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+  background-size: 200% 200%;
+  color: white;
+  animation: gradientMove 3s ease-in-out infinite;
+}
+
+@keyframes gradientMove {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.axyra-memberships-footer {
+  text-align: center;
+  margin-top: 80px;
+  position: relative;
+  z-index: 2;
+}
+
+.axyra-memberships-guarantee {
+  font-size: 1.2rem;
+  color: #333333;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  animation: guaranteeFloat 3s ease-in-out infinite;
+}
+
+@keyframes guaranteeFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.axyra-guarantee-icon {
+  font-size: 2rem;
+  animation: guaranteePulse 2s ease-in-out infinite;
+}
+
+@keyframes guaranteePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .axyra-memberships-title {
+    font-size: 2.5rem;
+  }
+  
+  .axyra-title-main {
+    font-size: 3rem;
+  }
+  
+  .axyra-title-sub {
+    font-size: 1.8rem;
+  }
+  
+  .axyra-memberships-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .axyra-membership-card {
+    padding: 30px 20px;
+  }
+  
+  .axyra-membership-card.axyra-membership-featured {
+    transform: scale(1);
+  }
+}
+
+/* Efectos de partículas flotantes */
+.axyra-memberships-brutal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, rgba(102, 126, 234, 0.1), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(118, 75, 162, 0.1), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(102, 126, 234, 0.15), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(118, 75, 162, 0.1), transparent),
+    radial-gradient(2px 2px at 160px 30px, rgba(102, 126, 234, 0.1), transparent);
+  background-repeat: repeat;
+  background-size: 200px 100px;
+  animation: particles 20s linear infinite;
+  opacity: 0.4;
+}
+
+@keyframes particles {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100px); }
+}
+
+/* Notificación de éxito de membresía */
+.axyra-membership-success {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
+  color: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 10001;
+  transform: translateX(400px);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  max-width: 400px;
+  overflow: hidden;
+}
+
+.axyra-membership-success.show {
+  transform: translateX(0);
+}
+
+.axyra-success-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  position: relative;
+}
+
+.axyra-success-icon {
+  font-size: 2.5rem;
+  animation: successBounce 1s ease-in-out infinite;
+}
+
+@keyframes successBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.axyra-success-text h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.axyra-success-text p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.axyra-success-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.axyra-success-close:hover {
+  opacity: 1;
+}

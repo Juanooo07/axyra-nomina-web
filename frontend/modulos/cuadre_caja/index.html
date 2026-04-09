@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cuadre de Caja - AXYRA</title>
+    <link rel="stylesheet" href="../../static/axyra-styles.css" />
+    <link rel="stylesheet" href="../../static/advanced-header.css" />
+    <link rel="stylesheet" href="../../static/ai-chat-styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  </head>
+  <body>
+    <div class="container" style="padding-top: 90px;"> <!-- Padding para header fijo -->
+      <h1><i class="fas fa-cash-register"></i> Cuadre de Caja</h1>
+
+      <div class="saldo-display" id="saldoDisplay">
+        <h2 id="saldoActual">$0</h2>
+        <p>Saldo Actual de Caja</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" onclick="cambiarTab('movimientos')">Movimientos</button>
+        <button class="tab" onclick="cambiarTab('cortes')">Cortes</button>
+        <button class="tab" onclick="cambiarTab('reportes')">Reportes</button>
+      </div>
+
+      <div id="tab-movimientos" class="tab-content active">
+        <h3>Registrar Movimiento</h3>
+        <button class="btn btn-primary" onclick="mostrarModalMovimiento()">Nuevo Movimiento</button>
+        <button class="btn btn-success" onclick="mostrarModalCorte()">Realizar Corte</button>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Concepto</th>
+              <th>Tipo</th>
+              <th>Monto</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoMovimientos"></tbody>
+        </table>
+      </div>
+
+      <div id="tab-cortes" class="tab-content">
+        <h3>Historial de Cortes</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Saldo Inicial</th>
+              <th>Saldo Final</th>
+              <th>Diferencia</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoCortes"></tbody>
+        </table>
+      </div>
+
+      <div id="tab-reportes" class="tab-content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3 id="totalMovimientos">0</h3>
+            <p>Total Movimientos</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="totalIngresos">$0</h3>
+            <p>Total Ingresos</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../../static/firebase-config.js"></script>
+    <script src="../../static/firebase-sync-manager.js"></script>
+    <script src="cuadre_caja_optimized.js"></script>
+    
+    <!-- Scripts avanzados -->
+    <script src="../../static/advanced-header.js"></script>
+    <script src="../../static/ai-chat-system.js"></script>
+    <script src="../../static/monitoring.js"></script>
+  </body>
+</html>

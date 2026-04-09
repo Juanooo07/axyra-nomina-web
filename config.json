@@ -1,0 +1,28 @@
+{
+  "empresa": {
+    "nombre": "VILLA VENECIA",
+    "nit": "900.123.456-7",
+    "direccion": "Calle 123 # 45-67, Bogotá D.C."
+  },
+  "salario_minimo": 1423500,
+  "auxilio_transporte": 100000,
+  "porcentajes": {
+    "salud": 0.04,
+    "pension": 0.04,
+    "fondo_solidaridad": 0.0,
+    "retencion_fuente": 0.0
+  },
+  "recargos": {
+    "nocturno": 0.35,
+    "dominical": 0.75,
+    "nocturno_dominical": 1.1,
+    "extra_diurna": 1.25,
+    "extra_nocturna": 1.75,
+    "diurna_dominical": 0.8,
+    "nocturna_dominical": 1.1,
+    "extra_diurna_dominical": 1.05,
+    "extra_nocturna_dominical": 1.85
+  },
+  "moneda": "COP",
+  "formato_moneda": "es-CO"
+}

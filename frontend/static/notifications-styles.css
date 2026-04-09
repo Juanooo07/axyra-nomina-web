@@ -1,0 +1,283 @@
+/* ========================================
+   ESTILOS MEJORADOS PARA NOTIFICACIONES AXYRA
+   ======================================== */
+
+.axyra-notifications-container {
+  position: fixed !important;
+  top: 80px !important;
+  right: 20px !important;
+  z-index: 10000 !important;
+  max-width: 420px !important;
+  min-width: 380px !important;
+  pointer-events: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  max-height: calc(100vh - 120px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 0 8px !important;
+}
+
+.axyra-notification {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+  margin-bottom: 8px !important;
+  padding: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  transform: translateX(100%) !important;
+  opacity: 0 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  pointer-events: auto !important;
+  max-width: 350px !important;
+  min-width: 320px !important;
+  overflow: visible !important;
+  position: relative !important;
+  z-index: 10000 !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.axyra-notification.show {
+  transform: translateX(0) !important;
+  opacity: 1 !important;
+}
+
+.axyra-notification-success {
+  border-left: 4px solid #10b981 !important;
+}
+
+.axyra-notification-error {
+  border-left: 4px solid #ef4444 !important;
+}
+
+.axyra-notification-warning {
+  border-left: 4px solid #f59e0b !important;
+}
+
+.axyra-notification-info {
+  border-left: 4px solid #3b82f6 !important;
+}
+
+.axyra-notification-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 12px !important;
+}
+
+.axyra-notification-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 20px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  flex-shrink: 0 !important;
+}
+
+.axyra-notification-title {
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  color: #1e293b !important;
+  margin-bottom: 2px !important;
+  line-height: 1.2 !important;
+}
+
+.axyra-notification-time {
+  font-size: 11px !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+}
+
+.axyra-notification-close {
+  background: rgba(148, 163, 184, 0.1) !important;
+  border: none !important;
+  color: #64748b !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  padding: 6px !important;
+  border-radius: 50% !important;
+  transition: all 0.3s ease !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.axyra-notification-close:hover {
+  background: rgba(148, 163, 184, 0.2) !important;
+  color: #475569 !important;
+}
+
+.axyra-notification-message {
+  color: #475569 !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  margin-bottom: 16px !important;
+  font-weight: 500 !important;
+}
+
+.axyra-notification-actions {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+
+.axyra-notification-action {
+  background: var(--notification-color) !important;
+  color: white !important;
+  border: none !important;
+  padding: 10px 20px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px var(--notification-color-shadow) !important;
+  flex: 1 !important;
+}
+
+.axyra-notification-action:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 16px var(--notification-color-shadow) !important;
+}
+
+.axyra-notification-dismiss {
+  background: rgba(148, 163, 184, 0.1) !important;
+  color: #64748b !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  padding: 10px 16px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.axyra-notification-dismiss:hover {
+  background: rgba(148, 163, 184, 0.2) !important;
+  color: #475569 !important;
+}
+
+/* Scrollbar personalizada */
+.axyra-notifications-container::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+.axyra-notifications-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1) !important;
+  border-radius: 3px !important;
+}
+
+.axyra-notifications-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-radius: 3px !important;
+}
+
+.axyra-notifications-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Animaciones mejoradas */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.axyra-notification.slide-in {
+  animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+.axyra-notification.slide-out {
+  animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .axyra-notifications-container {
+    right: 10px !important;
+    left: 10px !important;
+    max-width: calc(100vw - 20px) !important;
+    min-width: auto !important;
+  }
+
+  .axyra-notification {
+    max-width: 100% !important;
+    min-width: auto !important;
+  }
+}
+
+/* Estados de prioridad */
+.axyra-notification.high-priority {
+  border-left-width: 6px !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 12px 24px rgba(0, 0, 0, 0.1) !important;
+}
+
+.axyra-notification.medium-priority {
+  border-left-width: 4px !important;
+}
+
+.axyra-notification.low-priority {
+  border-left-width: 2px !important;
+  opacity: 0.9 !important;
+}
+
+/* Efectos de hover */
+.axyra-notification:hover {
+  transform: translateX(-2px) !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 12px 24px rgba(0, 0, 0, 0.1) !important;
+}
+
+.axyra-notification:hover .axyra-notification-action {
+  transform: translateY(-1px) !important;
+}
+
+/* Indicador de notificaciones nuevas */
+.axyra-notification.new::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

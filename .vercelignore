@@ -1,0 +1,47 @@
+# Ignorar archivos de Python que confunden a Vercel
+*.py
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Ignorar archivos de desarrollo
+node_modules/
+.git/
+.DS_Store
+*.log
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignorar archivos de Firebase que no necesitamos en Vercel
+firebase.json
+firestore.rules
+firestore.indexes.json
+storage.rules
+.firebaserc
+firebase-debug.log
+firebase-debug.*.log
+
+# Ignorar scripts de despliegue
+deploy-*.sh
+scripts/

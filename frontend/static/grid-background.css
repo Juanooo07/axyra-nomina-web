@@ -1,0 +1,89 @@
+/* Fondo azul cuadriculado para toda la página */
+body {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px) !important;
+  background-size: 20px 20px !important;
+  background-position: 0 0, 0 0 !important;
+  min-height: 100vh !important;
+}
+
+/* Forzar el fondo en el html también */
+html {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px) !important;
+  background-size: 20px 20px !important;
+  background-position: 0 0, 0 0 !important;
+  min-height: 100vh !important;
+}
+
+/* Ajustes para secciones específicas */
+.axyra-hero {
+  background: transparent !important;
+}
+
+.axyra-cta {
+  background: transparent !important;
+}
+
+.axyra-footer-professional {
+  background: transparent !important;
+}
+
+/* Mejorar contraste de texto en fondo oscuro */
+.axyra-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  margin: 20px 0;
+  padding: 40px 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Ajustar sección de membresías */
+.axyra-memberships-brutal {
+  background: rgba(255, 255, 255, 0.98) !important;
+  border-radius: 24px;
+  margin: 30px 0;
+  padding: 60px 0;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Mejorar visibilidad de las tarjetas */
+.axyra-feature-card,
+.axyra-quick-card,
+.axyra-membership-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Ajustar header para que se vea bien */
+.axyra-header {
+  background: rgba(30, 41, 59, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Mejorar contraste del texto principal */
+.axyra-hero-content h1,
+.axyra-hero-content p {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Ajustar secciones de contacto y footer */
+.axyra-contact {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 20px;
+  margin: 20px 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.axyra-footer-professional {
+  background: rgba(30, 41, 59, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 20px 20px 0 0;
+  margin-top: 40px;
+}

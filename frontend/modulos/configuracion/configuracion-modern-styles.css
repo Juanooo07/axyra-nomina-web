@@ -1,0 +1,351 @@
+/* Estilos modernos para Configuración AXYRA */
+
+/* Grid de sistemas */
+.axyra-systems-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+
+/* Tarjetas de sistemas */
+.axyra-system-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.axyra-system-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+}
+
+.axyra-system-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Variantes de color para las tarjetas */
+.axyra-system-primary::before {
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+}
+
+.axyra-system-secondary::before {
+  background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+}
+
+.axyra-system-info::before {
+  background: linear-gradient(90deg, #06b6d4, #0891b2);
+}
+
+.axyra-system-warning::before {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.axyra-system-success::before {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.axyra-system-dark::before {
+  background: linear-gradient(90deg, #374151, #1f2937);
+}
+
+/* Iconos de sistemas */
+.axyra-system-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: white;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  align-self: flex-start;
+}
+
+.axyra-system-primary .axyra-system-icon {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.axyra-system-secondary .axyra-system-icon {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.axyra-system-info .axyra-system-icon {
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+}
+
+.axyra-system-warning .axyra-system-icon {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.axyra-system-success .axyra-system-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.axyra-system-dark .axyra-system-icon {
+  background: linear-gradient(135deg, #374151, #1f2937);
+}
+
+/* Contenido de sistemas */
+.axyra-system-content {
+  flex: 1;
+}
+
+.axyra-system-content h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.axyra-system-content p {
+  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* Estado del sistema */
+.axyra-system-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.axyra-status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.axyra-status-active {
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.axyra-status-inactive {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.axyra-status-maintenance {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+/* Modals profesionales */
+.axyra-modal-professional {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.axyra-modal-professional-content {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 24px;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.axyra-modal-professional-header {
+  padding: 32px 32px 0 32px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.axyra-modal-professional-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.axyra-modal-professional-close {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: none;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.axyra-modal-professional-close:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.axyra-modal-professional-body {
+  padding: 32px;
+}
+
+.axyra-modal-professional-footer {
+  padding: 0 32px 32px 32px;
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
+/* Botones de modal */
+.axyra-btn-modal {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.axyra-btn-modal-primary {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+.axyra-btn-modal-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+}
+
+.axyra-btn-modal-secondary {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.axyra-btn-modal-secondary:hover {
+  background: #e5e7eb;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .axyra-systems-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .axyra-system-card {
+    padding: 24px;
+  }
+  
+  .axyra-system-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 28px;
+  }
+  
+  .axyra-system-content h3 {
+    font-size: 20px;
+  }
+  
+  .axyra-modal-professional-content {
+    margin: 10px;
+    max-height: 95vh;
+  }
+  
+  .axyra-modal-professional-header,
+  .axyra-modal-professional-body,
+  .axyra-modal-professional-footer {
+    padding: 20px;
+  }
+}
+
+/* Animaciones */
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes systemCardHover {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(-8px); }
+}
+
+.axyra-system-card:hover {
+  animation: systemCardHover 0.3s ease-out;
+}
+
+/* Mejoras para el header de la página */
+.axyra-page-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  color: white;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(30, 64, 175, 0.3);
+}
+
+.axyra-page-title {
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.axyra-page-subtitle {
+  font-size: 20px;
+  opacity: 0.9;
+  margin: 0;
+}

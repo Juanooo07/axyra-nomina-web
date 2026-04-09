@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AXYRA - Reportes Avanzados</title>
+    <link rel="stylesheet" href="../../static/axyra-styles.css" />
+    <link rel="stylesheet" href="../../static/advanced-features.css" />
+    <link rel="stylesheet" href="../../static/responsive-styles.css" />
+    <link rel="stylesheet" href="../../static/modal-fixes.css" />
+    <link rel="stylesheet" href="../../static/modal-positioning-fix.css" />
+    <link rel="stylesheet" href="../../static/modal-emergency-fix.css" />
+    <link rel="stylesheet" href="../../static/header-fixes.css" />
+    <link rel="stylesheet" href="reportes-avanzados-styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+      import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        collection,
+        query,
+        where,
+        getDocs,
+      } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js';
+
+      // Firebase config
+      const firebaseConfig = {
+        apiKey: 'AIzaSyBvQvqQvqQvqQvqQvqQvqQvqQvqQvqQvqQ',
+        authDomain: 'villa-venecia-nomina.firebaseapp.com',
+        projectId: 'villa-venecia-nomina',
+        storageBucket: 'villa-venecia-nomina.appspot.com',
+        messagingSenderId: '123456789',
+        appId: '1:123456789:web:abcdef123456',
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // Global auth state
+      window.axyraAuth = { auth, db };
+
+      // Check auth state with unified system
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          console.log('Usuario autenticado:', user.email);
+          // Initialize reports
+          if (window.axyraReportes) {
+            window.axyraReportes.init();
+          }
+        } else {
+          console.log('Usuario no autenticado');
+          // Verificar sistema unificado antes de redirigir
+          if (window.axyraUnifiedAuth && window.axyraUnifiedAuth.isAuthenticated()) {
+            console.log('Usuario autenticado en sistema unificado, continuando...');
+            if (window.axyraReportes) {
+              window.axyraReportes.init();
+            }
+          } else if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            console.log('Usuario autenticado en sistema aislado, continuando...');
+            if (window.axyraReportes) {
+              window.axyraReportes.init();
+            }
+          } else {
+            console.log('No hay usuario autenticado, redirigiendo...');
+            window.location.href = '../../login-optimized.html';
+          }
+        }
+      });
+    </script>
+
+    <!-- Header Compartido AXYRA -->
+    <script src="../../static/include-header.js"></script>
+
+    <!-- Verificación del Header Compartido -->
+    <script src="../../static/header-verification.js"></script>
+
+    <!-- Sistema de Roles y Permisos AXYRA -->
+    <script src="../../static/roles-config.js"></script>
+
+    <!-- Sistema de Notificaciones Push AXYRA -->
+    <!-- Sistema de Notificaciones AXYRA Profesional -->
+    <link rel="stylesheet" href="../../static/notifications-professional-styles.css" />
+    <script src="../../js/axyra-notifications.js"></script>
+
+    <!-- Sistema Unificado de Reportes Avanzados AXYRA -->
+    <script src="../../static/advanced-reports-unified.js"></script>
+
+    <!-- Sistema de Validación Avanzada AXYRA -->
+    <script src="../../static/advanced-validation-system.js"></script>
+  </head>
+  <body>
+    <!-- Header Compartido AXYRA - Se insertará automáticamente -->
+
+    <!-- Main Content -->
+    <main class="axyra-main-content">
+      <div class="axyra-reports-container">
+        <div class="axyra-reports-header">
+          <h1 class="axyra-reports-title">Reportes Avanzados</h1>
+          <p class="axyra-reports-subtitle">Genera reportes detallados y análisis de datos de tu empresa</p>
+        </div>
+
+        <!-- Dashboard de Reportes -->
+        <div class="axyra-reports-dashboard">
+          <div class="axyra-reports-grid">
+            <!-- Reportes de Empleados -->
+            <div class="axyra-report-card">
+              <div class="axyra-report-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="axyra-report-content">
+                <h3>Reportes de Empleados</h3>
+                <p>Análisis completo del personal, nóminas y rendimiento</p>
+                <div class="axyra-report-actions">
+                  <button id="btnReporteEmpleados" class="axyra-btn axyra-btn-primary">
+                    <i class="fas fa-chart-bar"></i> Generar
+                  </button>
+                  <button id="btnVistaPreviaEmpleados" class="axyra-btn axyra-btn-secondary">
+                    <i class="fas fa-eye"></i> Vista Previa
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reportes Financieros -->
+            <div class="axyra-report-card">
+              <div class="axyra-report-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="axyra-report-content">
+                <h3>Reportes Financieros</h3>
+                <p>Análisis de costos, ingresos y rentabilidad</p>
+                <div class="axyra-report-actions">
+                  <button id="btnReporteFinanciero" class="axyra-btn axyra-btn-primary">
+                    <i class="fas fa-chart-bar"></i> Generar
+                  </button>
+                  <button id="btnVistaPreviaFinanciero" class="axyra-btn axyra-btn-secondary">
+                    <i class="fas fa-eye"></i> Vista Previa
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reportes de Inventario -->
+            <div class="axyra-report-card">
+              <div class="axyra-report-icon">
+                <i class="fas fa-boxes"></i>
+              </div>
+              <div class="axyra-report-content">
+                <h3>Reportes de Inventario</h3>
+                <p>Control de stock, movimientos y análisis de productos</p>
+                <div class="axyra-report-actions">
+                  <button id="btnReporteInventario" class="axyra-btn axyra-btn-primary">
+                    <i class="fas fa-chart-bar"></i> Generar
+                  </button>
+                  <button id="btnVistaPreviaInventario" class="axyra-btn axyra-btn-secondary">
+                    <i class="fas fa-eye"></i> Vista Previa
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reportes de Horas -->
+            <div class="axyra-report-card">
+              <div class="axyra-report-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="axyra-report-content">
+                <h3>Reportes de Horas</h3>
+                <p>Análisis de tiempo trabajado y productividad</p>
+                <div class="axyra-report-actions">
+                  <button id="btnReporteHoras" class="axyra-btn axyra-btn-primary">
+                    <i class="fas fa-chart-bar"></i> Generar
+                  </button>
+                  <button id="btnVistaPreviaHoras" class="axyra-btn axyra-btn-secondary">
+                    <i class="fas fa-eye"></i> Vista Previa
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reportes de Cuadre de Caja -->
+            <div class="axyra-report-card">
+              <div class="axyra-report-icon">
+                <i class="fas fa-cash-register"></i>
+              </div>
+              <div class="axyra-report-content">
+                <h3>Reportes de Caja</h3>
+                <p>Análisis de ventas, ingresos y cuadres diarios</p>
+                <div class="axyra-report-actions">
+                  <button id="btnReporteCaja" class="axyra-btn axyra-btn-primary">
+                    <i class="fas fa-chart-bar"></i> Generar
+                  </button>
+                  <button id="btnVistaPreviaCaja" class="axyra-btn axyra-btn-secondary">
+                    <i class="fas fa-eye"></i> Vista Previa
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reportes Personalizados -->
+            <div class="axyra-report-card">
+              <div class="axyra-report-icon">
+                <i class="fas fa-cogs"></i>
+              </div>
+              <div class="axyra-report-content">
+                <h3>Reportes Personalizados</h3>
+                <p>Crea reportes a medida con tus propios criterios</p>
+                <div class="axyra-report-actions">
+                  <button id="btnReportePersonalizado" class="axyra-btn axyra-btn-primary">
+                    <i class="fas fa-plus"></i> Crear
+                  </button>
+                  <button id="btnGestionarPersonalizados" class="axyra-btn axyra-btn-secondary">
+                    <i class="fas fa-list"></i> Gestionar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros y Configuración -->
+        <div class="axyra-reports-filters">
+          <h3>Filtros y Configuración</h3>
+          <div class="axyra-filters-grid">
+            <div class="axyra-filter-group">
+              <label for="filtroFechaInicio">Fecha Inicio:</label>
+              <input type="date" id="filtroFechaInicio" class="axyra-form-control" />
+            </div>
+            <div class="axyra-filter-group">
+              <label for="filtroFechaFin">Fecha Fin:</label>
+              <input type="date" id="filtroFechaFin" class="axyra-form-control" />
+            </div>
+            <div class="axyra-filter-group">
+              <label for="filtroDepartamento">Departamento:</label>
+              <select id="filtroDepartamento" class="axyra-form-control">
+                <option value="">Todos los departamentos</option>
+              </select>
+            </div>
+            <div class="axyra-filter-group">
+              <label for="filtroFormato">Formato:</label>
+              <select id="filtroFormato" class="axyra-form-control">
+                <option value="pdf">PDF</option>
+                <option value="excel">Excel</option>
+                <option value="html">HTML</option>
+              </select>
+            </div>
+            <div class="axyra-filter-group">
+              <button id="btnAplicarFiltros" class="axyra-btn axyra-btn-primary">
+                <i class="fas fa-filter"></i> Aplicar Filtros
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Área de Visualización -->
+        <div class="axyra-reports-viewer">
+          <div class="axyra-viewer-header">
+            <h3>Vista Previa del Reporte</h3>
+            <div class="axyra-viewer-actions">
+              <button id="btnExportarReporte" class="axyra-btn axyra-btn-success" disabled>
+                <i class="fas fa-download"></i> Exportar
+              </button>
+              <button id="btnImprimirReporte" class="axyra-btn axyra-btn-secondary" disabled>
+                <i class="fas fa-print"></i> Imprimir
+              </button>
+              <button id="btnCompartirReporte" class="axyra-btn axyra-btn-info" disabled>
+                <i class="fas fa-share"></i> Compartir
+              </button>
+            </div>
+          </div>
+          <div class="axyra-viewer-content" id="reporteContent">
+            <div class="axyra-placeholder">
+              <i class="fas fa-chart-bar"></i>
+              <h4>Selecciona un reporte para comenzar</h4>
+              <p>Elige uno de los reportes disponibles para ver la vista previa</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historial de Reportes -->
+        <div class="axyra-reports-history">
+          <h3>Historial de Reportes</h3>
+          <div class="axyra-history-list" id="historialReportes">
+            <!-- Los reportes generados se mostrarán aquí -->
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../../static/firebase-config.js"></script>
+    <script src="../../static/firebase-sync-manager.js"></script>
+    <script src="../../static/advanced-validation-system.js"></script>
+
+    <!-- Sistema Avanzado de Reportes AXYRA -->
+    <script src="reportes-avanzados.js"></script>
+
+    <!-- Chat de IA AXYRA - Cargar al final -->
+    <script src="../../static/axyra-ai-global.js"></script>
+  </body>
+</html>

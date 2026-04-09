@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 PRUEBA COMPLETA DEL SISTEMA - AXYRA 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .contenedor {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 1000px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .panel h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+        
+        .botones {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #e8e8e8;
+        }
+        
+        .console {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            max-height: 250px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .console-log {
+            color: #00ff00;
+        }
+        
+        .console-error {
+            color: #ff6b6b;
+        }
+        
+        .console-success {
+            color: #51cf66;
+        }
+        
+        .console-info {
+            color: #87ceeb;
+        }
+        
+        .tabla-resultado {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .tabla-resultado th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .tabla-resultado td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .tabla-resultado tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .tabla-resultado .numero {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+        }
+        
+        .status-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+        .status-ok {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            padding: 10px 20px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .tab-button.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .lista-empleados {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .item-empleado {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .item-empleado:last-child {
+            border-bottom: none;
+        }
+        
+        .item-empleado button {
+            padding: 5px 10px;
+            font-size: 0.8em;
+        }
+        
+        .card-valor {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .card-valor .etiqueta {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        
+        .card-valor .valor {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #333;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .success-badge {
+            background: #51cf66;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .error-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <header>
+            <h1>🧪 PRUEBA COMPLETA DEL SISTEMA AXYRA</h1>
+            <p>Prueba TODO funcionando en tiempo real - Sin riesgos, solo memoria temporal</p>
+        </header>
+        
+        <div class="grid">
+            <!-- PANEL IZQUIERDO: CREAR EMPLEADO -->
+            <div class="panel">
+                <h2>👤 Crear Empleado Fijo</h2>
+                
+                <div class="input-group">
+                    <label>Nombre *</label>
+                    <input type="text" id="nombre" placeholder="Ej: Juan Pérez García" value="Juan Pérez">
+                </div>
+                
+                <div class="input-group">
+                    <label>Cédula *</label>
+                    <input type="text" id="cedula" placeholder="Ej: 1234567890" value="1234567890">
+                </div>
+                
+                <div class="input-group">
+                    <label>Cargo</label>
+                    <input type="text" id="cargo" placeholder="Ej: Gerente" value="Gerente de Ventas">
+                </div>
+                
+                <div class="input-group">
+                    <label>Departamento</label>
+                    <input type="text" id="departamento" placeholder="Ej: Ventas" value="Ventas">
+                </div>
+                
+                <div class="input-group">
+                    <label>Salario Fijo * (COP)</label>
+                    <input type="number" id="salarioFijo" placeholder="Ej: 2500000" value="2500000">
+                </div>
+                
+                <div class="input-group">
+                    <label>Bonificación (COP)</label>
+                    <input type="number" id="bonificacion" placeholder="Ej: 200000" value="200000">
+                </div>
+                
+                <div class="input-group">
+                    <label>Aux. Transporte (COP)</label>
+                    <input type="number" id="auxTransporte" placeholder="Ej: 150000" value="150000">
+                </div>
+                
+                <div class="input-group">
+                    <label>Aux. Alimentación (COP)</label>
+                    <input type="number" id="auxAlimentacion" placeholder="Ej: 100000" value="100000">
+                </div>
+                
+                <div class="botones">
+                    <button class="btn-primary" onclick="crearEmpleado()">✅ Crear Empleado</button>
+                    <button class="btn-secondary" onclick="limpiarFormulario()">🗑️ Limpiar</button>
+                </div>
+                
+                <div id="statusCrear"></div>
+                
+                <h2 style="margin-top: 30px;">📋 Empleados Creados</h2>
+                <div class="lista-empleados" id="listaEmpleados">
+                    <p style="padding: 20px; color: #999; text-align: center;">Sin empleados aún</p>
+                </div>
+            </div>
+            
+            <!-- PANEL DERECHO: CÁLCULOS Y RESULTADOS -->
+            <div class="panel">
+                <h2>💰 Cálculos y Resultados</h2>
+                
+                <div class="tab-buttons">
+                    <button class="tab-button active" onclick="cambiarTab('salario')">💵 Salario</button>
+                    <button class="tab-button" onclick="cambiarTab('nomina')">📊 Nómina</button>
+                    <button class="tab-button" onclick="cambiarTab('horas')">⏰ Horas</button>
+                </div>
+                
+                <!-- TAB: SALARIO -->
+                <div id="tab-salario" class="tab-content active">
+                    <div class="input-group">
+                        <label>Seleccionar Empleado</label>
+                        <select id="selectEmpleado" onchange="calcularSalarioSeleccionado()">
+                            <option value="">-- Selecciona un empleado --</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn-primary" onclick="calcularSalarioSeleccionado()" style="width: 100%;">
+                        🧮 Calcular Salario
+                    </button>
+                    
+                    <div id="resultadoSalario"></div>
+                </div>
+                
+                <!-- TAB: NÓMINA -->
+                <div id="tab-nomina" class="tab-content">
+                    <div class="input-group">
+                        <label>Mes (1-12)</label>
+                        <input type="number" id="mes" min="1" max="12" value="4">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Año</label>
+                        <input type="number" id="ano" value="2026">
+                    </div>
+                    
+                    <button class="btn-primary" onclick="generarNomina()" style="width: 100%;">
+                        📋 Generar Nómina
+                    </button>
+                    
+                    <div id="resultadoNomina"></div>
+                </div>
+                
+                <!-- TAB: HORAS -->
+                <div id="tab-horas" class="tab-content">
+                    <div class="input-group">
+                        <label>Hora Inicio</label>
+                        <input type="time" id="horaInicio" value="08:00">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Hora Fin</label>
+                        <input type="time" id="horaFin" value="17:00">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Tipo de Hora</label>
+                        <select id="tipoHora">
+                            <option value="ordinaria">Ordinaria (1.0x)</option>
+                            <option value="extra_diurna">Extra Diurna (1.25x)</option>
+                            <option value="nocturna">Nocturna (1.35x)</option>
+                            <option value="dominical">Dominical (1.75x)</option>
+                            <option value="extra_dominical">Extra Dominical (2.5x)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Valor Hora (COP)</label>
+                        <input type="number" id="valorHora" placeholder="Ej: 30000" value="30000">
+                    </div>
+                    
+                    <button class="btn-primary" onclick="calcularHoras()" style="width: 100%;">
+                        ⏰ Calcular Horas
+                    </button>
+                    
+                    <div id="resultadoHoras"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- PANEL COMPLETO: CONSOLA Y ESTADO -->
+        <div class="panel">
+            <h2>📊 Consola de Ejecución</h2>
+            <div class="console" id="consola">
+                <div class="console-info">📌 Sistema listo. Crea un empleado para comenzar...</div>
+            </div>
+            
+            <div class="botones">
+                <button class="btn-secondary" onclick="limpiarConsola()" style="flex: 1;">🗑️ Limpiar Consola</button>
+                <button class="btn-secondary" onclick="exportarJSON()" style="flex: 1;">📥 Exportar Datos JSON</button>
+                <button class="btn-secondary" onclick="limpiarTodo()" style="flex: 1;">⚠️ Limpiar TODO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cargar módulos -->
+    <script src="modulos/gestion_personal/empleados-fijos-mejorado.js"></script>
+    <script src="../scripts/test-porcentajes-horas.js"></script>
+
+    <script>
+        let logsConsola = [];
+        let empleadosActuales = [];
+
+        // Capturar logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        console.log = function(...args) {
+            originalLog(...args);
+            const msg = args.join(' ');
+            logsConsola.push({ tipo: 'log', msg });
+            actualizarConsola();
+        };
+        
+        console.error = function(...args) {
+            originalError(...args);
+            const msg = args.join(' ');
+            logsConsola.push({ tipo: 'error', msg });
+            actualizarConsola();
+        };
+
+        function actualizarConsola() {
+            const consola = document.getElementById('consola');
+            consola.innerHTML = logsConsola.map(log => {
+                const clase = `console-${log.tipo}`;
+                return `<div class="${clase}">→ ${log.msg}</div>`;
+            }).join('');
+            consola.scrollTop = consola.scrollHeight;
+        }
+
+        function agregarLog(msg, tipo = 'log') {
+            logsConsola.push({ tipo, msg });
+            actualizarConsola();
+        }
+
+        function crearEmpleado() {
+            try {
+                const datos = {
+                    nombre: document.getElementById('nombre').value,
+                    cedula: document.getElementById('cedula').value,
+                    cargo: document.getElementById('cargo').value,
+                    departamento: document.getElementById('departamento').value,
+                    salarioFijo: parseInt(document.getElementById('salarioFijo').value),
+                    bonificacion: parseInt(document.getElementById('bonificacion').value),
+                    auxTransporte: parseInt(document.getElementById('auxTransporte').value),
+                    auxAlimentacion: parseInt(document.getElementById('auxAlimentacion').value),
+                    estado: 'ACTIVO'
+                };
+
+                if (!datos.nombre || !datos.cedula || !datos.salarioFijo) {
+                    throw new Error('Falta información obligatoria');
+                }
+
+                const empleado = window.axyraEmpleadosFijos.agregarEmpleadoFijo(datos);
+                empleadosActuales.push(empleado);
+
+                agregarLog(`✅ Empleado creado: ${empleado.nombre} (${empleado.cedula})`, 'log');
+                
+                mostrarStatus('statusCrear', `✅ Empleado ${empleado.nombre} creado exitosamente`, 'success');
+                actualizarListaEmpleados();
+                actualizarSelectEmpleados();
+                
+            } catch (error) {
+                agregarLog(`❌ Error: ${error.message}`, 'error');
+                mostrarStatus('statusCrear', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function actualizarListaEmpleados() {
+            const lista = document.getElementById('listaEmpleados');
+            const emps = window.axyraEmpleadosFijos.listarEmpleados();
+            
+            if (emps.length === 0) {
+                lista.innerHTML = '<p style="padding: 20px; color: #999; text-align: center;">Sin empleados aún</p>';
+                return;
+            }
+
+            lista.innerHTML = emps.map(emp => `
+                <div class="item-empleado">
+                    <div>
+                        <strong>${emp.nombre}</strong><br>
+                        <small style="color: #666;">${emp.cedula} • ${emp.cargo}</small>
+                    </div>
+                    <button class="btn-secondary" onclick="eliminarEmpleado('${emp.id}')" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function actualizarSelectEmpleados() {
+            const select = document.getElementById('selectEmpleado');
+            const emps = window.axyraEmpleadosFijos.listarEmpleados();
+            
+            let html = '<option value="">-- Selecciona un empleado --</option>';
+            emps.forEach(emp => {
+                html += `<option value="${emp.id}">${emp.nombre} ($${emp.salarioFijo.toLocaleString()})</option>`;
+            });
+            
+            select.innerHTML = html;
+        }
+
+        function calcularSalarioSeleccionado() {
+            const empleadoId = document.getElementById('selectEmpleado').value;
+            if (!empleadoId) {
+                mostrarStatus('resultadoSalario', '⚠️ Selecciona un empleado', 'error');
+                return;
+            }
+
+            try {
+                const calculo = window.axyraEmpleadosFijos.calcularSalarioMensual(empleadoId);
+                
+                const html = `
+                    <div class="status-box status-ok" style="margin-top: 20px;">
+                        <h3 style="margin-bottom: 15px;">💰 Cálculo de Salario para ${calculo.empleadoNombre}</h3>
+                        
+                        <table class="tabla-resultado">
+                            <tr>
+                                <td>Salario Base</td>
+                                <td class="numero">$${calculo.salarioBase.toLocaleString()}</td>
+                            </tr>
+                            <tr>
+                                <td>Bonificación</td>
+                                <td class="numero">$${(calculo.bonificacion || 0).toLocaleString()}</td>
+                            </tr>
+                            <tr>
+                                <td>Aux. Transporte</td>
+                                <td class="numero">$${(calculo.auxTransporte || 0).toLocaleString()}</td>
+                            </tr>
+                            <tr style="background: #e3f2fd;">
+                                <td><strong>SALARIO BRUTO</strong></td>
+                                <td class="numero"><strong>$${calculo.salarioBruto.toLocaleString()}</strong></td>
+                            </tr>
+                            <tr style="background: #fff3e0;">
+                                <td>AFP (10%)</td>
+                                <td class="numero">-$${calculo.afp.toLocaleString()}</td>
+                            </tr>
+                            <tr style="background: #fff3e0;">
+                                <td>Salud (4%)</td>
+                                <td class="numero">-$${calculo.salud.toLocaleString()}</td>
+                            </tr>
+                            <tr style="background: #fff3e0;">
+                                <td>Impuestos (8%)</td>
+                                <td class="numero">-$${calculo.impuestoRenta.toLocaleString()}</td>
+                            </tr>
+                            <tr style="background: #fff3e0;">
+                                <td>Sindicato (2%)</td>
+                                <td class="numero">-$${calculo.sindicato.toLocaleString()}</td>
+                            </tr>
+                            <tr style="background: #f3e5f5;">
+                                <td><strong>TOTAL DEDUCCIONES</strong></td>
+                                <td class="numero"><strong>-$${calculo.totalDeducciones.toLocaleString()}</strong></td>
+                            </tr>
+                            <tr style="background: #c8e6c9; font-weight: bold;">
+                                <td>SALARIO NETO</td>
+                                <td class="numero">$${calculo.salarioNeto.toLocaleString()}</td>
+                            </tr>
+                        </table>
+                        
+                        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">
+                            * Descuentos porcentuales: ${calculo.porcentajeDeducciones}
+                        </p>
+                    </div>
+                `;
+                
+                document.getElementById('resultadoSalario').innerHTML = html;
+                agregarLog(`✅ Cálculo realizado para ${calculo.empleadoNombre}: Bruto $${calculo.salarioBruto}, Neto $${calculo.salarioNeto}`, 'log');
+                
+            } catch (error) {
+                agregarLog(`❌ Error: ${error.message}`, 'error');
+                mostrarStatus('resultadoSalario', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function generarNomina() {
+            try {
+                const mes = parseInt(document.getElementById('mes').value);
+                const ano = parseInt(document.getElementById('ano').value);
+                
+                const nomina = window.axyraEmpleadosFijos.generarNominaMensual(mes, ano);
+                
+                const html = `
+                    <div class="status-box status-ok" style="margin-top: 20px;">
+                        <h3 style="margin-bottom: 15px;">📋 Nómina del Mes - ${mes}/${ano}</h3>
+                        
+                        <table class="tabla-resultado">
+                            <tr>
+                                <td>Cantidad de Empleados</td>
+                                <td class="numero"><strong>${nomina.cantidadEmpleados}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Total Salarios Brutos</td>
+                                <td class="numero">$${nomina.totalSalariosBrutos.toLocaleString()}</td>
+                            </tr>
+                            <tr style="background: #fff3e0;">
+                                <td>Total AFP</td>
+                                <td class="numero">-$${nomina.totalAFP.toLocaleString()}</td>
+                            </tr>
+                            <tr style="background: #fff3e0;">
+                                <td>Total Salud</td>
+                                <td class="numero">-$${nomina.totalSalud.toLocaleString()}</td>
+                            </tr>
+                            <tr style="background: #fff3e0;">
+                                <td>Total Impuestos</td>
+                                <td class="numero">-$${nomina.totalImpuestos.toLocaleString()}</td>
+                            </tr>
+                            <tr style="background: #f3e5f5;">
+                                <td><strong>Total Deducciones</strong></td>
+                                <td class="numero"><strong>-$${nomina.totalDeducciones.toLocaleString()}</strong></td>
+                            </tr>
+                            <tr style="background: #c8e6c9; font-weight: bold; font-size: 1.1em;">
+                                <td>TOTAL A PAGAR</td>
+                                <td class="numero">$${nomina.totalSalariosNetos.toLocaleString()}</td>
+                            </tr>
+                        </table>
+                        
+                        ${nomina.empleados ? `
+                            <h4 style="margin-top: 20px; margin-bottom: 10px;">Detalle por Empleado:</h4>
+                            <table class="tabla-resultado">
+                                <tr>
+                                    <th>Empleado</th>
+                                    <th class="numero">Bruto</th>
+                                    <th class="numero">Desc.</th>
+                                    <th class="numero">Neto</th>
+                                </tr>
+                                ${nomina.empleados.map(emp => `
+                                    <tr>
+                                        <td>${emp.nombre}</td>
+                                        <td class="numero">$${emp.salarioBruto.toLocaleString()}</td>
+                                        <td class="numero">-$${emp.totalDeducciones.toLocaleString()}</td>
+                                        <td class="numero" style="color: green; font-weight: bold;">$${emp.salarioNeto.toLocaleString()}</td>
+                                    </tr>
+                                `).join('')}
+                            </table>
+                        ` : ''}
+                    </div>
+                `;
+                
+                document.getElementById('resultadoNomina').innerHTML = html;
+                agregarLog(`✅ Nómina generada: ${nomina.cantidadEmpleados} empleados, Total $${nomina.totalSalariosNetos.toLocaleString()}`, 'log');
+                
+            } catch (error) {
+                agregarLog(`❌ Error: ${error.message}`, 'error');
+                mostrarStatus('resultadoNomina', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function calcularHoras() {
+            try {
+                const inicio = document.getElementById('horaInicio').value;
+                const fin = document.getElementById('horaFin').value;
+                const tipo = document.getElementById('tipoHora').value;
+                const valorHora = parseInt(document.getElementById('valorHora').value);
+
+                if (!inicio || !fin || !valorHora) {
+                    throw new Error('Complete todos los campos');
+                }
+
+                // Calcular diferencia de horas
+                const [hInicio, mInicio] = inicio.split(':').map(Number);
+                const [hFin, mFin] = fin.split(':').map(Number);
+                
+                const minInicio = hInicio * 60 + mInicio;
+                const minFin = hFin * 60 + mFin;
+                const minTrabajados = minFin - minInicio;
+                
+                if (minTrabajados < 0) {
+                    throw new Error('La hora fin debe ser mayor a la hora inicio');
+                }
+                
+                const horasTrabajadas = Math.round((minTrabajados / 60) * 100) / 100;
+
+                // Multiplicadores
+                const multiplicadores = {
+                    ordinaria: 1.0,
+                    extra_diurna: 1.25,
+                    nocturna: 1.35,
+                    dominical: 1.75,
+                    extra_dominical: 2.5
+                };
+
+                const multiplicador = multiplicadores[tipo] || 1;
+                const valorPago = Math.round(valorHora * multiplicador * horasTrabajadas * 100) / 100;
+
+                const html = `
+                    <div class="status-box status-ok" style="margin-top: 20px;">
+                        <h3 style="margin-bottom: 15px;">⏰ Cálculo de Horas Trabajadas</h3>
+                        
+                        <div class="card-valor">
+                            <div class="etiqueta">Hora Inicio</div>
+                            <div class="valor">${inicio}</div>
+                        </div>
+                        
+                        <div class="card-valor">
+                            <div class="etiqueta">Hora Fin</div>
+                            <div class="valor">${fin}</div>
+                        </div>
+                        
+                        <div class="card-valor">
+                            <div class="etiqueta">Horas Trabajadas</div>
+                            <div class="valor">${horasTrabajadas}h</div>
+                        </div>
+                        
+                        <div class="card-valor">
+                            <div class="etiqueta">Tipo de Hora</div>
+                            <div class="valor">${tipo} (${multiplicador}x)</div>
+                        </div>
+                        
+                        <div class="card-valor">
+                            <div class="etiqueta">Valor Hora Base</div>
+                            <div class="valor">$${valorHora.toLocaleString()}</div>
+                        </div>
+                        
+                        <div class="card-valor" style="background: #c8e6c9; border-left-color: #51cf66;">
+                            <div class="etiqueta" style="color: #333;">TOTAL A PAGAR</div>
+                            <div class="valor" style="color: #51cf66;">$${valorPago.toLocaleString()}</div>
+                        </div>
+                        
+                        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">
+                            Fórmula: $${valorHora} × ${multiplicador} × ${horasTrabajadas}h = $${valorPago.toLocaleString()}
+                        </p>
+                    </div>
+                `;
+                
+                document.getElementById('resultadoHoras').innerHTML = html;
+                agregarLog(`✅ Cálculo de horas: ${horasTrabajadas}h (${tipo}) = $${valorPago.toLocaleString()}`, 'log');
+                
+            } catch (error) {
+                agregarLog(`❌ Error: ${error.message}`, 'error');
+                mostrarStatus('resultadoHoras', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function cambiarTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function eliminarEmpleado(id) {
+            if (confirm('¿Eliminar este empleado?')) {
+                window.axyraEmpleadosFijos.eliminarEmpleado(id);
+                agregarLog(`🗑️ Empleado eliminado`, 'log');
+                actualizarListaEmpleados();
+                actualizarSelectEmpleados();
+                document.getElementById('resultadoSalario').innerHTML = '';
+            }
+        }
+
+        function mostrarStatus(elementId, mensaje, tipo) {
+            const clases = tipo === 'success' ? 'status-box status-ok' : 'status-box status-error';
+            document.getElementById(elementId).innerHTML = `<div class="${clases}">${mensaje}</div>`;
+        }
+
+        function limpiarFormulario() {
+            document.getElementById('nombre').value = 'Juan Pérez';
+            document.getElementById('cedula').value = '1234567890';
+            document.getElementById('cargo').value = 'Gerente de Ventas';
+            document.getElementById('departamento').value = 'Ventas';
+            document.getElementById('salarioFijo').value = '2500000';
+            document.getElementById('bonificacion').value = '200000';
+            document.getElementById('auxTransporte').value = '150000';
+            document.getElementById('auxAlimentacion').value = '100000';
+        }
+
+        function limpiarConsola() {
+            logsConsola = [];
+            actualizarConsola();
+        }
+
+        function exportarJSON() {
+            const datos = {
+                empleados: window.axyraEmpleadosFijos.listarEmpleados(),
+                historial: window.axyraEmpleadosFijos.historialSalarios,
+                exportadoEn: new Date().toLocaleString()
+            };
+
+            const json = JSON.stringify(datos, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `empleados-fijos-${new Date().getTime()}.json`;
+            a.click();
+
+            agregarLog(`📥 Datos exportados a JSON`, 'log');
+        }
+
+        function limpiarTodo() {
+            if (confirm('¿Limpiar TODO? (empleados y historial)')) {
+                window.axyraEmpleadosFijos.empleados = [];
+                window.axyraEmpleadosFijos.historialSalarios = [];
+                localStorage.clear();
+                
+                actualizarListaEmpleados();
+                actualizarSelectEmpleados();
+                document.getElementById('resultadoSalario').innerHTML = '';
+                document.getElementById('resultadoNomina').innerHTML = '';
+                
+                agregarLog(`⚠️ TODOS los datos limpiados`, 'error');
+            }
+        }
+
+        // Inicializar
+        window.addEventListener('load', () => {
+            agregarLog('✅ Sistema cargado correctamente', 'log');
+            agregarLog('📝 Crea un empleado para comenzar las pruebas...', 'log');
+            limpiarFormulario();
+        });
+    </script>
+</body>
+</html>

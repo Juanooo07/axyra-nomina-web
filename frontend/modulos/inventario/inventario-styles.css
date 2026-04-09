@@ -1,0 +1,359 @@
+/* Estilos específicos para Inventario AXYRA */
+
+/* Header del overview */
+.inventario-overview-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.inventario-overview-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.inventario-overview-header p {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Grid de estadísticas mejorado */
+.inventario-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* Tarjetas de estadísticas mejoradas */
+.inventario-stat-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.inventario-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+}
+
+.inventario-stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Variantes de color para las tarjetas */
+.inventario-stat-primary::before {
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+}
+
+.inventario-stat-success::before {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.inventario-stat-warning::before {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.inventario-stat-info::before {
+  background: linear-gradient(90deg, #06b6d4, #0891b2);
+}
+
+.inventario-stat-secondary::before {
+  background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+}
+
+.inventario-stat-danger::before {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+/* Iconos de estadísticas */
+.inventario-stat-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.inventario-stat-primary .inventario-stat-icon {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.inventario-stat-success .inventario-stat-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.inventario-stat-warning .inventario-stat-icon {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.inventario-stat-info .inventario-stat-icon {
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+}
+
+.inventario-stat-secondary .inventario-stat-icon {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.inventario-stat-danger .inventario-stat-icon {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+/* Contenido de estadísticas */
+.inventario-stat-content {
+  flex: 1;
+}
+
+.inventario-stat-number {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1f2937;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.inventario-stat-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.inventario-stat-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Mejoras para la sección de búsqueda y filtros */
+.inventario-search-filters {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  margin-bottom: 32px;
+}
+
+.inventario-search-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.inventario-search-box {
+  flex: 1;
+  min-width: 300px;
+}
+
+.inventario-search-input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.inventario-search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Botones de acción mejorados */
+.inventario-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.inventario-btn {
+  padding: 16px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: white;
+}
+
+.inventario-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.inventario-btn-primary {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.inventario-btn-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.inventario-btn-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.inventario-btn-info {
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+}
+
+/* Tabla de productos mejorada */
+.inventario-table-container {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+}
+
+.inventario-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inventario-table th {
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  padding: 20px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.inventario-table td {
+  padding: 16px;
+  border-bottom: 1px solid #f3f4f6;
+  vertical-align: middle;
+}
+
+.inventario-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* Estados de stock */
+.stock-amount {
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #f0f9ff;
+  color: #0369a1;
+}
+
+.stock-low {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .inventario-overview-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .inventario-stat-card {
+    padding: 20px;
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .inventario-stat-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 24px;
+  }
+
+  .inventario-stat-number {
+    font-size: 28px;
+  }
+
+  .inventario-search-row {
+    flex-direction: column;
+  }
+
+  .inventario-search-box {
+    min-width: auto;
+  }
+
+  .inventario-actions {
+    flex-direction: column;
+  }
+
+  .inventario-btn {
+    justify-content: center;
+  }
+}
+
+/* Animaciones */
+@keyframes statPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.inventario-stat-card.animate {
+  animation: statPulse 0.6s ease-in-out;
+}
+
+/* Mejoras para el header de la página */
+.axyra-page-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  color: white;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(30, 64, 175, 0.3);
+}
+
+.axyra-page-title {
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.axyra-page-subtitle {
+  font-size: 20px;
+  opacity: 0.9;
+  margin: 0;
+}

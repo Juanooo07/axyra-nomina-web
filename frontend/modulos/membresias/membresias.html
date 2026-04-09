@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AXYRA - Membresías y Suscripciones</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../../nomina.ico" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <!-- Estilos AXYRA -->
+    <link rel="stylesheet" href="../../static/axyra-styles.css" />
+    <link rel="stylesheet" href="../../static/modal-fixes.css" />
+    <link rel="stylesheet" href="../../static/modal-positioning-fix.css" />
+    <link rel="stylesheet" href="../../static/modal-emergency-fix.css" />
+    <link rel="stylesheet" href="../../static/header-fixes.css" />
+    <link rel="stylesheet" href="../../static/footer-center-fix.css" />
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Header Compartido AXYRA -->
+    <script src="../../static/include-header.js"></script>
+
+    <!-- Sistema de Logging Limpio -->
+    <script src="../../static/clean-logging-system.js"></script>
+
+    <!-- Sistema de Membresías Funcional AXYRA -->
+    <script src="../../static/membership-system-functional.js"></script>
+
+    <!-- Configuración de Claves Wompi AXYRA -->
+    <script src="../../static/wompi-keys-config.js"></script>
+
+    <!-- Configuración de Validación Wompi AXYRA -->
+    <script src="../../static/wompi-validation-config.js"></script>
+
+    <!-- Limpiador de Clases Duplicadas AXYRA -->
+    <script src="../../static/clean-duplicate-classes.js"></script>
+
+    <!-- Sistema de Pagos Unificado AXYRA -->
+    <!-- ✅ CONSOLIDADO: Payment System Unificado -->
+    <script src="../../static/payment-system-unified.js"></script>
+
+    <!-- Manejador de Errores AXYRA -->
+    <script src="../../static/error-handler.js"></script>
+
+    <!-- Sistema de Fallback API AXYRA -->
+    <script src="../../static/api-fallback.js"></script>
+
+    <style>
+      .membresias-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .membresias-header {
+        text-align: center;
+        margin-bottom: 50px;
+      }
+
+      .membresias-title {
+        font-size: 3rem;
+        color: #4f81bd;
+        margin-bottom: 20px;
+        font-weight: 700;
+      }
+
+      .membresias-subtitle {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 30px;
+      }
+
+      .planes-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 50px;
+      }
+
+      .plan-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        position: relative;
+        transition: all 0.3s ease;
+        border: 3px solid transparent;
+      }
+
+      .plan-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .plan-card.recomendado {
+        border-color: #4f81bd;
+        transform: scale(1.05);
+      }
+
+      .plan-card.recomendado::before {
+        content: 'MÁS POPULAR';
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #4f81bd;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .plan-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+      }
+
+      .plan-basico .plan-icon {
+        color: #10b981;
+      }
+
+      .plan-profesional .plan-icon {
+        color: #4f81bd;
+      }
+
+      .plan-empresarial .plan-icon {
+        color: #8b5cf6;
+      }
+
+      .plan-nombre {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #1f2937;
+      }
+
+      .plan-precio {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #4f81bd;
+        margin-bottom: 5px;
+      }
+
+      .plan-periodo {
+        color: #6b7280;
+        margin-bottom: 30px;
+      }
+
+      .plan-caracteristicas {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 30px;
+      }
+
+      .plan-caracteristicas li {
+        padding: 10px 0;
+        border-bottom: 1px solid #f3f4f6;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .plan-caracteristicas li:last-child {
+        border-bottom: none;
+      }
+
+      .plan-caracteristicas i {
+        color: #10b981;
+        width: 20px;
+      }
+
+      .plan-btn {
+        width: 100%;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .plan-btn-basico {
+        background: #10b981;
+        color: white;
+      }
+
+      .plan-btn-basico:hover {
+        background: #059669;
+        transform: translateY(-2px);
+      }
+
+      .plan-btn-profesional {
+        background: #4f81bd;
+        color: white;
+      }
+
+      .plan-btn-profesional:hover {
+        background: #2c5aa0;
+        transform: translateY(-2px);
+      }
+
+      .plan-btn-empresarial {
+        background: #8b5cf6;
+        color: white;
+      }
+
+      .plan-btn-empresarial:hover {
+        background: #7c3aed;
+        transform: translateY(-2px);
+      }
+
+      .comparacion-container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 50px;
+      }
+
+      .comparacion-title {
+        font-size: 2rem;
+        color: #1f2937;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .comparacion-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      .comparacion-table th,
+      .comparacion-table td {
+        padding: 15px;
+        text-align: center;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .comparacion-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .comparacion-table .feature-name {
+        text-align: left;
+        font-weight: 600;
+      }
+
+      .check-icon {
+        color: #10b981;
+        font-size: 1.2rem;
+      }
+
+      .cross-icon {
+        color: #ef4444;
+        font-size: 1.2rem;
+      }
+
+      .testimonios-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px;
+        padding: 50px;
+        text-align: center;
+        margin-bottom: 50px;
+      }
+
+      .testimonios-title {
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+      }
+
+      .testimonios-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+
+      .testimonio {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+      }
+
+      .testimonio-texto {
+        font-style: italic;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+      }
+
+      .testimonio-autor {
+        font-weight: 600;
+      }
+
+      .faq-container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .faq-title {
+        font-size: 2rem;
+        color: #1f2937;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .faq-item {
+        border-bottom: 1px solid #e5e7eb;
+        padding: 20px 0;
+      }
+
+      .faq-pregunta {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 10px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .faq-respuesta {
+        color: #6b7280;
+        display: none;
+      }
+
+      .faq-item.active .faq-respuesta {
+        display: block;
+      }
+
+      .contacto-container {
+        background: #f8f9fa;
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+      }
+
+      .contacto-title {
+        font-size: 2rem;
+        color: #1f2937;
+        margin-bottom: 20px;
+      }
+
+      .contacto-texto {
+        color: #6b7280;
+        margin-bottom: 30px;
+        font-size: 1.1rem;
+      }
+
+      .contacto-btn {
+        background: #4f81bd;
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .contacto-btn:hover {
+        background: #2c5aa0;
+        transform: translateY(-2px);
+      }
+
+      .contacto-actions {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .contacto-btn-secondary {
+        background: #6b7280 !important;
+        color: white;
+      }
+
+      .contacto-btn-secondary:hover {
+        background: #4b5563 !important;
+        transform: translateY(-2px);
+      }
+
+      @media (max-width: 768px) {
+        .membresias-title {
+          font-size: 2rem;
+        }
+
+        .planes-container {
+          grid-template-columns: 1fr;
+        }
+
+        .plan-card.recomendado {
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header Compartido AXYRA - Se insertará automáticamente -->
+
+    <main class="axyra-main-content">
+      <div class="membresias-container">
+        <!-- Header -->
+        <div class="membresias-header">
+          <h1 class="membresias-title">Membresías AXYRA</h1>
+          <p class="membresias-subtitle">
+            Elige el plan perfecto para tu empresa y lleva tu gestión al siguiente nivel
+          </p>
+        </div>
+
+        <!-- Planes de Suscripción -->
+        <div class="planes-container">
+          <!-- Plan Básico -->
+          <div class="plan-card plan-basico">
+            <div class="plan-icon">
+              <i class="fas fa-rocket"></i>
+            </div>
+            <h3 class="plan-nombre">Básico</h3>
+            <div class="plan-precio">$29.900</div>
+            <div class="plan-periodo">/mes</div>
+            <ul class="plan-caracteristicas">
+              <li><i class="fas fa-check"></i> Hasta 5 empleados</li>
+              <li><i class="fas fa-check"></i> Gestión básica de nómina</li>
+              <li><i class="fas fa-check"></i> Inventario simple</li>
+              <li><i class="fas fa-check"></i> Reportes básicos</li>
+              <li><i class="fas fa-check"></i> Soporte por email</li>
+              <li><i class="fas fa-check"></i> 5GB de almacenamiento</li>
+            </ul>
+            <a
+              href="https://checkout.wompi.co/l/CNouhH"
+              class="plan-btn plan-btn-basico"
+              data-plan="basic"
+              target="_blank"
+            >
+              <i class="fas fa-credit-card"></i> Comenzar Prueba Gratis
+            </a>
+          </div>
+
+          <!-- Plan Profesional -->
+          <div class="plan-card plan-profesional recomendado">
+            <div class="plan-icon">
+              <i class="fas fa-star"></i>
+            </div>
+            <h3 class="plan-nombre">Profesional</h3>
+            <div class="plan-precio">$49.900</div>
+            <div class="plan-periodo">/mes</div>
+            <ul class="plan-caracteristicas">
+              <li><i class="fas fa-check"></i> Hasta 25 empleados</li>
+              <li><i class="fas fa-check"></i> Gestión completa de nómina</li>
+              <li><i class="fas fa-check"></i> Inventario avanzado</li>
+              <li><i class="fas fa-check"></i> Cuadre de caja</li>
+              <li><i class="fas fa-check"></i> Reportes avanzados</li>
+              <li><i class="fas fa-check"></i> Chat de IA incluido</li>
+              <li><i class="fas fa-check"></i> Soporte prioritario</li>
+              <li><i class="fas fa-check"></i> 50GB de almacenamiento</li>
+              <li><i class="fas fa-check"></i> Integración con bancos</li>
+            </ul>
+            <a
+              href="https://checkout.wompi.co/l/6uOGGL"
+              class="plan-btn plan-btn-profesional"
+              data-plan="professional"
+              target="_blank"
+            >
+              <i class="fas fa-credit-card"></i> Comenzar Prueba Gratis
+            </a>
+          </div>
+
+          <!-- Plan Empresarial -->
+          <div class="plan-card plan-empresarial">
+            <div class="plan-icon">
+              <i class="fas fa-crown"></i>
+            </div>
+            <h3 class="plan-nombre">Empresarial</h3>
+            <div class="plan-precio">$99.900</div>
+            <div class="plan-periodo">/mes</div>
+            <ul class="plan-caracteristicas">
+              <li><i class="fas fa-check"></i> Empleados ilimitados</li>
+              <li><i class="fas fa-check"></i> Todas las funciones</li>
+              <li><i class="fas fa-check"></i> Múltiples sucursales</li>
+              <li><i class="fas fa-check"></i> API personalizada</li>
+              <li><i class="fas fa-check"></i> Reportes personalizados</li>
+              <li><i class="fas fa-check"></i> Soporte 24/7</li>
+              <li><i class="fas fa-check"></i> Almacenamiento ilimitado</li>
+              <li><i class="fas fa-check"></i> Integraciones avanzadas</li>
+              <li><i class="fas fa-check"></i> Capacitación incluida</li>
+            </ul>
+            <a
+              href="https://checkout.wompi.co/l/LfxrYP"
+              class="plan-btn plan-btn-empresarial"
+              data-plan="enterprise"
+              target="_blank"
+            >
+              <i class="fas fa-credit-card"></i> Comenzar Prueba Gratis
+            </a>
+          </div>
+        </div>
+
+        <!-- Comparación de Planes -->
+        <div class="comparacion-container">
+          <h2 class="comparacion-title">Comparación de Planes</h2>
+          <table class="comparacion-table">
+            <thead>
+              <tr>
+                <th>Característica</th>
+                <th>Básico</th>
+                <th>Profesional</th>
+                <th>Empresarial</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="feature-name">Empleados</td>
+                <td>Hasta 5</td>
+                <td>Hasta 25</td>
+                <td>Ilimitados</td>
+              </tr>
+              <tr>
+                <td class="feature-name">Gestión de Nómina</td>
+                <td><i class="fas fa-check check-icon"></i></td>
+                <td><i class="fas fa-check check-icon"></i></td>
+                <td><i class="fas fa-check check-icon"></i></td>
+              </tr>
+              <tr>
+                <td class="feature-name">Inventario</td>
+                <td>Básico</td>
+                <td><i class="fas fa-check check-icon"></i></td>
+                <td><i class="fas fa-check check-icon"></i></td>
+              </tr>
+              <tr>
+                <td class="feature-name">Cuadre de Caja</td>
+                <td><i class="fas fa-times cross-icon"></i></td>
+                <td><i class="fas fa-check check-icon"></i></td>
+                <td><i class="fas fa-check check-icon"></i></td>
+              </tr>
+              <tr>
+                <td class="feature-name">Chat de IA</td>
+                <td><i class="fas fa-times cross-icon"></i></td>
+                <td><i class="fas fa-check check-icon"></i></td>
+                <td><i class="fas fa-check check-icon"></i></td>
+              </tr>
+              <tr>
+                <td class="feature-name">Soporte</td>
+                <td>Email</td>
+                <td>Prioritario</td>
+                <td>24/7</td>
+              </tr>
+              <tr>
+                <td class="feature-name">Almacenamiento</td>
+                <td>5GB</td>
+                <td>50GB</td>
+                <td>Ilimitado</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Testimonios -->
+        <div class="testimonios-container">
+          <h2 class="testimonios-title">Lo que dicen nuestros clientes</h2>
+          <div class="testimonios-grid">
+            <div class="testimonio">
+              <p class="testimonio-texto">
+                "AXYRA ha revolucionado la gestión de nuestra empresa. El ahorro de tiempo es increíble y la interfaz es
+                muy intuitiva."
+              </p>
+              <p class="testimonio-autor">- María González, Gerente General</p>
+            </div>
+            <div class="testimonio">
+              <p class="testimonio-texto">
+                "El chat de IA es una funcionalidad increíble. Resuelve dudas al instante y nos ayuda a ser más
+                eficientes."
+              </p>
+              <p class="testimonio-autor">- Carlos Rodríguez, Contador</p>
+            </div>
+            <div class="testimonio">
+              <p class="testimonio-texto">
+                "La integración con bancos nos ha ahorrado horas de trabajo. Definitivamente recomendado para empresas
+                en crecimiento."
+              </p>
+              <p class="testimonio-autor">- Ana Martínez, Directora Financiera</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="faq-container">
+          <h2 class="faq-title">Preguntas Frecuentes</h2>
+          <div class="faq-item">
+            <div class="faq-pregunta" onclick="toggleFAQ(this)">
+              ¿Puedo cambiar de plan en cualquier momento?
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-respuesta">
+              Sí, puedes cambiar de plan en cualquier momento. Los cambios se reflejan en tu próxima facturación.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-pregunta" onclick="toggleFAQ(this)">
+              ¿Hay período de prueba gratuito?
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-respuesta">
+              Sí, ofrecemos 7 días de prueba gratuita para todos los planes. No se requiere tarjeta de crédito.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-pregunta" onclick="toggleFAQ(this)">
+              ¿Qué métodos de pago aceptan?
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-respuesta">Aceptamos tarjetas de crédito, débito, transferencias bancarias y PSE.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-pregunta" onclick="toggleFAQ(this)">
+              ¿Los datos están seguros?
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-respuesta">
+              Sí, utilizamos encriptación de extremo a extremo y cumplimos con todas las normativas de seguridad.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-pregunta" onclick="toggleFAQ(this)">
+              ¿Ofrecen capacitación?
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-respuesta">
+              Sí, incluimos capacitación gratuita para el plan Empresarial y videos tutoriales para todos los planes.
+            </div>
+          </div>
+        </div>
+
+        <!-- Contacto -->
+        <div class="contacto-container">
+          <h2 class="contacto-title">¿Necesitas ayuda para elegir?</h2>
+          <p class="contacto-texto">
+            Nuestro equipo de expertos está listo para ayudarte a encontrar el plan perfecto para tu empresa.
+          </p>
+          <div class="contacto-actions">
+            <a href="mailto:axyra.app@gmail.com" class="contacto-btn">
+              <i class="fas fa-envelope"></i> Contactar Ventas
+            </a>
+            <a href="../dashboard/dashboard.html" class="contacto-btn contacto-btn-secondary">
+              <i class="fas fa-arrow-left"></i> Volver al Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../../static/firebase-config.js"></script>
+    <!-- Sistema de Notificaciones AXYRA Profesional -->
+    <link rel="stylesheet" href="../../static/notifications-professional-styles.css" />
+    <!-- ✅ CONSOLIDADO: Notificaciones Unificadas -->
+    <script src="../../js/axyra-notifications.js"></script>
+    <!-- Removido: Duplicado de payment-system-unified.js -->
+    <script src="membresias.js"></script>
+
+    <!-- Chat de IA AXYRA -->
+    <script src="../../static/ai-chat-system.js"></script>
+
+    <script>
+      // Funciones para FAQ
+      function toggleFAQ(element) {
+        const faqItem = element.parentElement;
+        faqItem.classList.toggle('active');
+
+        const icon = element.querySelector('i');
+        if (faqItem.classList.contains('active')) {
+          icon.classList.remove('fa-chevron-down');
+          icon.classList.add('fa-chevron-up');
+        } else {
+          icon.classList.remove('fa-chevron-up');
+          icon.classList.add('fa-chevron-down');
+        }
+      }
+
+      // Función para seleccionar plan
+      function seleccionarPlan(plan) {
+        console.log('Plan seleccionado:', plan);
+
+        // Usar el sistema de membresías unificado
+        if (window.axyraMembershipSystem) {
+          window.axyraMembershipSystem.selectPlan(plan);
+        } else {
+          console.warn('⚠️ Sistema de membresías no disponible');
+          alert('Sistema de membresías no disponible. Intenta más tarde.');
+        }
+      }
+    </script>
+
+    <!-- Sistema de Suscripciones AXYRA -->
+    <script src="../../static/subscription-system.js"></script>
+    <script src="../../static/admin-subscription-manager.js"></script>
+
+    <!-- Chat de IA AXYRA - Cargar al final -->
+    <script src="../../static/axyra-ai-global.js"></script>
+  </body>
+</html>

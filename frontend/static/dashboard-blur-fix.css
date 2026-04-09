@@ -1,0 +1,92 @@
+/* ========================================
+   CORRECCIÓN DE BLUR EN DASHBOARD AXYRA
+   ======================================== */
+
+/* Remover todos los efectos de blur del dashboard */
+.axyra-main-content,
+.axyra-dashboard-container,
+.axyra-dashboard-header,
+.axyra-stats-grid,
+.axyra-quick-actions,
+.axyra-charts-section,
+.axyra-dashboard-avanzado,
+.axyra-recent-activity,
+.axyra-stat-card,
+.axyra-action-btn,
+.axyra-chart-card {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  blur: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Asegurar que el loader esté completamente oculto */
+#dashboard-loader {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+}
+
+/* Remover blur de modales que puedan estar interfiriendo */
+.axyra-modal-overlay {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Asegurar que el contenido principal sea completamente visible */
+body {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Forzar visibilidad de todos los elementos del dashboard */
+.axyra-dashboard-container * {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Asegurar que no haya overlays que causen blur */
+.axyra-main-content::before,
+.axyra-main-content::after,
+.axyra-dashboard-container::before,
+.axyra-dashboard-container::after {
+  display: none !important;
+}
+
+/* Remover cualquier efecto de blur de elementos específicos */
+.axyra-stat-card,
+.axyra-action-btn,
+.axyra-chart-card,
+.axyra-section-title {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transform: none !important;
+}
+
+/* Asegurar que el header no tenga blur */
+.axyra-header {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Forzar que todos los elementos sean completamente opacos */
+.axyra-main-content,
+.axyra-dashboard-container,
+.axyra-dashboard-header,
+.axyra-stats-grid,
+.axyra-quick-actions,
+.axyra-charts-section {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}

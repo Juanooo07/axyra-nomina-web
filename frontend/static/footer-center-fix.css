@@ -1,0 +1,379 @@
+/**
+ * 🎯 FOOTER CENTER FIX - AXYRA SISTEMA DE GESTIÓN
+ * Centrar el footer en todas las páginas del sistema
+ */
+
+/* ===== FOOTER CENTRADO GLOBAL ===== */
+.axyra-footer,
+.axyra-footer-professional,
+footer {
+  text-align: center !important;
+  padding: 20px 0 !important;
+  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
+  color: #ffffff !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* ===== CONTENIDO DEL FOOTER CENTRADO ===== */
+.axyra-footer-content,
+.axyra-footer-professional .axyra-footer-content,
+footer .axyra-footer-content {
+  max-width: 1400px !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+  text-align: center !important;
+}
+
+/* ===== COPYRIGHT CENTRADO ===== */
+.axyra-footer-bottom,
+.axyra-footer-professional .axyra-footer-bottom,
+footer .axyra-footer-bottom,
+.axyra-copyright,
+.axyra-footer-copyright {
+  text-align: center !important;
+  margin: 0 auto !important;
+  padding: 20px 0 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.axyra-footer-bottom p,
+.axyra-footer-professional .axyra-footer-bottom p,
+footer .axyra-footer-bottom p,
+.axyra-copyright p,
+.axyra-footer-copyright p {
+  margin: 0 !important;
+  color: #a0aec0 !important;
+  font-size: 0.9rem !important;
+  text-align: center !important;
+}
+
+/* ===== GRID DEL FOOTER CENTRADO ===== */
+.axyra-footer-grid,
+.axyra-footer-professional .axyra-footer-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+  gap: 40px !important;
+  margin-bottom: 40px !important;
+  text-align: center !important;
+}
+
+/* ===== SECCIONES DEL FOOTER CENTRADAS ===== */
+.axyra-footer-section,
+.axyra-footer-professional .axyra-footer-section {
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+}
+
+.axyra-footer-section h4,
+.axyra-footer-professional .axyra-footer-section h4 {
+  color: #ffffff !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 1rem !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5) !important;
+  text-align: center !important;
+}
+
+.axyra-footer-section ul,
+.axyra-footer-professional .axyra-footer-section ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+.axyra-footer-section li,
+.axyra-footer-professional .axyra-footer-section li {
+  margin-bottom: 0.5rem !important;
+  text-align: center !important;
+}
+
+.axyra-footer-section button,
+.axyra-footer-professional .axyra-footer-section button {
+  background: none !important;
+  border: none !important;
+  color: #e2e8f0 !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  font-size: 0.95rem !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  text-align: center !important;
+  display: inline-block !important;
+  margin: 0 5px !important;
+}
+
+.axyra-footer-section button:hover,
+.axyra-footer-professional .axyra-footer-section button:hover {
+  color: #2563eb !important;
+  background: rgba(37, 99, 235, 0.1) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* ===== ENLACES DEL FOOTER CENTRADOS ===== */
+.axyra-footer-link,
+.axyra-footer-professional .axyra-footer-link {
+  background: none !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  font-size: 0.85rem !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  text-align: center !important;
+  display: inline-block !important;
+  margin: 0 5px !important;
+}
+
+.axyra-footer-link:hover,
+.axyra-footer-professional .axyra-footer-link:hover {
+  color: #2563eb !important;
+  background: #374151 !important;
+}
+
+/* ===== REDES SOCIALES CENTRADAS ===== */
+.axyra-social,
+.axyra-footer-professional .axyra-social {
+  text-align: center !important;
+  margin: 20px 0 !important;
+}
+
+.axyra-social h4,
+.axyra-footer-professional .axyra-social h4 {
+  color: #ffffff !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 15px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  text-align: center !important;
+}
+
+.axyra-social-icons,
+.axyra-footer-professional .axyra-social-icons {
+  display: flex !important;
+  gap: 15px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+}
+
+.axyra-social-btn,
+.axyra-footer-professional .axyra-social-btn {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  border: 2px solid #ffffff !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  font-weight: bold !important;
+  font-size: 1rem !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.axyra-social-btn:hover,
+.axyra-footer-professional .axyra-social-btn:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ===== BOTÓN DE OFERTA CENTRADO ===== */
+.axyra-offer-btn,
+.axyra-footer-professional .axyra-offer-btn {
+  background: transparent !important;
+  border: 2px solid #ffffff !important;
+  color: #ffffff !important;
+  padding: 12px 24px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+  display: inline-block !important;
+  margin: 10px auto !important;
+}
+
+.axyra-offer-btn:hover,
+.axyra-footer-professional .axyra-offer-btn:hover {
+  background: #ffffff !important;
+  color: #2d3748 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ===== CONTENIDO DEL FOOTER BOTTOM CENTRADO ===== */
+.axyra-footer-bottom-content,
+.axyra-footer-professional .axyra-footer-bottom-content {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 20px !important;
+  text-align: center !important;
+}
+
+.axyra-footer-copyright,
+.axyra-footer-professional .axyra-footer-copyright {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.axyra-footer-legal,
+.axyra-footer-professional .axyra-footer-legal {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  justify-content: center !important;
+  text-align: center !important;
+  flex-wrap: wrap !important;
+}
+
+/* ===== VERSIÓN CENTRADA ===== */
+.axyra-version,
+.axyra-footer-professional .axyra-version {
+  background: #374151 !important;
+  color: #d1d5db !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  display: inline-block !important;
+  margin: 0 auto !important;
+}
+
+/* ===== SEPARADOR CENTRADO ===== */
+.axyra-footer-separator,
+.axyra-footer-professional .axyra-footer-separator {
+  color: #6b7280 !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  margin: 0 10px !important;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .axyra-footer-grid,
+  .axyra-footer-professional .axyra-footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    text-align: center !important;
+  }
+
+  .axyra-footer-section,
+  .axyra-footer-professional .axyra-footer-section {
+    text-align: center !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .axyra-footer-bottom-content,
+  .axyra-footer-professional .axyra-footer-bottom-content {
+    flex-direction: column !important;
+    gap: 15px !important;
+    text-align: center !important;
+  }
+
+  .axyra-footer-copyright,
+  .axyra-footer-professional .axyra-footer-copyright {
+    flex-direction: column !important;
+    gap: 10px !important;
+    text-align: center !important;
+  }
+
+  .axyra-footer-legal,
+  .axyra-footer-professional .axyra-footer-legal {
+    flex-direction: column !important;
+    gap: 5px !important;
+    text-align: center !important;
+  }
+
+  .axyra-social-icons,
+  .axyra-footer-professional .axyra-social-icons {
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .axyra-footer,
+  .axyra-footer-professional,
+  footer {
+    padding: 15px 0 !important;
+  }
+
+  .axyra-footer-content,
+  .axyra-footer-professional .axyra-footer-content,
+  footer .axyra-footer-content {
+    padding: 0 15px !important;
+  }
+
+  .axyra-footer-section h4,
+  .axyra-footer-professional .axyra-footer-section h4 {
+    font-size: 1rem !important;
+  }
+
+  .axyra-footer-section button,
+  .axyra-footer-professional .axyra-footer-section button {
+    font-size: 0.85rem !important;
+    padding: 6px 10px !important;
+  }
+}
+
+/* ===== FOOTER ESPECÍFICO PARA CUADRE DE CAJA ===== */
+.axyra-premium-restriction .axyra-footer,
+.axyra-premium-restriction footer {
+  text-align: center !important;
+  padding: 20px 0 !important;
+  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
+  color: #ffffff !important;
+  position: relative !important;
+  z-index: 10 !important;
+  margin-top: 40px !important;
+}
+
+.axyra-premium-restriction .axyra-footer p,
+.axyra-premium-restriction footer p {
+  margin: 0 !important;
+  color: #a0aec0 !important;
+  font-size: 0.9rem !important;
+  text-align: center !important;
+}
+
+/* ===== FOOTER PARA TODAS LAS PÁGINAS DEL SISTEMA ===== */
+body {
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.axyra-container,
+main,
+.axyra-section {
+  flex: 1 !important;
+}
+
+.axyra-footer,
+.axyra-footer-professional,
+footer {
+  margin-top: auto !important;
+  width: 100% !important;
+}
+
+

@@ -1,0 +1,619 @@
+/**
+ * 💰 ESTILOS CUADRE DE CAJA MEJORADO - AXYRA SISTEMA DE GESTIÓN
+ * Estructura mejorada y tarjetas organizadas
+ */
+
+/* ===== LAYOUT PRINCIPAL MEJORADO ===== */
+.axyra-section {
+  padding: 20px;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.axyra-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.axyra-page-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 30px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.axyra-page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.axyra-page-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ===== DASHBOARD FINANCIERO MEJORADO ===== */
+.axyra-financial-dashboard {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.axyra-financial-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.axyra-financial-header h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 10px 0;
+}
+
+.axyra-financial-header p {
+  color: #6b7280;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* ===== GRID FINANCIERO MEJORADO ===== */
+.axyra-financial-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.axyra-financial-card {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 25px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.axyra-financial-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.axyra-financial-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.axyra-financial-card-header h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.axyra-financial-card-header p {
+  color: #6b7280;
+  margin: 5px 0 0 0;
+  font-size: 0.9rem;
+}
+
+.axyra-financial-controls select {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.axyra-financial-chart {
+  height: 300px;
+  position: relative;
+}
+
+/* ===== GRID DE KPIS MEJORADO ===== */
+.axyra-financial-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.axyra-kpi-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.axyra-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+}
+
+.axyra-kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+}
+
+/* Variantes de color para KPIs */
+.axyra-kpi-primary::before {
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+}
+
+.axyra-kpi-success::before {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.axyra-kpi-warning::before {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.axyra-kpi-info::before {
+  background: linear-gradient(90deg, #06b6d4, #0891b2);
+}
+
+.axyra-kpi-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.axyra-kpi-primary .axyra-kpi-icon {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.axyra-kpi-success .axyra-kpi-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.axyra-kpi-warning .axyra-kpi-icon {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.axyra-kpi-info .axyra-kpi-icon {
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+}
+
+.axyra-kpi-content {
+  flex: 1;
+}
+
+.axyra-kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.axyra-kpi-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 2px;
+}
+
+.axyra-kpi-subtitle {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+/* ===== TARJETAS PRINCIPALES ===== */
+.axyra-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  margin-bottom: 30px;
+  overflow: hidden;
+}
+
+.axyra-card-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 20px 25px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.axyra-card-icon {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+}
+
+.axyra-card-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 5px 0;
+}
+
+.axyra-card-subtitle {
+  color: #6b7280;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.axyra-card-content {
+  padding: 25px;
+}
+
+/* ===== FORMULARIOS MEJORADOS ===== */
+.axyra-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.axyra-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.axyra-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.axyra-form-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.axyra-form-input,
+.axyra-form-select {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.axyra-form-input:focus,
+.axyra-form-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.axyra-form-select-container {
+  position: relative;
+}
+
+.axyra-form-select-container::after {
+  content: '▼';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  pointer-events: none;
+}
+
+/* ===== BOTONES MEJORADOS ===== */
+.axyra-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  justify-content: center;
+}
+
+.axyra-btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.axyra-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.axyra-btn-success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.axyra-btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.axyra-btn-warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.axyra-btn-warning:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+/* ===== TABLA MEJORADA ===== */
+.axyra-table-container {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  margin-top: 20px;
+}
+
+.axyra-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.axyra-table th {
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  color: #374151;
+  font-weight: 600;
+  padding: 15px 20px;
+  text-align: left;
+  border-bottom: 2px solid #e2e8f0;
+  font-size: 0.9rem;
+}
+
+.axyra-table td {
+  padding: 15px 20px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+.axyra-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* ===== NOTIFICACIONES MEJORADAS ===== */
+.axyra-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-left: 4px solid #f59e0b;
+  padding: 20px;
+  max-width: 400px;
+  z-index: 10000;
+  animation: slideInRight 0.3s ease;
+}
+
+.axyra-notification-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.axyra-notification-icon {
+  width: 24px;
+  height: 24px;
+  background: #f59e0b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+}
+
+.axyra-notification-title {
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.axyra-notification-content {
+  color: #6b7280;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+
+.axyra-notification-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.axyra-notification-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.axyra-notification-btn-primary {
+  background: #f59e0b;
+  color: white;
+}
+
+.axyra-notification-btn-primary:hover {
+  background: #d97706;
+}
+
+.axyra-notification-btn-secondary {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.axyra-notification-btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+  .axyra-financial-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .axyra-financial-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .axyra-section {
+    padding: 15px;
+  }
+
+  .axyra-page-title {
+    font-size: 2rem;
+  }
+
+  .axyra-financial-dashboard {
+    padding: 20px;
+  }
+
+  .axyra-financial-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .axyra-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .axyra-kpi-card {
+    padding: 20px;
+  }
+
+  .axyra-kpi-value {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .axyra-page-header {
+    padding: 20px;
+  }
+
+  .axyra-page-title {
+    font-size: 1.8rem;
+  }
+
+  .axyra-financial-dashboard {
+    padding: 15px;
+  }
+
+  .axyra-card-content {
+    padding: 20px;
+  }
+
+  .axyra-kpi-card {
+    padding: 15px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .axyra-kpi-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.axyra-card {
+  animation: fadeIn 0.5s ease;
+}
+
+/* ===== SCROLLBAR PERSONALIZADO ===== */
+.axyra-table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.axyra-table-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.axyra-table-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.axyra-table-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

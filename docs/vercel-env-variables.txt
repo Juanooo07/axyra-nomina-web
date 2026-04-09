@@ -1,0 +1,21 @@
+# ========================================
+# VARIABLES DE ENTORNO PARA VERCEL
+# ========================================
+
+# Firebase Configuration
+FIREBASE_API_KEY=AIzaSyAW3ejokcsWAP5G1yJT63jLBpFmdTiTUwc
+FIREBASE_AUTH_DOMAIN=axyra-48238.firebaseapp.com
+FIREBASE_PROJECT_ID=axyra-48238
+FIREBASE_STORAGE_BUCKET=axyra-48238.firebasestorage.app
+FIREBASE_MESSAGING_SENDER_ID=796334517286
+FIREBASE_APP_ID=1:796334517286:web:95947cf0f773dc11378ae7
+FIREBASE_MEASUREMENT_ID=G-R8W2MP15B7
+
+# Application Configuration
+NODE_ENV=production
+APP_NAME=AXYRA Sistema de Gestión
+APP_VERSION=1.0.0
+
+# Security Configuration (generar valores únicos)
+JWT_SECRET=axyra-jwt-secret-2024-super-seguro-123456789
+ENCRYPTION_KEY=axyra-encryption-key-2024-super-seguro-987654321

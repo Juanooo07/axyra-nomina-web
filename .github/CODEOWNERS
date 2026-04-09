@@ -1,0 +1,31 @@
+# AXYRA Sistema de Gestión - Code Owners
+
+# Global owners
+* @axyra-team
+
+# Firebase configuration
+firestore.rules @axyra-team
+firestore.indexes.json @axyra-team
+firebase.json @axyra-team
+storage.rules @axyra-team
+
+# API endpoints
+api/ @axyra-team
+
+# Frontend modules
+frontend/modulos/gestion_personal/ @axyra-team
+frontend/modulos/cuadre_caja/ @axyra-team
+frontend/modulos/inventario/ @axyra-team
+frontend/modulos/membresias/ @axyra-team
+
+# Static files
+static/ @axyra-team
+
+# Configuration files
+package.json @axyra-team
+vercel.json @axyra-team
+deploy-production.sh @axyra-team
+
+# Documentation
+docs/ @axyra-team
+README*.md @axyra-team

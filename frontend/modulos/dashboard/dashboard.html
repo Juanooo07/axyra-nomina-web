@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AXYRA - Dashboard</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../../nomina.ico" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Sistema de Diseño AXYRA Profesional -->
+    <link rel="stylesheet" href="../../static/axyra-design-system.css" />
+    <link rel="stylesheet" href="../../static/axyra-styles.css" />
+    <link rel="stylesheet" href="dashboard-styles.css" />
+    <link rel="stylesheet" href="dashboard-avanzado-styles.css" />
+    <link rel="stylesheet" href="../../static/modal-fixes.css" />
+    <link rel="stylesheet" href="../../static/modal-positioning-fix.css" />
+    <link rel="stylesheet" href="../../static/modal-emergency-fix.css" />
+    <link rel="stylesheet" href="../../static/header-fixes.css" />
+    <link rel="stylesheet" href="../../static/dashboard-blur-fix.css" />
+    <link rel="stylesheet" href="../../static/footer-center-fix.css" />
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Header Compartido AXYRA -->
+    <script src="../../static/include-header.js"></script>
+
+    <!-- Sistema Unificado de Autenticación AXYRA -->
+    <script src="../../static/unified-auth-system.js"></script>
+
+    <!-- Sistema Unificado de Reportes Avanzados AXYRA -->
+    <script src="../../static/advanced-reports-unified.js"></script>
+
+    <!-- Sistema Unificado de Backup AXYRA -->
+    <script src="../../static/backup-system-unified.js"></script>
+
+    <!-- Sistema Unificado de Auditoría AXYRA -->
+    <script src="../../static/audit-system-unified.js"></script>
+
+    <!-- Sistema de Restricción por Planes -->
+    <script src="../../static/plan-restriction-system.js"></script>
+
+    <!-- Sistema de Membresías Funcional AXYRA -->
+    <script src="../../static/membership-system-functional.js"></script>
+
+    <!-- Prueba del Sistema de Membresías AXYRA -->
+    <script src="../../static/membership-test.js"></script>
+
+    <!-- Limpiador de Notificaciones Viejas AXYRA -->
+    <script src="../../static/clean-old-notifications.js"></script>
+
+    <!-- Limpiador de Clases Duplicadas AXYRA -->
+    <script src="../../static/clean-duplicate-classes.js"></script>
+
+    <!-- Sistema de Notificaciones AXYRA Profesional -->
+    <link rel="stylesheet" href="../../static/notifications-professional-styles.css" />
+    <!-- ✅ CONSOLIDADO: Notificaciones Unificadas -->
+    <script src="../../js/axyra-notifications.js"></script>
+    <script src="../../static/notification-examples.js"></script>
+
+    <!-- ✅ Sistema de Pagos CONSOLIDADO - Unified -->
+    <script src="../../static/payment-system-unified.js"></script>
+
+    <!-- Manejador de Errores AXYRA -->
+    <script src="../../static/error-handler.js"></script>
+
+    <!-- Sistema de Fallback API AXYRA -->
+    <script src="../../static/api-fallback.js"></script>
+
+    <!-- Sistema de Logging Limpio -->
+    <script src="../../static/clean-logging-system.js"></script>
+
+    <!-- Sistema Real de Pagos Wompi - DESHABILITADO -->
+    <!-- <script src="../../static/wompi-integration-real.js"></script> -->
+    <script src="../../static/subscription-manager.js"></script>
+    <script src="../../static/subscription-monitoring.js"></script>
+  </head>
+  <body>
+    <!-- Loader del Dashboard -->
+    <div
+      id="dashboard-loader"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        color: white;
+      "
+    >
+      <div style="text-align: center">
+        <img
+          src="../../logo.png"
+          alt="AXYRA"
+          style="width: 80px; height: 80px; margin-bottom: 20px"
+          onerror="this.style.display='none'"
+        />
+        <div
+          style="
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+          "
+        ></div>
+        <h2 style="margin: 0 0 10px 0; font-size: 1.5rem">Cargando Dashboard</h2>
+        <p style="margin: 0; opacity: 0.8">Inicializando sistema AXYRA...</p>
+      </div>
+    </div>
+
+    <style>
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ========================================
+         ESTILOS MODERNOS PARA DASHBOARD AXYRA
+         ======================================== */
+
+      .axyra-stats-grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .axyra-stats-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .axyra-stat-card-modern {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .axyra-stat-card-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border-radius: 16px 16px 0 0;
+      }
+
+      .axyra-stat-card-modern:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        border-color: rgba(102, 126, 234, 0.2);
+      }
+
+      .axyra-stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .axyra-stat-icon-modern {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .axyra-stat-icon-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+        border-radius: 12px;
+      }
+
+      .axyra-stat-icon-modern.blue {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      }
+
+      .axyra-stat-icon-modern.green {
+        background: linear-gradient(135deg, #10b981, #059669);
+      }
+
+      .axyra-stat-icon-modern.orange {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+      }
+
+      .axyra-stat-icon-modern.purple {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      }
+
+      .axyra-stat-icon-modern.teal {
+        background: linear-gradient(135deg, #14b8a6, #0d9488);
+      }
+
+      .axyra-stat-icon-modern.indigo {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+      }
+
+      .axyra-stat-trend {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+        padding: 4px 8px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .axyra-stat-trend i {
+        font-size: 10px;
+      }
+
+      .axyra-stat-content {
+        position: relative;
+        z-index: 2;
+      }
+
+      .axyra-stat-number-modern {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 8px;
+        line-height: 1;
+      }
+
+      .axyra-stat-label-modern {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 4px;
+      }
+
+      .axyra-stat-description {
+        font-size: 0.875rem;
+        color: #6b7280;
+        font-weight: 500;
+      }
+
+      /* ========================================
+         INDICADOR DE MEMBRESÍA
+         ======================================== */
+
+      .axyra-membership-indicator {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 8px 16px;
+        border-radius: 25px;
+        margin-right: 16px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .axyra-membership-indicator:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      .axyra-membership-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: white;
+      }
+
+      .axyra-membership-info i {
+        font-size: 16px;
+        color: #ffd700;
+      }
+
+      .axyra-membership-info span {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .axyra-upgrade-btn {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .axyra-upgrade-btn:hover {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .axyra-upgrade-btn i {
+        font-size: 10px;
+      }
+
+      /* Estados del indicador según el plan */
+      .axyra-membership-indicator.plan-gratuito {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+      }
+
+      .axyra-membership-indicator.plan-basico {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      }
+
+      .axyra-membership-indicator.plan-profesional {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+      }
+
+      .axyra-membership-indicator.plan-empresarial {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+      }
+
+      .axyra-membership-indicator.plan-ultimo {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+      }
+
+      .axyra-membership-indicator.plan-ultimo .axyra-upgrade-btn {
+        display: none;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1200px) {
+        .axyra-stats-grid-4 {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .axyra-stats-grid-4,
+        .axyra-stats-grid-2 {
+          grid-template-columns: 1fr;
+        }
+
+        .axyra-stat-card-modern {
+          padding: 20px;
+        }
+
+        .axyra-stat-number-modern {
+          font-size: 2rem;
+        }
+      }
+    </style>
+
+    <!-- Header Compartido AXYRA - Se insertará automáticamente -->
+
+    <!-- Main Content -->
+    <main class="axyra-main-content">
+      <div class="axyra-dashboard-container">
+        <!-- Dashboard Header -->
+        <div class="axyra-dashboard-header">
+          <div>
+            <h1 class="axyra-dashboard-title" id="welcomeTitle">Dashboard Avanzado</h1>
+            <p class="axyra-dashboard-subtitle" id="welcomeMessage">
+              Resumen general de tu empresa y estadísticas importantes
+            </p>
+          </div>
+          <div class="axyra-dashboard-controls">
+            <div class="axyra-membership-indicator" id="membershipIndicator">
+              <div class="axyra-membership-info">
+                <i class="fas fa-crown" id="membershipIcon"></i>
+                <span id="membershipText">Plan Gratuito</span>
+              </div>
+              <button
+                class="axyra-upgrade-btn"
+                id="upgradeBtn"
+                onclick="window.location.href='../membresias/membresias.html'"
+              >
+                <i class="fas fa-rocket"></i>
+                Ver Planes
+              </button>
+            </div>
+            <button
+              id="btnPersonalizarDashboard"
+              class="axyra-dashboard-btn axyra-dashboard-btn-primary"
+              data-modal="personalize"
+            >
+              <i class="fas fa-palette"></i> Personalizar
+            </button>
+            <button
+              id="btnConfigurarDashboard"
+              class="axyra-dashboard-btn axyra-dashboard-btn-secondary"
+              data-modal="configure"
+            >
+              <i class="fas fa-cog"></i> Configurar
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats Grid - 4 Columnas -->
+        <div class="axyra-stats-grid-4">
+          <div class="axyra-stat-card-modern" data-modal="empleadosModal">
+            <div class="axyra-stat-header">
+              <div class="axyra-stat-icon-modern blue">
+                <i class="fas fa-users"></i>
+              </div>
+            </div>
+            <div class="axyra-stat-content">
+              <div class="axyra-stat-number-modern" id="empleadosActivos">0</div>
+              <div class="axyra-stat-label-modern">Empleados Activos</div>
+              <div class="axyra-stat-description">Personal registrado</div>
+            </div>
+          </div>
+
+          <div class="axyra-stat-card-modern" data-modal="horasModal">
+            <div class="axyra-stat-header">
+              <div class="axyra-stat-icon-modern green">
+                <i class="fas fa-clock"></i>
+              </div>
+            </div>
+            <div class="axyra-stat-content">
+              <div class="axyra-stat-number-modern" id="horasMes">0</div>
+              <div class="axyra-stat-label-modern">Horas del Mes</div>
+              <div class="axyra-stat-description">Tiempo trabajado</div>
+            </div>
+          </div>
+
+          <div class="axyra-stat-card-modern" data-modal="nominasModal">
+            <div class="axyra-stat-header">
+              <div class="axyra-stat-icon-modern orange">
+                <i class="fas fa-file-invoice-dollar"></i>
+              </div>
+            </div>
+            <div class="axyra-stat-content">
+              <div class="axyra-stat-number-modern" id="nominasGeneradas">0</div>
+              <div class="axyra-stat-label-modern">Nóminas Generadas</div>
+              <div class="axyra-stat-description">Pagos procesados</div>
+            </div>
+          </div>
+
+          <div class="axyra-stat-card-modern" data-modal="salariosModal">
+            <div class="axyra-stat-header">
+              <div class="axyra-stat-icon-modern purple">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+            </div>
+            <div class="axyra-stat-content">
+              <div class="axyra-stat-number-modern" id="totalSalarios">$0</div>
+              <div class="axyra-stat-label-modern">Total Salarios</div>
+              <div class="axyra-stat-description">Salarios netos</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Grid Secundario - 2 Columnas -->
+        <div class="axyra-stats-grid-2">
+          <div class="axyra-stat-card-modern" data-modal="cuadresModal">
+            <div class="axyra-stat-header">
+              <div class="axyra-stat-icon-modern teal">
+                <i class="fas fa-calculator"></i>
+              </div>
+            </div>
+            <div class="axyra-stat-content">
+              <div class="axyra-stat-number-modern" id="cuadresCaja">0</div>
+              <div class="axyra-stat-label-modern">Cuadres de Caja</div>
+              <div class="axyra-stat-description">Reconciliaciones</div>
+            </div>
+          </div>
+
+          <div class="axyra-stat-card-modern" data-modal="inventarioModal">
+            <div class="axyra-stat-header">
+              <div class="axyra-stat-icon-modern indigo">
+                <i class="fas fa-boxes"></i>
+              </div>
+            </div>
+            <div class="axyra-stat-content">
+              <div class="axyra-stat-number-modern" id="totalInventario">0</div>
+              <div class="axyra-stat-label-modern">Items en Inventario</div>
+              <div class="axyra-stat-description">Productos disponibles</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="axyra-quick-actions">
+          <h2 class="axyra-section-title">
+            <i class="fas fa-bolt"></i>
+            Acciones Rápidas
+          </h2>
+          <div class="axyra-actions-grid">
+            <a href="../gestion_personal/gestion_personal.html" class="axyra-action-btn" data-module="gestion_personal">
+              <i class="fas fa-user-plus"></i>
+              <span>Registrar Empleado</span>
+            </a>
+            <a href="../gestion_personal/gestion_personal.html" class="axyra-action-btn" data-module="gestion_personal">
+              <i class="fas fa-clock"></i>
+              <span>Registrar Horas</span>
+            </a>
+            <a href="../gestion_personal/gestion_personal.html" class="axyra-action-btn" data-module="gestion_personal">
+              <i class="fas fa-file-invoice"></i>
+              <span>Generar Nómina</span>
+            </a>
+            <a href="../cuadre_caja/cuadre_caja.html" class="axyra-action-btn" data-module="caja">
+              <i class="fas fa-calculator"></i>
+              <span>Cuadre de Caja</span>
+            </a>
+            <a href="../inventario/inventario.html" class="axyra-action-btn" data-module="inventario">
+              <i class="fas fa-box"></i>
+              <span>Gestionar Inventario</span>
+            </a>
+            <a href="../configuracion/configuracion.html" class="axyra-action-btn" data-module="configuracion">
+              <i class="fas fa-cog"></i>
+              <span>Configuración</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="axyra-charts-section">
+          <h2 class="axyra-section-title">
+            <i class="fas fa-chart-line"></i>
+            Análisis y Estadísticas
+          </h2>
+          <div class="axyra-charts-grid">
+            <div class="axyra-chart-card">
+              <h3 class="axyra-chart-title">Distribución de Empleados por Departamento</h3>
+              <div class="axyra-chart-container">
+                <canvas id="employeeDistributionChart"></canvas>
+              </div>
+            </div>
+            <div class="axyra-chart-card">
+              <h3 class="axyra-chart-title">Tendencia de Horas Trabajadas</h3>
+              <div class="axyra-chart-container">
+                <canvas id="hoursTrendChart"></canvas>
+              </div>
+            </div>
+            <div class="axyra-chart-card">
+              <h3 class="axyra-chart-title">Distribución de Salarios</h3>
+              <div class="axyra-chart-container">
+                <canvas id="salaryDistributionChart"></canvas>
+              </div>
+            </div>
+            <div class="axyra-chart-card">
+              <h3 class="axyra-chart-title">Métricas de Productividad</h3>
+              <div class="axyra-chart-container">
+                <canvas id="productivityChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard Avanzado -->
+        <div class="axyra-dashboard-avanzado">
+          <div id="dashboard-widgets">
+            <!-- Los widgets se cargarán dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="axyra-recent-activity">
+          <h2 class="axyra-section-title">
+            <i class="fas fa-history"></i>
+            Actividad Reciente
+          </h2>
+          <div class="axyra-activity-list" id="actividadReciente">
+            <!-- La actividad se cargará dinámicamente -->
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="axyra-footer">
+      <div class="axyra-footer-content">
+        <div class="axyra-footer-bottom">
+          <p>&copy; 2025 AXYRA. Sistema de Gestión Empresarial.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modales para estadísticas -->
+    <div id="empleadosModal" class="axyra-modal">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3>Detalle de Empleados</h3>
+          <button class="axyra-modal-close">&times;</button>
+        </div>
+        <div class="axyra-modal-body" id="empleadosModalBody">
+          <!-- Contenido del modal -->
+        </div>
+      </div>
+    </div>
+
+    <div id="horasModal" class="axyra-modal">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3>Detalle de Horas del Mes</h3>
+          <button class="axyra-modal-close">&times;</button>
+        </div>
+        <div class="axyra-modal-body" id="horasModalBody">
+          <!-- Contenido del modal -->
+        </div>
+      </div>
+    </div>
+
+    <div id="nominasModal" class="axyra-modal">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3>Detalle de Nóminas</h3>
+          <button class="axyra-modal-close">&times;</button>
+        </div>
+        <div class="axyra-modal-body" id="nominasModalBody">
+          <!-- Contenido del modal -->
+        </div>
+      </div>
+    </div>
+
+    <div id="salariosModal" class="axyra-modal">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3>Detalle de Salarios Netos</h3>
+          <button class="axyra-modal-close">&times;</button>
+        </div>
+        <div class="axyra-modal-body" id="salariosModalBody">
+          <!-- Contenido del modal -->
+        </div>
+      </div>
+    </div>
+
+    <div id="cuadresModal" class="axyra-modal">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3>Detalle de Cuadres de Caja</h3>
+          <button class="axyra-modal-close">&times;</button>
+        </div>
+        <div class="axyra-modal-body" id="cuadresModalBody">
+          <!-- Contenido del modal -->
+        </div>
+      </div>
+    </div>
+
+    <div id="inventarioModal" class="axyra-modal">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3>Detalle de Inventario</h3>
+          <button class="axyra-modal-close">&times;</button>
+        </div>
+        <div class="axyra-modal-body" id="inventarioModalBody">
+          <!-- Contenido del modal -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts esenciales -->
+    <script src="../../static/firebase-config.js"></script>
+    <script src="../../static/auth-manager.js"></script>
+    <script src="dashboard.js"></script>
+
+    <!-- Script simplificado para dashboard -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('🚀 Inicializando dashboard AXYRA...');
+
+        // Ocultar loader inmediatamente
+        const loader = document.getElementById('dashboard-loader');
+        if (loader) {
+          loader.style.display = 'none';
+          console.log('✅ Loader ocultado');
+        }
+
+        // Mostrar contenido principal
+        const mainContent = document.querySelector('.axyra-main-content');
+        if (mainContent) {
+          mainContent.style.display = 'block';
+          mainContent.style.opacity = '1';
+          mainContent.style.visibility = 'visible';
+          console.log('✅ Contenido principal mostrado');
+        }
+
+        // Aplicar estilos de corrección
+        const style = document.createElement('style');
+        style.textContent = `
+          .axyra-main-content,
+          .axyra-dashboard-container,
+          .axyra-dashboard-header,
+          .axyra-stats-grid,
+          .axyra-quick-actions,
+          .axyra-charts-section {
+            filter: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+          }
+          #dashboard-loader {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            z-index: -1 !important;
+          }
+        `;
+        document.head.appendChild(style);
+
+        console.log('✅ Dashboard AXYRA inicializado correctamente');
+
+        // Actualizar indicador de membresía
+        updateMembershipIndicator();
+      });
+
+      // Función para actualizar el indicador de membresía
+      function updateMembershipIndicator() {
+        const membershipPlan = localStorage.getItem('axyra_membership_plan') || 'free';
+        const membershipIndicator = document.getElementById('membershipIndicator');
+        const membershipText = document.getElementById('membershipText');
+        const membershipIcon = document.getElementById('membershipIcon');
+        const upgradeBtn = document.getElementById('upgradeBtn');
+
+        if (!membershipIndicator) return;
+
+        // Remover clases anteriores
+        membershipIndicator.className = 'axyra-membership-indicator';
+
+        switch (membershipPlan) {
+          case 'free':
+            membershipIndicator.classList.add('plan-gratuito');
+            membershipText.textContent = 'Plan Gratuito';
+            membershipIcon.className = 'fas fa-gift';
+            upgradeBtn.style.display = 'flex';
+            break;
+
+          case 'basic':
+            membershipIndicator.classList.add('plan-basico');
+            membershipText.textContent = 'Plan Básico';
+            membershipIcon.className = 'fas fa-star';
+            upgradeBtn.style.display = 'flex';
+            break;
+
+          case 'professional':
+            membershipIndicator.classList.add('plan-profesional');
+            membershipText.textContent = 'Plan Profesional';
+            membershipIcon.className = 'fas fa-crown';
+            upgradeBtn.style.display = 'flex';
+            break;
+
+          case 'enterprise':
+            membershipIndicator.classList.add('plan-empresarial');
+            membershipText.textContent = 'Plan Empresarial';
+            membershipIcon.className = 'fas fa-building';
+            upgradeBtn.style.display = 'flex';
+            break;
+
+          case 'ultimate':
+            membershipIndicator.classList.add('plan-ultimo');
+            membershipText.textContent = 'Plan Ultimate';
+            membershipIcon.className = 'fas fa-gem';
+            upgradeBtn.style.display = 'none';
+            break;
+
+          default:
+            membershipIndicator.classList.add('plan-gratuito');
+            membershipText.textContent = 'Plan Gratuito';
+            membershipIcon.className = 'fas fa-gift';
+            upgradeBtn.style.display = 'flex';
+        }
+
+        console.log('💎 Indicador de membresía actualizado:', membershipPlan);
+      }
+
+      // Script para forzar recarga y limpiar caché
+      if (localStorage.getItem('axyra_version') !== 'v20') {
+        localStorage.setItem('axyra_version', 'v20');
+        if (performance.navigation.type === 1) {
+          window.location.reload(true);
+        }
+      }
+    </script>
+  </body>
+</html>

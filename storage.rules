@@ -1,0 +1,154 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE USUARIOS
+    // ========================================
+    
+    match /usuarios/{userId}/{allPaths=**} {
+      // Solo el usuario propietario puede leer/escribir sus archivos
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Los admins pueden leer todos los archivos de usuarios
+      allow read: if request.auth != null && 
+        request.auth.token.email == 'axyra.app@gmail.com';
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE EMPLEADOS
+    // ========================================
+    
+    match /empleados/{empleadoId}/{allPaths=**} {
+      // Usuarios autenticados de la misma empresa pueden leer
+      allow read: if request.auth != null && 
+        (request.auth.token.companyId == resource.metadata.companyId ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+      
+      // Solo RRHH, gerentes y admins pueden escribir
+      allow write: if request.auth != null && 
+        (request.auth.token.role in ['rrhh', 'gerente'] ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE NÓMINAS
+    // ========================================
+    
+    match /nominas/{nominaId}/{allPaths=**} {
+      // Solo contadores, gerentes y admins pueden acceder
+      allow read, write: if request.auth != null && 
+        (request.auth.token.role in ['contador', 'gerente'] ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE CUADRE DE CAJA
+    // ========================================
+    
+    match /cuadre_caja/{cuadreId}/{allPaths=**} {
+      // Solo contadores, cajeros, gerentes y admins pueden acceder
+      allow read, write: if request.auth != null && 
+        (request.auth.token.role in ['contador', 'cajero', 'gerente'] ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE INVENTARIO
+    // ========================================
+    
+    match /inventario/{productoId}/{allPaths=**} {
+      // Usuarios autenticados de la misma empresa pueden leer
+      allow read: if request.auth != null && 
+        (request.auth.token.companyId == resource.metadata.companyId ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+      
+      // Solo almacén, gerentes y admins pueden escribir
+      allow write: if request.auth != null && 
+        (request.auth.token.role in ['almacen', 'gerente'] ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE FACTURAS
+    // ========================================
+    
+    match /facturas/{facturaId}/{allPaths=**} {
+      // Solo contadores, gerentes y admins pueden acceder
+      allow read, write: if request.auth != null && 
+        (request.auth.token.role in ['contador', 'gerente'] ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE REPORTES
+    // ========================================
+    
+    match /reportes/{reporteId}/{allPaths=**} {
+      // Usuarios autenticados de la misma empresa pueden leer
+      allow read: if request.auth != null && 
+        (request.auth.token.companyId == resource.metadata.companyId ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+      
+      // Solo gerentes y admins pueden escribir
+      allow write: if request.auth != null && 
+        (request.auth.token.role in ['gerente'] ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE EXPORTACIONES
+    // ========================================
+    
+    match /exportaciones/{exportacionId}/{allPaths=**} {
+      // Solo el usuario que creó la exportación o admins pueden acceder
+      allow read, write: if request.auth != null && 
+        (request.auth.uid == resource.metadata.createdBy ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE BACKUPS
+    // ========================================
+    
+    match /backups/{backupId}/{allPaths=**} {
+      // Solo admins pueden acceder a backups
+      allow read, write: if request.auth != null && 
+        request.auth.token.email == 'axyra.app@gmail.com';
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS TEMPORALES
+    // ========================================
+    
+    match /temp/{userId}/{allPaths=**} {
+      // Solo el usuario propietario puede acceder a sus archivos temporales
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Los archivos temporales se eliminan automáticamente después de 24 horas
+      // (esto se maneja en el código de la aplicación)
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS PÚBLICOS
+    // ========================================
+    
+    match /public/{allPaths=**} {
+      // Archivos públicos pueden ser leídos por cualquier usuario autenticado
+      allow read: if request.auth != null;
+      
+      // Solo admins pueden escribir archivos públicos
+      allow write: if request.auth != null && 
+        request.auth.token.email == 'axyra.app@gmail.com';
+    }
+    
+    // ========================================
+    // REGLAS POR DEFECTO
+    // ========================================
+    
+    // Cualquier otro archivo no especificado
+    match /{allPaths=**} {
+      // Denegar por defecto
+      allow read, write: if false;
+    }
+  }
+}

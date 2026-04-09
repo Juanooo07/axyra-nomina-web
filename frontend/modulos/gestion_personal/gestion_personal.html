@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Personal - AXYRA</title>
+    <link rel="stylesheet" href="../../static/axyra-styles.css" />
+    <link rel="stylesheet" href="../../static/axyra-design-system.css" />
+    <link rel="stylesheet" href="../../static/header-fixes.css" />
+    <link rel="stylesheet" href="../../static/ai-chat-styles.css" />
+    <link rel="stylesheet" href="../../static/footer-center-fix.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+      .gestion-personal-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px; /* Padding normal */
+      }
+
+      .gestion-personal-container h1 {
+        color: #1a1a1a;
+        font-weight: 800;
+        font-size: 2.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .gestion-personal-container h3 {
+        color: #1a1a1a;
+        font-weight: 700;
+        font-size: 1.5rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .gestion-personal-container h4 {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 1.2rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+      }
+
+      /* Estilos para modales */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+      }
+
+      .modal-content {
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 0;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        animation: modalSlideIn 0.3s ease-out;
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 12px 12px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .close {
+        color: white;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .close:hover {
+        color: #ff6b6b;
+      }
+
+      .modal-body {
+        padding: 30px;
+      }
+
+      .modal-footer {
+        padding: 20px 30px;
+        background-color: #f8f9fa;
+        border-radius: 0 0 12px 12px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      /* Estilos para tarjetas */
+      .empleado-card,
+      .horas-card,
+      .departamento-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e1e5e9;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .empleado-card:hover,
+      .horas-card:hover,
+      .departamento-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .empleado-info,
+      .horas-info,
+      .departamento-info {
+        margin-bottom: 15px;
+      }
+
+      .empleado-info h4,
+      .horas-info h4,
+      .departamento-info h4 {
+        margin: 0 0 10px 0;
+        color: #2c3e50;
+        font-size: 1.2rem;
+      }
+
+      .empleado-info p,
+      .horas-info p,
+      .departamento-info p {
+        margin: 5px 0;
+        color: #666;
+        font-size: 14px;
+      }
+
+      .empleado-actions,
+      .horas-actions,
+      .departamento-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-info {
+        background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%);
+        color: white;
+      }
+
+      .btn-info:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(54, 209, 220, 0.4);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-1px);
+      }
+
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .no-data {
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        padding: 40px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 2px dashed #dee2e6;
+      }
+
+      /* Estadísticas - Diseño Moderno */
+      .estadisticas-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+      }
+
+      .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 30px 25px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        border: none;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+      }
+
+      .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+        border-radius: 20px;
+        pointer-events: none;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+      }
+
+      .stat-card:nth-child(1) {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .stat-card:nth-child(2) {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+
+      .stat-card:nth-child(3) {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      }
+
+      .stat-card:nth-child(4) {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      }
+
+      .stat-card h3 {
+        font-size: 3rem;
+        font-weight: 800;
+        color: white;
+        margin: 0 0 15px 0;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        position: relative;
+        z-index: 2;
+      }
+
+      .stat-card p {
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 2;
+        letter-spacing: 0.5px;
+      }
+
+      /* Estilos para modales adicionales */
+      .horas-empleado-item {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e1e5e9;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .horas-empleado-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .horas-empleado-item .horas-info {
+        margin-bottom: 15px;
+      }
+
+      .horas-empleado-item .horas-info p {
+        margin: 5px 0;
+        color: #666;
+        font-size: 14px;
+      }
+
+      .horas-empleado-item .horas-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .detalle-horas-container {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .detalle-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #e1e5e9;
+      }
+
+      .detalle-item:last-child {
+        border-bottom: none;
+      }
+
+      .detalle-item label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+      }
+
+      .detalle-item span {
+        color: #666;
+        font-weight: 500;
+      }
+
+      /* Estados vacíos para producción */
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        border: 2px dashed #dee2e6;
+        margin: 20px 0;
+      }
+
+      .empty-state .empty-icon {
+        font-size: 4rem;
+        color: #6c757d;
+        margin-bottom: 20px;
+        opacity: 0.7;
+      }
+
+      .empty-state h3 {
+        color: #2c3e50;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0 0 10px 0;
+      }
+
+      .empty-state p {
+        color: #6c757d;
+        font-size: 1rem;
+        margin: 0 0 25px 0;
+        line-height: 1.5;
+      }
+
+      .empty-state .btn {
+        margin-top: 10px;
+      }
+
+      .stat-card .stat-icon {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 2.5rem;
+        color: rgba(255, 255, 255, 0.3);
+        z-index: 1;
+      }
+
+      .stat-card .stat-trend {
+        position: absolute;
+        bottom: 15px;
+        right: 20px;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+        z-index: 2;
+      }
+
+      /* Animaciones de entrada */
+      .stat-card {
+        animation: slideInUp 0.6s ease-out;
+      }
+
+      .stat-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .stat-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .stat-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .stat-card:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .gestion-personal-tabs {
+        display: flex;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 15px;
+        margin-bottom: 30px;
+        overflow-x: auto;
+        padding: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .gestion-personal-tab {
+        flex: 1;
+        padding: 18px 25px;
+        text-align: center;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        color: #666;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        white-space: nowrap;
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+        min-width: 150px;
+      }
+
+      .gestion-personal-tab::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 12px;
+      }
+
+      .gestion-personal-tab:hover::before {
+        opacity: 1;
+      }
+
+      .gestion-personal-tab:hover {
+        color: #667eea;
+        transform: translateY(-2px);
+      }
+
+      .gestion-personal-tab.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px;
+        margin: 2px;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        transform: translateY(-2px);
+      }
+
+      .gestion-personal-tab.active::before {
+        display: none;
+      }
+
+      .gestion-personal-tab i {
+        margin-right: 8px;
+        font-size: 1.1rem;
+      }
+
+      .gestion-personal-tab:hover {
+        background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+        color: #000000;
+        transform: translateY(-1px);
+        font-weight: 800;
+      }
+
+      .gestion-personal-tab.active:hover {
+        background: #0056b3;
+      }
+
+      .tab-content {
+        display: none;
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+        padding: 20px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(102, 126, 234, 0.4);
+      }
+
+      .stat-card h3 {
+        margin: 0 0 15px 0;
+        font-size: 3rem;
+        font-weight: 800;
+        text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(45deg, #fff 0%, #f0f0f0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .stat-card p {
+        margin: 0;
+        opacity: 0.95;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        font-size: 1.1rem;
+      }
+
+      .form-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .form-section h3 {
+        color: #1a1a1a;
+        font-weight: 800;
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+      }
+
+      .form-section h4 {
+        color: #2c3e50;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin: 20px 0 15px 0;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group label {
+        margin-bottom: 5px;
+        font-weight: 700;
+        color: #1a1a1a;
+        font-size: 14px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 12px;
+        border: 2px solid #ced4da;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #1a1a1a;
+        background: #ffffff;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 123, 255, 0.4);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+      }
+
+      .btn-success:hover {
+        background: linear-gradient(135deg, #1e7e34 0%, #1a6b2e 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(40, 167, 69, 0.4);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+      }
+
+      .btn-danger:hover {
+        background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(220, 53, 69, 0.4);
+      }
+
+      .btn-outline-primary {
+        background: transparent;
+        color: #007bff;
+        border: 2px solid #007bff;
+        font-weight: 700;
+      }
+
+      .btn-outline-primary:hover {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+      }
+
+      .btn-outline-danger {
+        background: transparent;
+        color: #dc3545;
+        border: 2px solid #dc3545;
+        font-weight: 700;
+      }
+
+      .btn-outline-danger:hover {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+      }
+
+      .btn-outline-info {
+        background: transparent;
+        color: #17a2b8;
+        border: 2px solid #17a2b8;
+        font-weight: 700;
+      }
+
+      .btn-outline-info:hover {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+      }
+
+      .btn-sm {
+        padding: 8px 16px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .btn-small {
+        padding: 10px 20px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        margin-top: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid #dee2e6;
+      }
+
+      .table-container h3 {
+        color: #1a1a1a;
+        font-weight: 800;
+        font-size: 1.3rem;
+        margin: 0 0 20px 0;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        padding: 20px 20px 0 20px;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        margin: 0;
+      }
+
+      .table thead {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      }
+
+      .table tbody tr:nth-child(even) {
+        background: #f8f9fa;
+      }
+
+      .table tbody tr:nth-child(odd) {
+        background: white;
+      }
+
+      .table th,
+      .table td {
+        padding: 15px 12px;
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+        font-size: 14px;
+        font-weight: 500;
+        color: #1a1a1a;
+      }
+
+      .table th {
+        background: #f8f9fa;
+        font-weight: 800;
+        color: #1a1a1a;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .table tbody tr:hover {
+        background: #f8f9fa;
+      }
+
+      .estado-badge {
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .estado-badge.activo {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: #ffffff;
+        box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+      }
+
+      .estado-badge.inactivo {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: #ffffff;
+        box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+      }
+
+      .departamento-item {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+
+      .departamento-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .departamento-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .departamento-nombre {
+        font-weight: 700;
+        color: #1a1a1a;
+        font-size: 16px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .departamento-descripcion {
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .departamento-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      /* Estilos para contenedores de acciones de tabla */
+      .table-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .table-actions .btn {
+        margin: 0;
+        white-space: nowrap;
+      }
+
+      /* Mejorar legibilidad de los datos de la tabla */
+      .table td {
+        vertical-align: middle;
+      }
+
+      .table td strong {
+        font-weight: 700;
+        color: #1a1a1a;
+      }
+
+      .table td .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-radius: 12px;
+      }
+
+      .text-success {
+        color: #28a745 !important;
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(40, 167, 69, 0.3);
+      }
+
+      .text-danger {
+        color: #dc3545 !important;
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(220, 53, 69, 0.3);
+      }
+
+      .text-info {
+        color: #17a2b8 !important;
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(23, 162, 184, 0.3);
+      }
+
+      /* Estilos para iconos de acción */
+      .action-btn {
+        display: inline-block;
+        padding: 8px 12px;
+        margin: 2px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .action-btn.edit {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+      }
+
+      .action-btn.edit:hover {
+        background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+      }
+
+      .action-btn.delete {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+      }
+
+      .action-btn.delete:hover {
+        background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+      }
+
+      .action-btn.view {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        color: white;
+      }
+
+      .action-btn.view:hover {
+        background: linear-gradient(135deg, #138496 0%, #0f6674 100%);
+      }
+
+      .action-btn.print {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        color: white;
+      }
+
+      .action-btn.print:hover {
+        background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      .modal-content {
+        background-color: white;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .modal-title {
+        margin: 0;
+        color: #1a1a1a;
+        font-weight: 700;
+        font-size: 18px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #6c757d;
+      }
+
+      .close:hover {
+        color: #495057;
+      }
+
+      .modal-body {
+        margin-bottom: 20px;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #dee2e6;
+      }
+
+      @media (max-width: 768px) {
+        .gestion-personal-container {
+          padding: 10px;
+        }
+
+        .gestion-personal-tabs {
+          flex-direction: column;
+        }
+
+        .gestion-personal-tab {
+          text-align: left;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .btn-group {
+          flex-direction: column;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="gestion-personal-container">
+      <h1><i class="fas fa-users"></i> Gestión de Personal</h1>
+
+      <!-- Estadísticas -->
+      <div class="estadisticas-container">
+        <div class="stat-card">
+          <i class="fas fa-users stat-icon"></i>
+          <h3 id="totalEmpleados">0</h3>
+          <p>Empleados</p>
+          <div class="stat-trend">+0% este mes</div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-clock stat-icon"></i>
+          <h3 id="totalHoras">0</h3>
+          <p>Registros de Horas</p>
+          <div class="stat-trend">+0% esta semana</div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-building stat-icon"></i>
+          <h3 id="totalDepartamentos">0</h3>
+          <p>Departamentos</p>
+          <div class="stat-trend">Activos</div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-chart-line stat-icon"></i>
+          <h3 id="promedioHoras">0</h3>
+          <p>Promedio Horas/Registro</p>
+          <div class="stat-trend">Eficiencia</div>
+        </div>
+      </div>
+
+      <!-- Pestañas -->
+      <div class="gestion-personal-tabs">
+        <button class="gestion-personal-tab active" onclick="cambiarTab('horas')">
+          <i class="fas fa-clock"></i> Registro de Horas
+        </button>
+        <button class="gestion-personal-tab" onclick="cambiarTab('empleados')">
+          <i class="fas fa-users"></i> Empleados
+        </button>
+        <button class="gestion-personal-tab" onclick="cambiarTab('departamentos')">
+          <i class="fas fa-building"></i> Departamentos
+        </button>
+        <button class="gestion-personal-tab" onclick="cambiarTab('nomina')">
+          <i class="fas fa-file-invoice-dollar"></i> Nómina
+        </button>
+        <button class="gestion-personal-tab" onclick="cambiarTab('reportes')">
+          <i class="fas fa-chart-bar"></i> Reportes
+        </button>
+      </div>
+
+      <!-- Contenido de Pestañas -->
+
+      <!-- Pestaña de Horas -->
+      <div id="tab-horas" class="tab-content active">
+        <div class="form-section">
+          <h3><i class="fas fa-plus"></i> Registrar Horas</h3>
+          <form id="formRegistroHoras">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="empleadoHoras">Empleado *</label>
+                <select id="empleadoHoras" name="empleadoHoras" required>
+                  <option value="">Seleccionar empleado</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="fechaHoras">Fecha *</label>
+                <input type="date" id="fechaHoras" name="fechaHoras" required />
+              </div>
+            </div>
+
+            <h4>Tipos de Horas</h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="horas_ordinarias">Horas Ordinarias</label>
+                <input type="number" id="horas_ordinarias" name="horas_ordinarias" min="0" step="0.5" value="0" />
+              </div>
+              <div class="form-group">
+                <label for="horas_recargo_nocturno">Recargo Nocturno</label>
+                <input
+                  type="number"
+                  id="horas_recargo_nocturno"
+                  name="horas_recargo_nocturno"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+              <div class="form-group">
+                <label for="horas_recargo_diurno_dominical">Recargo Diurno Dominical</label>
+                <input
+                  type="number"
+                  id="horas_recargo_diurno_dominical"
+                  name="horas_recargo_diurno_dominical"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+              <div class="form-group">
+                <label for="horas_recargo_nocturno_dominical">Recargo Nocturno Dominical</label>
+                <input
+                  type="number"
+                  id="horas_recargo_nocturno_dominical"
+                  name="horas_recargo_nocturno_dominical"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="horas_hora_extra_diurna">Hora Extra Diurna</label>
+                <input
+                  type="number"
+                  id="horas_hora_extra_diurna"
+                  name="horas_hora_extra_diurna"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+              <div class="form-group">
+                <label for="horas_hora_extra_nocturna">Hora Extra Nocturna</label>
+                <input
+                  type="number"
+                  id="horas_hora_extra_nocturna"
+                  name="horas_hora_extra_nocturna"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+              <div class="form-group">
+                <label for="horas_hora_diurna_dominical_o_festivo">Hora Diurna Dominical/Festivo</label>
+                <input
+                  type="number"
+                  id="horas_hora_diurna_dominical_o_festivo"
+                  name="horas_hora_diurna_dominical_o_festivo"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+              <div class="form-group">
+                <label for="horas_hora_extra_diurna_dominical_o_festivo">Hora Extra Diurna Dominical/Festivo</label>
+                <input
+                  type="number"
+                  id="horas_hora_extra_diurna_dominical_o_festivo"
+                  name="horas_hora_extra_diurna_dominical_o_festivo"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="horas_hora_nocturna_dominical_o_festivo">Hora Nocturna Dominical/Festivo</label>
+                <input
+                  type="number"
+                  id="horas_hora_nocturna_dominical_o_festivo"
+                  name="horas_hora_nocturna_dominical_o_festivo"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+              <div class="form-group">
+                <label for="horas_hora_extra_nocturna_dominical_o_festivo">Hora Extra Nocturna Dominical/Festivo</label>
+                <input
+                  type="number"
+                  id="horas_hora_extra_nocturna_dominical_o_festivo"
+                  name="horas_hora_extra_nocturna_dominical_o_festivo"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Registrar Horas</button>
+              <button type="button" class="btn btn-outline-primary" onclick="calcularHoras()">
+                <i class="fas fa-calculator"></i> Calcular
+              </button>
+              <button type="button" class="btn btn-success" data-generate-work-order>
+                <i class="fas fa-file-invoice"></i> Generar Comprobante
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="table-container">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px">
+            <h3><i class="fas fa-history"></i> Historial de Horas</h3>
+            <button class="btn btn-danger btn-sm" onclick="limpiarTablaHoras()">
+              <i class="fas fa-trash"></i> Limpiar Tabla
+            </button>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Empleado</th>
+                <th>Ordinarias</th>
+                <th>Rec. Nocturno</th>
+                <th>Rec. Diurno Dom.</th>
+                <th>Rec. Nocturno Dom.</th>
+                <th>H.E. Diurna</th>
+                <th>H.E. Nocturna</th>
+                <th>H. Diurna Dom.</th>
+                <th>H.E. Diurna Dom.</th>
+                <th>H. Nocturna Dom.</th>
+                <th>H.E. Nocturna Dom.</th>
+                <th>Total Horas</th>
+                <th>Total Salario</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpoHistorialHoras">
+              <!-- Los datos se cargarán dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pestaña de Empleados -->
+      <div id="tab-empleados" class="tab-content">
+        <div class="form-section">
+          <h3><i class="fas fa-plus"></i> Gestionar Empleados</h3>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="mostrarModalEmpleado()">
+              <i class="fas fa-plus"></i> Nuevo Empleado
+            </button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px">
+            <h3><i class="fas fa-users"></i> Lista de Empleados</h3>
+            <div class="table-actions">
+              <button class="btn btn-primary" onclick="mostrarModalEmpleado()">
+                <i class="fas fa-plus"></i> Agregar Empleado
+              </button>
+              <button class="btn btn-success" onclick="imprimirListaEmpleados()">
+                <i class="fas fa-print"></i> Imprimir Lista
+              </button>
+              <button class="btn btn-info" onclick="exportarEmpleadosPDF()">
+                <i class="fas fa-file-pdf"></i> Exportar PDF
+              </button>
+            </div>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Cédula</th>
+                <th>Cargo</th>
+                <th>Departamento</th>
+                <th>Salario</th>
+                <th>Tipo Contrato</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpoEmpleados">
+              <!-- Los datos se cargarán dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pestaña de Departamentos -->
+      <div id="tab-departamentos" class="tab-content">
+        <div class="form-section">
+          <h3><i class="fas fa-plus"></i> Gestionar Departamentos</h3>
+          <form id="formDepartamento">
+            <input type="hidden" name="departamentoId" value="" />
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nombreDepartamento">Nombre *</label>
+                <input type="text" id="nombreDepartamento" name="nombre" required />
+              </div>
+              <div class="form-group">
+                <label for="colorDepartamento">Color</label>
+                <input type="color" id="colorDepartamento" name="color" value="#007bff" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="descripcionDepartamento">Descripción</label>
+              <textarea id="descripcionDepartamento" name="descripcion" rows="3"></textarea>
+            </div>
+            <div class="btn-group">
+              <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar Departamento</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="listaDepartamentos">
+          <!-- Los departamentos se cargarán dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Pestaña de Nómina -->
+      <div id="tab-nomina" class="tab-content">
+        <div class="form-section">
+          <h3><i class="fas fa-file-invoice-dollar"></i> Generar Nómina</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fechaInicioNomina">Fecha de Inicio</label>
+              <input type="date" id="fechaInicioNomina" name="fechaInicioNomina" required />
+            </div>
+            <div class="form-group">
+              <label for="fechaFinNomina">Fecha de Fin</label>
+              <input type="date" id="fechaFinNomina" name="fechaFinNomina" required />
+            </div>
+            <div class="form-group">
+              <label for="nominaDepartamento">Departamento</label>
+              <select id="nominaDepartamento" name="nominaDepartamento">
+                <option value="">Todos los Departamentos</option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="generarNomina()">
+              <i class="fas fa-calculator"></i> Generar Nómina
+            </button>
+            <button class="btn btn-success" onclick="generarComprobante()">
+              <i class="fas fa-file-pdf"></i> Generar Comprobante
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pestaña de Reportes -->
+      <div id="tab-reportes" class="tab-content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3 id="totalEmpleados">0</h3>
+            <p>Total Empleados</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="empleadosActivos">0</h3>
+            <p>Empleados Activos</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="horasMes">0</h3>
+            <p>Horas del Mes</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="totalPagos">$0</h3>
+            <p>Total Pagos</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="nominasGeneradas">0</h3>
+            <p>Nóminas Generadas</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="promedioHoras">0</h3>
+            <p>Promedio Horas</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="promedioSalario">$0</h3>
+            <p>Promedio Salario</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Empleado -->
+    <div id="modalEmpleado" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Gestionar Empleado</h3>
+          <button class="close" onclick="cerrarModalEmpleado()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="formEmpleado">
+            <input type="hidden" name="empleadoId" value="" />
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nombreEmpleado">Nombre Completo *</label>
+                <input type="text" id="nombreEmpleado" name="nombre" required />
+              </div>
+              <div class="form-group">
+                <label for="cedulaEmpleado">Cédula *</label>
+                <input type="text" id="cedulaEmpleado" name="cedula" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cargoEmpleado">Cargo *</label>
+                <input type="text" id="cargoEmpleado" name="cargo" required />
+              </div>
+              <div class="form-group">
+                <label for="departamentoEmpleado">Departamento</label>
+                <select id="departamentoEmpleado" name="departamento">
+                  <option value="">Seleccionar departamento</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="salarioEmpleado">Salario *</label>
+                <input type="number" id="salarioEmpleado" name="salario" min="0" step="1000" required />
+              </div>
+              <div class="form-group">
+                <label for="tipoContratoEmpleado">Tipo de Contrato</label>
+                <select id="tipoContratoEmpleado" name="tipoContrato">
+                  <option value="indefinido">Indefinido</option>
+                  <option value="fijo">Fijo</option>
+                  <option value="obra_labor">Obra o Labor</option>
+                  <option value="aprendizaje">Aprendizaje</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fechaContratacionEmpleado">Fecha de Contratación</label>
+                <input type="date" id="fechaContratacionEmpleado" name="fechaContratacion" />
+              </div>
+              <div class="form-group">
+                <label for="estadoEmpleado">Estado</label>
+                <select id="estadoEmpleado" name="estado">
+                  <option value="activo">Activo</option>
+                  <option value="inactivo">Inactivo</option>
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-primary" onclick="cerrarModalEmpleado()">Cancelar</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="document.getElementById('formEmpleado').dispatchEvent(new Event('submit'))"
+          >
+            Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../static/firebase-config.js"></script>
+    <script src="../../static/firebase-sync-manager.js"></script>
+    <script src="gestion_personal_optimized.js"></script>
+    <script src="../../static/company-config-system.js"></script>
+    <script src="../../static/work-order-generator.js"></script>
+    <script>
+      // Función para cambiar pestañas
+      function cambiarTab(tabName) {
+        // Ocultar todos los contenidos
+        document.querySelectorAll('.tab-content').forEach((content) => {
+          content.classList.remove('active');
+        });
+
+        // Remover clase active de todas las pestañas
+        document.querySelectorAll('.gestion-personal-tab').forEach((tab) => {
+          tab.classList.remove('active');
+        });
+
+        // Mostrar contenido seleccionado
+        const selectedContent = document.getElementById(`tab-${tabName}`);
+        if (selectedContent) {
+          selectedContent.classList.add('active');
+        }
+
+        // Activar pestaña seleccionada
+        const selectedTab = document.querySelector(`[onclick*="cambiarTab('${tabName}')"]`);
+        if (selectedTab) {
+          selectedTab.classList.add('active');
+        }
+      }
+
+      // Función para mostrar modal de empleado
+      function mostrarModalEmpleado(empleadoId = null) {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.mostrarModalEmpleado(empleadoId);
+        }
+      }
+
+      // Función para cerrar modal de empleado
+      function cerrarModalEmpleado() {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.cerrarModalEmpleado();
+        }
+      }
+
+      // Función para mostrar modal de horas
+      function mostrarModalHoras(horasId = null) {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.mostrarModalHoras(horasId);
+        }
+      }
+
+      // Función para cerrar modal de horas
+      function cerrarModalHoras() {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.cerrarModalHoras();
+        }
+      }
+
+      // Función para calcular horas
+      function calcularHoras() {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.calcularHoras();
+        }
+      }
+
+      // Función para generar comprobante
+      function generarComprobante() {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.generarComprobante();
+        }
+      }
+
+      // Función para generar nómina
+      function generarNomina() {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.generarNomina();
+        }
+      }
+
+      // Función para limpiar tabla de horas
+      function limpiarTablaHoras() {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.limpiarTablaHoras();
+        }
+      }
+
+      // Función para mostrar detalle de horas
+      function mostrarDetalleHoras(horasId) {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.verDetalleHoras(horasId);
+        }
+      }
+
+      // Función para mostrar detalle de horas (alias para compatibilidad)
+      function verDetalleHoras(horasId) {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.verDetalleHoras(horasId);
+        }
+      }
+
+      // Funciones de exportación
+      function exportarEmpleadosPDF() {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.exportarEmpleadosPDF();
+        }
+      }
+
+      function imprimirListaEmpleados() {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.imprimirListaEmpleados();
+        }
+      }
+
+      // Funciones de modales
+      function mostrarModalEmpleado() {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.mostrarModalEmpleado();
+        }
+      }
+
+      function cerrarModalEmpleado() {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.cerrarModalEmpleado();
+        }
+      }
+
+      function guardarEmpleado() {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.guardarEmpleado();
+        }
+      }
+
+      // Establecer fechas por defecto
+      document.addEventListener('DOMContentLoaded', function () {
+        const fechaInput = document.getElementById('fechaHoras');
+        if (fechaInput) {
+          fechaInput.value = new Date().toISOString().split('T')[0];
+        }
+
+        // Configurar fechas por defecto para nómina (primer y último día del mes actual)
+        const fechaInicioNomina = document.getElementById('fechaInicioNomina');
+        const fechaFinNomina = document.getElementById('fechaFinNomina');
+
+        if (fechaInicioNomina && fechaFinNomina) {
+          const hoy = new Date();
+          const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+          const ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+
+          fechaInicioNomina.value = primerDia.toISOString().split('T')[0];
+          fechaFinNomina.value = ultimoDia.toISOString().split('T')[0];
+        }
+      });
+    </script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Scripts AXYRA Core -->
+    <script src="../../js/axyra-unified-config.js"></script>
+    <script src="../../js/axyra-notifications.js"></script>
+    <script src="../../js/axyra-auth.js"></script>
+    <script src="../../js/user-data-cleaner.js"></script>
+
+    <!-- Gestión de Personal Optimizado -->
+    <script src="gestion_personal_fixed.js"></script>
+
+    <!-- Header Compartido AXYRA -->
+    <script src="../../static/include-header.js"></script>
+
+    <!-- Funciones globales para gestión de personal -->
+    <script>
+      // Función global para limpiar tabla de horas
+      function limpiarTablaHoras() {
+        try {
+          if (window.axyraGestionPersonal && typeof window.axyraGestionPersonal.limpiarTablaHoras === 'function') {
+            window.axyraGestionPersonal.limpiarTablaHoras();
+          } else {
+            console.warn('⚠️ AxyraGestionPersonal no está disponible, usando fallback');
+            // Fallback: limpiar tabla manualmente
+            const tableBody = document.querySelector('.table tbody');
+            if (tableBody) {
+              tableBody.innerHTML = '';
+              console.log('✅ Tabla de horas limpiada (fallback)');
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error limpiando tabla de horas:', error);
+        }
+      }
+
+      // Función global para ver detalle de horas
+      function verDetalleHoras(horasId) {
+        try {
+          if (window.axyraGestionPersonal && typeof window.axyraGestionPersonal.verDetalleHoras === 'function') {
+            window.axyraGestionPersonal.verDetalleHoras(horasId);
+          } else {
+            console.warn('⚠️ AxyraGestionPersonal no está disponible para ver detalle');
+          }
+        } catch (error) {
+          console.error('❌ Error viendo detalle de horas:', error);
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,248 @@
+/* ========================================
+// ESTILOS PARA EL SISTEMA DE NOTIFICACIONES PROFESIONAL AXYRA
+// ======================================== */
+
+/* Contenedor principal de notificaciones */
+.axyra-notifications-container-professional {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  width: 380px !important;
+  max-height: 80vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  z-index: 10000 !important;
+  pointer-events: none !important;
+  padding: 0 8px !important;
+}
+
+/* Scrollbar personalizada para el contenedor */
+.axyra-notifications-container-professional::-webkit-scrollbar {
+  width: 4px;
+}
+.axyra-notifications-container-professional::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+}
+.axyra-notifications-container-professional::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 2px;
+}
+.axyra-notifications-container-professional::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Estilos base para cada notificación */
+.axyra-notification-professional {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1), 0 3px 10px rgba(0, 0, 0, 0.05) !important;
+  margin-bottom: 12px !important;
+  padding: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  transform: translateX(100%) !important;
+  opacity: 0 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  pointer-events: auto !important;
+  max-width: 100% !important;
+  min-width: 320px !important;
+  overflow: visible !important;
+  position: relative !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+/* Estados de la notificación */
+.axyra-notification-professional.axyra-notification-success {
+  border-left-color: #10b981 !important;
+}
+.axyra-notification-professional.axyra-notification-error {
+  border-left-color: #ef4444 !important;
+}
+.axyra-notification-professional.axyra-notification-warning {
+  border-left-color: #f59e0b !important;
+}
+.axyra-notification-professional.axyra-notification-info {
+  border-left-color: #3b82f6 !important;
+}
+
+/* Header de la notificación */
+.axyra-notification-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 8px !important;
+}
+
+/* Icono de la notificación */
+.axyra-notification-icon {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 16px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  flex-shrink: 0 !important;
+}
+
+/* Título de la notificación */
+.axyra-notification-title {
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: #1e293b !important;
+  margin-bottom: 2px !important;
+  line-height: 1.2 !important;
+}
+
+/* Hora de la notificación */
+.axyra-notification-time {
+  font-size: 10px !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+}
+
+/* Botón de cerrar */
+.axyra-notification-close {
+  background: rgba(148, 163, 184, 0.1) !important;
+  border: none !important;
+  color: #64748b !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  padding: 4px !important;
+  border-radius: 50% !important;
+  transition: all 0.3s ease !important;
+  width: 24px !important;
+  height: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+.axyra-notification-close:hover {
+  background: rgba(148, 163, 184, 0.2) !important;
+  color: #475569 !important;
+}
+
+/* Contenido del mensaje */
+.axyra-notification-message {
+  color: #475569 !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  margin-bottom: 12px !important;
+  font-weight: 500 !important;
+}
+
+/* Acciones de la notificación (botones) */
+.axyra-notification-actions {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+
+.axyra-notification-action {
+  color: white !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  flex: 1 !important;
+}
+.axyra-notification-action:hover {
+  filter: brightness(1.1) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .axyra-notifications-container-professional {
+    top: 10px !important;
+    right: 10px !important;
+    left: 10px !important;
+    max-width: unset !important;
+    min-width: unset !important;
+    width: calc(100% - 20px) !important;
+  }
+
+  .axyra-notification-professional {
+    margin-bottom: 10px !important;
+    padding: 14px !important;
+    min-width: unset !important;
+  }
+
+  .axyra-notification-header {
+    margin-bottom: 8px !important;
+  }
+
+  .axyra-notification-icon {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 14px !important;
+  }
+
+  .axyra-notification-title {
+    font-size: 13px !important;
+  }
+
+  .axyra-notification-time {
+    font-size: 9px !important;
+  }
+
+  .axyra-notification-close {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 12px !important;
+    padding: 2px !important;
+  }
+
+  .axyra-notification-message {
+    font-size: 12px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .axyra-notification-actions {
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+
+  .axyra-notification-action {
+    width: 100% !important;
+    padding: 10px 15px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Animaciones mejoradas */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.axyra-notification-professional.show {
+  animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.axyra-notification-professional.hide {
+  animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
