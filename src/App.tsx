@@ -31,6 +31,11 @@ function normalizePath(pathname: string) {
   return pathname.replace(/\/+$|^\/+/, '').trim();
 }
 
+/**
+ * Parses the current URL pathname to extract user ID, view name, and optional employee ID.
+ * @param pathname - The URL pathname to parse (e.g., "/user123/history/emp456")
+ * @returns An object containing userId, view, and employeeId
+ */
 function parseRoute(pathname: string) {
   const trimmed = normalizePath(pathname);
   const segments = trimmed.split('/').filter(Boolean);
@@ -50,11 +55,23 @@ function parseRoute(pathname: string) {
   };
 }
 
+/**
+ * Builds a URL path for a specific view with optional employee ID.
+ * @param userId - The user ID for the URL
+ * @param view - The view name (dashboard, history, etc.)
+ * @param employeeId - Optional employee ID for employee-specific views
+ * @returns The constructed URL path
+ */
 function buildViewPath(userId: string, view: string, employeeId: string | null = null) {
   const basePath = `/${userId}/${view === 'dashboard' ? 'dashboard' : view}`;
   return employeeId && viewsWithEmployeeId.has(view) ? `${basePath}/${employeeId}` : basePath;
 }
 
+/**
+ * Checks if the given pathname corresponds to the Google OAuth callback route.
+ * @param pathname - The URL pathname to check
+ * @returns True if the path is the Google callback path, false otherwise
+ */
 function isGoogleCallbackPath(pathname: string) {
   const trimmed = normalizePath(pathname);
   return trimmed === 'auth/google/callback' || trimmed.endsWith('auth/google/callback');
