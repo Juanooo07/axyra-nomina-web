@@ -55,7 +55,12 @@ interface PayrollHistory {
 type SortField = 'date' | 'hours' | 'period' | 'net_salary' | 'total_hours';
 type SortDirection = 'asc' | 'desc';
 
-export function EmployeeHistory() {
+interface EmployeeHistoryProps {
+  selectedEmployeeId?: string;
+  onEmployeeChange?: (employeeId: string | null) => void;
+}
+
+export function EmployeeHistory({ selectedEmployeeId, onEmployeeChange }: EmployeeHistoryProps) {
   const { user } = useAuth();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<string>('');
@@ -83,6 +88,15 @@ export function EmployeeHistory() {
       loadEmployees();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (selectedEmployeeId && employees.length > 0 && selectedEmployeeId !== selectedEmployee) {
+      const employeeExists = employees.some(emp => emp.id === selectedEmployeeId);
+      if (employeeExists) {
+        setSelectedEmployee(selectedEmployeeId);
+      }
+    }
+  }, [selectedEmployeeId, employees]);
 
   useEffect(() => {
     if (selectedEmployee) {
@@ -641,7 +655,11 @@ export function EmployeeHistory() {
 
         <select
           value={selectedEmployee}
-          onChange={(e) => setSelectedEmployee(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            setSelectedEmployee(value);
+            onEmployeeChange?.(value || null);
+          }}
           className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-slate-800"
         >
           <option value="">Seleccione un empleado</option>

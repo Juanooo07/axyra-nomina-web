@@ -92,7 +92,12 @@ interface PayrollHistory {
   employee_cedula?: string;
 }
 
-export function Payroll() {
+interface PayrollProps {
+  selectedEmployeeId?: string;
+  onEmployeeChange?: (employeeId: string | null) => void;
+}
+
+export function Payroll({ selectedEmployeeId, onEmployeeChange }: PayrollProps) {
   const { user } = useAuth();
 
   // Selection state
@@ -142,6 +147,15 @@ export function Payroll() {
       loadUserSettings();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (selectedEmployeeId && employees.length > 0 && selectedEmployeeId !== selectedEmployee) {
+      const exists = employees.some(emp => emp.id === selectedEmployeeId);
+      if (exists) {
+        setSelectedEmployee(selectedEmployeeId);
+      }
+    }
+  }, [selectedEmployeeId, employees]);
 
   // Load payroll history when employee changes
   useEffect(() => {
@@ -870,7 +884,9 @@ export function Payroll() {
             <select
               value={selectedEmployee}
               onChange={(e) => {
-                setSelectedEmployee(e.target.value);
+                const value = e.target.value;
+                setSelectedEmployee(value);
+                onEmployeeChange?.(value || null);
                 setViewingPayroll(null);
                 setViewingCalculation(null);
                 setShowCalculation(false);

@@ -25,25 +25,34 @@ const routeViews = new Set([
   'history'
 ]);
 
+const viewsWithEmployeeId = new Set(['history', 'payroll', 'hour-records']);
+
 function normalizePath(pathname: string) {
   return pathname.replace(/\/+$|^\/+/, '').trim();
 }
 
-function extractViewFromPath(pathname: string) {
+function parseRoute(pathname: string) {
   const trimmed = normalizePath(pathname);
   const segments = trimmed.split('/').filter(Boolean);
-  if (segments.length === 0) {
-    return 'dashboard';
+
+  if (segments.length === 0 || segments[0] === 'auth') {
+    return { userId: null, view: 'dashboard', employeeId: null };
   }
-  if (segments[0] === 'auth') {
-    return 'dashboard';
-  }
+
+  const userId = segments[0];
   const view = segments[1] || 'dashboard';
-  return routeViews.has(view) ? view : 'dashboard';
+  const employeeId = segments[2] || null;
+
+  return {
+    userId,
+    view: routeViews.has(view) ? view : 'dashboard',
+    employeeId: employeeId || null
+  };
 }
 
-function buildViewPath(userId: string, view: string) {
-  return `/${userId}/${view === 'dashboard' ? 'dashboard' : view}`;
+function buildViewPath(userId: string, view: string, employeeId: string | null = null) {
+  const basePath = `/${userId}/${view === 'dashboard' ? 'dashboard' : view}`;
+  return employeeId && viewsWithEmployeeId.has(view) ? `${basePath}/${employeeId}` : basePath;
 }
 
 function isGoogleCallbackPath(pathname: string) {
@@ -56,18 +65,22 @@ function AppContent() {
   const [showRegister, setShowRegister] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
+  const [routeEmployeeId, setRouteEmployeeId] = useState<string | null>(null);
 
   useEffect(() => {
-    const updateViewFromLocation = () => {
+    const updateRouteFromLocation = () => {
       if (isGoogleCallbackPath(window.location.pathname)) {
         return;
       }
-      setCurrentView(extractViewFromPath(window.location.pathname));
+
+      const { view, employeeId } = parseRoute(window.location.pathname);
+      setCurrentView(view);
+      setRouteEmployeeId(employeeId);
     };
 
-    updateViewFromLocation();
-    window.addEventListener('popstate', updateViewFromLocation);
-    return () => window.removeEventListener('popstate', updateViewFromLocation);
+    updateRouteFromLocation();
+    window.addEventListener('popstate', updateRouteFromLocation);
+    return () => window.removeEventListener('popstate', updateRouteFromLocation);
   }, []);
 
   useEffect(() => {
@@ -78,22 +91,27 @@ function AppContent() {
       return;
     }
 
-    const desiredView = extractViewFromPath(window.location.pathname);
-    const desiredPath = buildViewPath(user.id, desiredView);
-
+    const desiredPath = buildViewPath(user.id, currentView, routeEmployeeId);
     if (window.location.pathname !== desiredPath) {
       window.history.replaceState({}, document.title, desiredPath);
     }
-
-    if (currentView !== desiredView) {
-      setCurrentView(desiredView);
-    }
-  }, [user]);
+  }, [user, currentView, routeEmployeeId]);
 
   const handleViewChange = (view: string) => {
+    const nextEmployeeId = viewsWithEmployeeId.has(view) ? routeEmployeeId : null;
     setCurrentView(view);
+    setRouteEmployeeId(nextEmployeeId);
+
     if (user) {
-      const newPath = buildViewPath(user.id, view);
+      const newPath = buildViewPath(user.id, view, nextEmployeeId);
+      window.history.pushState({}, '', newPath);
+    }
+  };
+
+  const handleEmployeeSelect = (employeeId: string | null) => {
+    setRouteEmployeeId(employeeId);
+    if (user) {
+      const newPath = buildViewPath(user.id, currentView, employeeId);
       window.history.pushState({}, '', newPath);
     }
   };
@@ -143,11 +161,11 @@ function AppContent() {
       case 'hour-types':
         return <HourTypes />;
       case 'hour-records':
-        return <HourRecords />;
+        return <HourRecords selectedEmployeeId={routeEmployeeId || undefined} onEmployeeChange={handleEmployeeSelect} />;
       case 'history':
-        return <EmployeeHistory />;
+        return <EmployeeHistory selectedEmployeeId={routeEmployeeId || undefined} onEmployeeChange={handleEmployeeSelect} />;
       case 'payroll':
-        return <Payroll />;
+        return <Payroll selectedEmployeeId={routeEmployeeId || undefined} onEmployeeChange={handleEmployeeSelect} />;
       case 'settlement':
         return <Settlement />;
       case 'settings':

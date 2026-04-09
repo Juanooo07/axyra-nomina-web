@@ -26,7 +26,12 @@ const HOUR_TYPES = [
   'Hora Extra Nocturna Dominical',
 ];
 
-export function HourRecords() {
+interface HourRecordsProps {
+  selectedEmployeeId?: string;
+  onEmployeeChange?: (employeeId: string | null) => void;
+}
+
+export function HourRecords({ selectedEmployeeId, onEmployeeChange }: HourRecordsProps) {
   const { user } = useAuth();
 
   const [selectedEmployee, setSelectedEmployee] = useState('');
@@ -45,6 +50,15 @@ export function HourRecords() {
       loadEmployees();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (selectedEmployeeId && employees.length > 0 && selectedEmployeeId !== selectedEmployee) {
+      const exists = employees.some(emp => emp.id === selectedEmployeeId);
+      if (exists) {
+        setSelectedEmployee(selectedEmployeeId);
+      }
+    }
+  }, [selectedEmployeeId, employees]);
 
   const loadEmployees = async () => {
     if (!user) return;
@@ -322,7 +336,11 @@ export function HourRecords() {
             </label>
             <select
               value={selectedEmployee}
-              onChange={(e) => setSelectedEmployee(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSelectedEmployee(value);
+                onEmployeeChange?.(value || null);
+              }}
               className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               required
             >
