@@ -513,7 +513,7 @@
           <p>Sistema de Gestión</p>
         </div>
         <div class="sidebar-nav">
-          <a href="#" class="nav-item active" onclick="router.navigate('/' + currentUserId)">
+          <a href="#" class="nav-item active" onclick="router.navigate('/' + currentUserId + '/dashboard')">
             <i class="fas fa-tachometer-alt"></i>
             Dashboard
           </a>
@@ -1241,6 +1241,11 @@
       }
 
       function loadDashboard() {
+        if (!currentUserId) return;
+        if (window.location.pathname !== `/${currentUserId}/dashboard`) {
+          window.history.replaceState(null, '', `/${currentUserId}/dashboard`);
+        }
+
         // Load default dashboard content
         if (window.axyraDashboard) {
           window.axyraDashboard.loadDashboardData();
@@ -1249,6 +1254,12 @@
 
       // Router routes
       router.on('/:userId', (params) => {
+        if (params.userId === currentUserId) {
+          loadDashboard();
+        }
+      });
+
+      router.on('/:userId/dashboard', (params) => {
         if (params.userId === currentUserId) {
           loadDashboard();
         }
@@ -1283,7 +1294,12 @@
         window.axyraAuth.auth.onAuthStateChanged((user) => {
           if (user) {
             currentUserId = user.uid;
-            router.resolve();
+            const currentPath = window.location.pathname;
+            if (!currentPath.includes(user.uid)) {
+              router.navigate(`/${user.uid}/dashboard`, { replace: true });
+            } else {
+              router.resolve();
+            }
           }
         });
       }
