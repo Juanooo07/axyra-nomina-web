@@ -88,28 +88,23 @@ export const ExportToDrive = ({
       }
 
       // CREAR ESTRUCTURA DE CARPETAS AUTOMÁTICAMENTE
-      console.log('Export: Creating folder structure...');
 
       // Paso 1: Carpeta principal "AXYRA - Nóminas"
       const mainFolderId = await getOrCreateDriveFolder(token.access_token, 'AXYRA - Nóminas');
       if (!mainFolderId) throw new Error('No se pudo crear carpeta principal');
-      console.log('Export: Main folder created:', mainFolderId);
 
       // Paso 2: Carpeta del período
       const periodFolder = periodData.period?.replace(/\s+/g, '-').toUpperCase() || 'PERIODO';
       const periodFolderId = await getOrCreateDriveFolder(token.access_token, periodFolder, mainFolderId);
       if (!periodFolderId) throw new Error('No se pudo crear carpeta del período');
-      console.log('Export: Period folder created:', periodFolderId);
 
       // Paso 3: Carpeta del empleado
       const employeeName = periodData.employee?.toUpperCase().replace(/\s+/g, '_') || 'EMPLEADO';
       const employeeFolder = `${employeeName}_${periodData.cedula || '0'}`;
       const employeeFolderId = await getOrCreateDriveFolder(token.access_token, employeeFolder, periodFolderId);
       if (!employeeFolderId) throw new Error('No se pudo crear carpeta del empleado');
-      console.log('Export: Employee folder created:', employeeFolderId);
 
       // Generar PDF REAL usando la función de pago
-      console.log('Export: Generating PDF from payroll data...');
       
       // Convertir hour_breakdowns a formato esperado por generatePaymentReceiptBlob
       const hourDetails = periodData.hour_breakdowns!.map(breakdown => ({
@@ -155,7 +150,6 @@ export const ExportToDrive = ({
         throw new Error('No se pudo subir el archivo a Google Drive');
       }
 
-      console.log('Export: SUCCESS - File uploaded with ID:', fileId);
       setSuccess(true);
 
       if (onExportSuccess) {
@@ -166,7 +160,6 @@ export const ExportToDrive = ({
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error al exportar a Drive';
       setError(message);
-      console.error('Export to Drive Error:', err);
     } finally {
       setLoading(false);
     }

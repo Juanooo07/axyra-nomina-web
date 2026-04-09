@@ -15,7 +15,6 @@ export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
   useEffect(() => {
     // Prevenir que se procese múltiples veces usando ref
     if (processedRef.current) {
-      console.log('GoogleCallback: Ya fue procesado, ignorando...');
       return;
     }
 
@@ -28,11 +27,6 @@ export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
         const searchParams = new URLSearchParams(window.location.search);
         const code = searchParams.get('code');
         const errorParam = searchParams.get('error');
-
-        console.log('GoogleCallback: Received params', { 
-          code: code ? `${code.substring(0, 20)}...` : null, 
-          errorParam 
-        });
 
         // Verificar si hay error de Google
         if (errorParam) {
@@ -51,8 +45,7 @@ export function GoogleCallback({ onComplete }: GoogleCallbackProps) {
         
         // Procesar el callback
         const result = await handleGoogleCallback(code);
-        
-        console.log('GoogleCallback: Result', result);
+
         if (!result?.success) {
           throw new Error('No se pudo procesar el callback de Google');
         }

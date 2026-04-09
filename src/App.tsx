@@ -140,7 +140,6 @@ function AppContent() {
     return (
       <GoogleCallback
         onComplete={() => {
-          console.log('GoogleCallback: onComplete called, redirecting to dashboard');
           window.history.replaceState({}, document.title, '/');
           window.location.href = '/';
         }}
