@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Login } from './components/Auth/Login';
 import { Register } from './components/Auth/Register';
@@ -14,25 +14,101 @@ import { Settlement } from './components/Settlement/Settlement';
 import { Settings } from './components/Settings/Settings';
 import { EmployeeHistory } from './components/History/EmployeeHistory';
 
+const routeViews = new Set([
+  'dashboard',
+  'employees',
+  'hour-types',
+  'hour-records',
+  'payroll',
+  'settlement',
+  'settings',
+  'history'
+]);
+
+function normalizePath(pathname: string) {
+  return pathname.replace(/\/+$|^\/+/, '').trim();
+}
+
+function extractViewFromPath(pathname: string) {
+  const trimmed = normalizePath(pathname);
+  const segments = trimmed.split('/').filter(Boolean);
+  if (segments.length === 0) {
+    return 'dashboard';
+  }
+  if (segments[0] === 'auth') {
+    return 'dashboard';
+  }
+  const view = segments[1] || 'dashboard';
+  return routeViews.has(view) ? view : 'dashboard';
+}
+
+function buildViewPath(userId: string, view: string) {
+  return `/${userId}/${view === 'dashboard' ? 'dashboard' : view}`;
+}
+
+function isGoogleCallbackPath(pathname: string) {
+  const trimmed = normalizePath(pathname);
+  return trimmed === 'auth/google/callback' || trimmed.endsWith('auth/google/callback');
+}
+
 function AppContent() {
   const { user, loading } = useAuth();
   const [showRegister, setShowRegister] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
 
+  useEffect(() => {
+    const updateViewFromLocation = () => {
+      if (isGoogleCallbackPath(window.location.pathname)) {
+        return;
+      }
+      setCurrentView(extractViewFromPath(window.location.pathname));
+    };
+
+    updateViewFromLocation();
+    window.addEventListener('popstate', updateViewFromLocation);
+    return () => window.removeEventListener('popstate', updateViewFromLocation);
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      if (!isGoogleCallbackPath(window.location.pathname) && window.location.pathname !== '/') {
+        window.history.replaceState({}, document.title, '/');
+      }
+      return;
+    }
+
+    const desiredView = extractViewFromPath(window.location.pathname);
+    const desiredPath = buildViewPath(user.id, desiredView);
+
+    if (window.location.pathname !== desiredPath) {
+      window.history.replaceState({}, document.title, desiredPath);
+    }
+
+    if (currentView !== desiredView) {
+      setCurrentView(desiredView);
+    }
+  }, [user]);
+
+  const handleViewChange = (view: string) => {
+    setCurrentView(view);
+    if (user) {
+      const newPath = buildViewPath(user.id, view);
+      window.history.pushState({}, '', newPath);
+    }
+  };
+
   // Detectar si estamos procesando el callback de Google
-  const isGoogleCallback = window.location.pathname === '/auth/google/callback';
+  const isGoogleCallback = isGoogleCallbackPath(window.location.pathname);
 
   if (isGoogleCallback) {
     return (
-      <GoogleCallback 
+      <GoogleCallback
         onComplete={() => {
-          // Limpiar los parámetros de la URL y redirigir al dashboard
           console.log('GoogleCallback: onComplete called, redirecting to dashboard');
           window.history.replaceState({}, document.title, '/');
-          // Recargar la página para que React actualice el estado
           window.location.href = '/';
-        }} 
+        }}
       />
     );
   }
@@ -61,7 +137,7 @@ function AppContent() {
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
-        return <Dashboard onViewChange={setCurrentView} />;
+        return <Dashboard onViewChange={handleViewChange} />;
       case 'employees':
         return <Employees />;
       case 'hour-types':
@@ -77,12 +153,12 @@ function AppContent() {
       case 'settings':
         return <Settings />;
       default:
-        return <Dashboard onViewChange={setCurrentView} />;
+        return <Dashboard onViewChange={handleViewChange} />;
     }
   };
 
   return (
-    <MainLayout currentView={currentView} onViewChange={setCurrentView}>
+    <MainLayout currentView={currentView} onViewChange={handleViewChange}>
       {renderView()}
     </MainLayout>
   );

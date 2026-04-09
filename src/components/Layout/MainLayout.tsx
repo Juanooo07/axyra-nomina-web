@@ -41,6 +41,11 @@ export function MainLayout({ children, currentView, onViewChange }: MainLayoutPr
     setIsMobileMenuOpen(false);
   };
 
+  const handleLogout = async () => {
+    await signOut();
+    window.history.replaceState({}, document.title, '/');
+  };
+
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <button
@@ -113,7 +118,7 @@ export function MainLayout({ children, currentView, onViewChange }: MainLayoutPr
             </div>
           </div>
           <button
-            onClick={signOut}
+            onClick={handleLogout}
             className="w-full flex items-center space-x-3 px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-xl transition-all"
           >
             <LogOut className="w-5 h-5" />

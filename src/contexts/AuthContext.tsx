@@ -59,6 +59,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      supabase.auth.signOut().catch(() => {
+        // Ignore errors during unload
+      });
+      localStorage.removeItem('selectedCompanyId');
+    };
+
+    const navigationEntries = performance.getEntriesByType ? performance.getEntriesByType('navigation') as PerformanceNavigationTiming[] : [];
+    const isReload = navigationEntries.length > 0
+      ? navigationEntries[0].type === 'reload'
+      : (performance as any).navigation?.type === 1;
+
+    if (isReload) {
+      (async () => {
+        await supabase.auth.signOut();
+        setUser(null);
+        setSession(null);
+        setProfile(null);
+        setCompanyUsers([]);
+        setSelectedCompanyId(null);
+        setLoading(false);
+      })();
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
   const loadUserData = async (userId: string) => {
     try {
       const [profileResult, companyUsersResult] = await Promise.all([
