@@ -5,61 +5,8 @@ import { PayrollSelector } from './components/PayrollSelector';
 import { PayrollCalculator } from './components/PayrollCalculator';
 import { PayrollSummary } from './components/PayrollSummary';
 import { PayrollHistoryComponent } from './components/PayrollHistory';
-
-// Interfaces
-interface Employee {
-  id: string;
-  full_name: string;
-  cedula: string;
-  contract_type: 'FIJO' | 'TEMPORAL';
-  monthly_salary: number;
-  receives_transport_allowance: boolean;
-  deduct_health: boolean;
-  deduct_pension: boolean;
-}
-
-interface HourBreakdown {
-  hour_type: string;
-  hours: number;
-  surcharge_percent: number;
-  hourly_rate: number;
-  total: number;
-}
-
-interface PayrollCalculation {
-  employee_id: string;
-  employee_name: string;
-  employee_cedula: string;
-  period_start: string;
-  period_end: string;
-  total_hours: number;
-  base_salary: number;
-  hour_breakdowns: HourBreakdown[];
-  total_surcharges: number;
-  transport_allowance: number;
-  health_deduction: number;
-  pension_deduction: number;
-  total_deductions: number;
-  net_salary: number;
-}
-
-interface PayrollHistory {
-  id: string;
-  employee_id: string;
-  period_start: string;
-  period_end: string;
-  total_hours: number;
-  base_salary: number;
-  total_surcharges: number;
-  transport_allowance: number;
-  health_deduction: number;
-  pension_deduction: number;
-  total_deductions: number;
-  net_salary: number;
-  created_at: string;
-  employee_name?: string;
-  employee_cedula?: string;
-}
+import { Employee, PayrollCalculation, PayrollHistory, UserSettings } from './types';
+import { useEmployeeSelection } from './hooks/useEmployeeSelection';
 
 interface PayrollProps {
   selectedEmployeeId?: string;
@@ -70,36 +17,29 @@ export function Payroll({ selectedEmployeeId, onEmployeeChange }: PayrollProps) 
   const { user } = useAuth();
 
   // Selection state
-  const [selectedEmployee, setSelectedEmployee] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
+  // Use custom hook for employee selection
+  const {
+    employees,
+    selectedEmployee,
+    loadEmployees,
+    handleEmployeeChange: handleEmployeeSelection
+  } = useEmployeeSelection(selectedEmployeeId);
+
   // Data state
-  const [employees, setEmployees] = useState<Employee[]>([]);
   const [payrollHistory, setPayrollHistory] = useState<PayrollHistory[]>([]);
   const [calculation, setCalculation] = useState<PayrollCalculation | null>(null);
-  const [userSettings, setUserSettings] = useState<{
-    company_name?: string;
-    company_nit?: string;
-    company_address?: string;
-  }>({});
+  const [userSettings, setUserSettings] = useState<UserSettings>({});
 
-  // Load employees when user changes
+  // Load employees and user settings when user changes
   useEffect(() => {
     if (user) {
       loadEmployees();
       loadUserSettings();
     }
   }, [user]);
-
-  useEffect(() => {
-    if (selectedEmployeeId && employees.length > 0 && selectedEmployeeId !== selectedEmployee) {
-      const exists = employees.some(emp => emp.id === selectedEmployeeId);
-      if (exists) {
-        setSelectedEmployee(selectedEmployeeId);
-      }
-    }
-  }, [selectedEmployeeId, employees]);
 
   // Load payroll history when employee changes
   useEffect(() => {
@@ -109,24 +49,6 @@ export function Payroll({ selectedEmployeeId, onEmployeeChange }: PayrollProps) 
       setPayrollHistory([]);
     }
   }, [user, selectedEmployee]);
-
-  const loadEmployees = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('employees')
-        .select('id, full_name, cedula, contract_type, monthly_salary, receives_transport_allowance, deduct_health, deduct_pension')
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .order('full_name');
-
-      if (error) throw error;
-      setEmployees(data || []);
-    } catch (err) {
-      console.error('Error loading employees:', err);
-    }
-  };
 
   const loadUserSettings = async () => {
     if (!user) return;
@@ -191,7 +113,7 @@ export function Payroll({ selectedEmployeeId, onEmployeeChange }: PayrollProps) 
   };
 
   const handleEmployeeChange = (employeeId: string) => {
-    setSelectedEmployee(employeeId);
+    handleEmployeeSelection(employeeId);
     setCalculation(null);
     if (onEmployeeChange) {
       onEmployeeChange(employeeId);
