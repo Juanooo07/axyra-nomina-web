@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, X, Trash2, Check, Edit, Download } from 'lucide-react';
+import { Plus, X, Trash2, Check, Edit, Download, FileText } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { exportEmployeesToExcel } from '../../utils/excelExport';
+import { exportEmployeesToExcel, exportEmployeeToExcel } from '../../utils/excelExport';
 
 interface Employee {
   id: string;
@@ -23,6 +23,7 @@ interface Employee {
 export function Employees() {
   const { user, selectedCompanyId } = useAuth();
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [employeePayments, setEmployeePayments] = useState<Record<string, number>>({});
   const [showForm, setShowForm] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [loading, setLoading] = useState(false);
@@ -44,6 +45,7 @@ export function Employees() {
   useEffect(() => {
     if (user) {
       loadEmployees();
+      loadEmployeePayments();
     }
   }, [user]);
 
@@ -68,12 +70,43 @@ export function Employees() {
       }
 
       setEmployees(data || []);
+      await loadEmployeePayments();
     } catch (err: any) {
       console.error('Unexpected error loading employees:', err);
       setError('Error inesperado al cargar empleados: ' + (err.message || 'Sin detalles'));
       setEmployees([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadEmployeePayments = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('payroll_history')
+        .select('employee_id, net_salary')
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error loading employee payments:', error);
+        setEmployeePayments({});
+        return;
+      }
+
+      const payments = (data || []).reduce((acc: Record<string, number>, item: any) => {
+        const employeeId = item.employee_id;
+        const netSalary = Number(item.net_salary) || 0;
+        if (!employeeId) return acc;
+        acc[employeeId] = (acc[employeeId] || 0) + netSalary;
+        return acc;
+      }, {} as Record<string, number>);
+
+      setEmployeePayments(payments);
+    } catch (err: any) {
+      console.error('Unexpected error loading employee payments:', err);
+      setEmployeePayments({});
     }
   };
 
@@ -198,7 +231,7 @@ export function Employees() {
     }
 
     setSuccess('Empleado eliminado exitosamente');
-    loadEmployees();
+    await loadEmployees();
   };
 
   const formatCurrency = (value: number) => {
@@ -225,7 +258,7 @@ export function Employees() {
                 alert('No hay empleados para exportar');
                 return;
               }
-              exportEmployeesToExcel(employees);
+              exportEmployeesToExcel(employees, employeePayments);
             }}
             className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-xl hover:from-green-700 hover:to-green-800 transition-all transform hover:scale-105 shadow-lg font-semibold"
             title="Descargar Excel con todos los empleados"
@@ -499,6 +532,13 @@ export function Employees() {
                     <td className="px-6 py-4">
                       <div className="flex justify-center space-x-2">
                         <button
+                          onClick={() => exportEmployeeToExcel(employee, employeePayments[employee.id] || 0)}
+                          className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-all"
+                          title="Exportar este empleado a Excel"
+                        >
+                          <FileText className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => handleEdit(employee)}
                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                           title="Editar"
@@ -580,6 +620,13 @@ export function Employees() {
 
               {/* Action buttons at the bottom */}
               <div className="flex gap-2 pt-2 border-t border-slate-200">
+                <button
+                  onClick={() => exportEmployeeToExcel(employee, employeePayments[employee.id] || 0)}
+                  className="flex-1 flex items-center justify-center space-x-2 bg-green-50 text-green-600 px-4 py-2 rounded-lg hover:bg-green-100 transition-all font-semibold text-sm"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Exportar</span>
+                </button>
                 <button
                   onClick={() => handleEdit(employee)}
                   className="flex-1 flex items-center justify-center space-x-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-100 transition-all font-semibold text-sm"

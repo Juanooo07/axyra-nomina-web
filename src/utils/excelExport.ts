@@ -31,7 +31,7 @@ interface PayrollData {
 /**
  * Exporta empleados a Excel con toda la información
  */
-export function exportEmployeesToExcel(employees: Employee[]): void {
+export function exportEmployeesToExcel(employees: Employee[], employeePayments: Record<string, number> = {}): void {
   const wb = XLSX.utils.book_new();
 
   // HOJA 1: Resumen de Empleados
@@ -40,6 +40,7 @@ export function exportEmployeesToExcel(employees: Employee[]): void {
     Cédula: emp.cedula,
     'Tipo Contrato': emp.contract_type,
     'Salario Base': emp.monthly_salary,
+    'Total Pagos': employeePayments[emp.id] || 0,
     'Desc. Salud': emp.deduct_health ? 'Sí' : 'No',
     'Desc. Pensión': emp.deduct_pension ? 'Sí' : 'No',
     'Desc. Transporte': emp.deduct_transport ? 'Sí' : 'No',
@@ -52,12 +53,13 @@ export function exportEmployeesToExcel(employees: Employee[]): void {
 
   // Formatear ancho de columnas
   const maxWidth = 20;
-  const colWidths = [25, 15, 15, 15, 12, 12, 15, 15, 12, 20];
+  const colWidths = [25, 15, 15, 15, 15, 12, 12, 15, 15, 12, 20];
   wsEmployees['!cols'] = colWidths.map(w => ({ wch: w }));
 
   XLSX.utils.book_append_sheet(wb, wsEmployees, 'Empleados');
 
   // HOJA 2: Estadísticas de Empleados
+  const totalPayments = employees.reduce((sum, emp) => sum + (employeePayments[emp.id] || 0), 0);
   const stats = [
     {
       'Total Empleados': employees.length,
@@ -71,7 +73,10 @@ export function exportEmployeesToExcel(employees: Employee[]): void {
       'Salario Mínimo': Math.min(...employees.map(e => e.monthly_salary)),
       'Salario Máximo': Math.max(...employees.map(e => e.monthly_salary)),
       'Total Nómina Mensual': employees.reduce((sum, e) => sum + e.monthly_salary, 0),
-      '': '',
+      'Total Pagos Acumulados': totalPayments,
+    },
+    {
+      'Promedio Total Pagos por Empleado': employees.length > 0 ? Math.round(totalPayments / employees.length) : 0,
     },
   ];
 
@@ -119,6 +124,86 @@ export function exportEmployeesToExcel(employees: Employee[]): void {
 
   // Generar archivo
   const fileName = `Empleados_${new Date().toISOString().split('T')[0]}.xlsx`;
+  XLSX.writeFile(wb, fileName);
+}
+
+/**
+ * Exporta un solo empleado a Excel con total acumulado de pagos
+ */
+export function exportEmployeeToExcel(employee: Employee, totalPayments: number): void {
+  const wb = XLSX.utils.book_new();
+
+  const employeeData = [
+    {
+      Nombre: employee.full_name,
+      Cédula: employee.cedula,
+      'Tipo Contrato': employee.contract_type,
+      'Salario Base': employee.monthly_salary,
+      'Total Pagos': totalPayments,
+      'Desc. Salud': employee.deduct_health ? 'Sí' : 'No',
+      'Desc. Pensión': employee.deduct_pension ? 'Sí' : 'No',
+      'Desc. Transporte': employee.deduct_transport ? 'Sí' : 'No',
+      'Auxilio Transporte': employee.receives_transport_allowance ? 'Sí' : 'No',
+      Estado: employee.status === 'active' ? 'Activo' : 'Inactivo',
+      Comentarios: employee.comments || '',
+    },
+  ];
+
+  const wsEmployee = XLSX.utils.json_to_sheet(employeeData);
+  wsEmployee['!cols'] = [
+    { wch: 25 },
+    { wch: 15 },
+    { wch: 15 },
+    { wch: 18 },
+    { wch: 15 },
+    { wch: 12 },
+    { wch: 12 },
+    { wch: 15 },
+    { wch: 15 },
+    { wch: 12 },
+    { wch: 20 },
+  ];
+
+  XLSX.utils.book_append_sheet(wb, wsEmployee, 'Empleado');
+
+  if (employee.contract_type === 'FIJO') {
+    const healthDeduction = employee.deduct_health ? Math.round(employee.monthly_salary * 0.04) : 0;
+    const pensionDeduction = employee.deduct_pension ? Math.round(employee.monthly_salary * 0.04) : 0;
+    const transportDeduction = employee.deduct_transport ? Math.round(employee.monthly_salary * 0.04) : 0;
+    const totalDeductions = healthDeduction + pensionDeduction + transportDeduction;
+
+    const deductiblesDetail = [
+      {
+        Nombre: employee.full_name,
+        Cédula: employee.cedula,
+        'Salario Base': employee.monthly_salary,
+        'Desc. Salud (4%)': healthDeduction,
+        'Desc. Pensión (4%)': pensionDeduction,
+        'Desc. Transporte (4%)': transportDeduction,
+        'Total Descuentos': totalDeductions,
+        'Neto Mensual': employee.monthly_salary - totalDeductions,
+        'Auxilio Transporte': employee.receives_transport_allowance ? 140000 : 0,
+      },
+    ];
+
+    const wsDeductibles = XLSX.utils.json_to_sheet(deductiblesDetail);
+    wsDeductibles['!cols'] = [
+      { wch: 25 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 15 },
+      { wch: 15 },
+      { wch: 15 },
+    ];
+
+    XLSX.utils.book_append_sheet(wb, wsDeductibles, 'Deducibles');
+  }
+
+  const sanitizedFileName = employee.full_name.replace(/[^a-zA-Z0-9-_ ]/g, '').replace(/\s+/g, '_');
+  const fileName = `${sanitizedFileName}_TotalPagos_${new Date().toISOString().split('T')[0]}.xlsx`;
   XLSX.writeFile(wb, fileName);
 }
 
