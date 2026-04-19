@@ -24,6 +24,7 @@ export function Employees() {
   const { user, selectedCompanyId } = useAuth();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [employeePayments, setEmployeePayments] = useState<Record<string, number>>({});
+  const [employeeHours, setEmployeeHours] = useState<Record<string, number>>({});
   const [showForm, setShowForm] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [loading, setLoading] = useState(false);
@@ -46,6 +47,7 @@ export function Employees() {
     if (user) {
       loadEmployees();
       loadEmployeePayments();
+      loadEmployeeHours();
     }
   }, [user]);
 
@@ -71,6 +73,7 @@ export function Employees() {
 
       setEmployees(data || []);
       await loadEmployeePayments();
+      await loadEmployeeHours();
     } catch (err: any) {
       console.error('Unexpected error loading employees:', err);
       setError('Error inesperado al cargar empleados: ' + (err.message || 'Sin detalles'));
@@ -107,6 +110,36 @@ export function Employees() {
     } catch (err: any) {
       console.error('Unexpected error loading employee payments:', err);
       setEmployeePayments({});
+    }
+  };
+
+  const loadEmployeeHours = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('hour_records')
+        .select('employee_id, hours')
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error loading employee hours:', error);
+        setEmployeeHours({});
+        return;
+      }
+
+      const hours = (data || []).reduce((acc: Record<string, number>, item: any) => {
+        const employeeId = item.employee_id;
+        const hoursWorked = Number(item.hours) || 0;
+        if (!employeeId) return acc;
+        acc[employeeId] = (acc[employeeId] || 0) + hoursWorked;
+        return acc;
+      }, {} as Record<string, number>);
+
+      setEmployeeHours(hours);
+    } catch (err: any) {
+      console.error('Unexpected error loading employee hours:', err);
+      setEmployeeHours({});
     }
   };
 
@@ -258,7 +291,7 @@ export function Employees() {
                 alert('No hay empleados para exportar');
                 return;
               }
-              exportEmployeesToExcel(employees, employeePayments);
+              exportEmployeesToExcel(employees, employeePayments, employeeHours);
             }}
             className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-xl hover:from-green-700 hover:to-green-800 transition-all transform hover:scale-105 shadow-lg font-semibold"
             title="Descargar Excel con todos los empleados"
@@ -532,7 +565,7 @@ export function Employees() {
                     <td className="px-6 py-4">
                       <div className="flex justify-center space-x-2">
                         <button
-                          onClick={() => exportEmployeeToExcel(employee, employeePayments[employee.id] || 0)}
+                          onClick={() => exportEmployeeToExcel(employee, employeePayments[employee.id] || 0, employeeHours[employee.id] || 0)}
                           className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-all"
                           title="Exportar este empleado a Excel"
                         >
@@ -621,7 +654,7 @@ export function Employees() {
               {/* Action buttons at the bottom */}
               <div className="flex gap-2 pt-2 border-t border-slate-200">
                 <button
-                  onClick={() => exportEmployeeToExcel(employee, employeePayments[employee.id] || 0)}
+                  onClick={() => exportEmployeeToExcel(employee, employeePayments[employee.id] || 0, employeeHours[employee.id] || 0)}
                   className="flex-1 flex items-center justify-center space-x-2 bg-green-50 text-green-600 px-4 py-2 rounded-lg hover:bg-green-100 transition-all font-semibold text-sm"
                 >
                   <Download className="w-4 h-4" />

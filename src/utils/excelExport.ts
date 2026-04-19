@@ -31,7 +31,7 @@ interface PayrollData {
 /**
  * Exporta empleados a Excel con toda la información
  */
-export function exportEmployeesToExcel(employees: Employee[], employeePayments: Record<string, number> = {}): void {
+export function exportEmployeesToExcel(employees: Employee[], employeePayments: Record<string, number> = {}, employeeHours: Record<string, number> = {}): void {
   const wb = XLSX.utils.book_new();
 
   // HOJA 1: Resumen de Empleados
@@ -40,6 +40,7 @@ export function exportEmployeesToExcel(employees: Employee[], employeePayments: 
     Cédula: emp.cedula,
     'Tipo Contrato': emp.contract_type,
     'Salario Base': emp.monthly_salary,
+    'Total Horas': employeeHours[emp.id] || 0,
     'Total Pagos': employeePayments[emp.id] || 0,
     'Desc. Salud': emp.deduct_health ? 'Sí' : 'No',
     'Desc. Pensión': emp.deduct_pension ? 'Sí' : 'No',
@@ -53,7 +54,7 @@ export function exportEmployeesToExcel(employees: Employee[], employeePayments: 
 
   // Formatear ancho de columnas
   const maxWidth = 20;
-  const colWidths = [25, 15, 15, 15, 15, 12, 12, 15, 15, 12, 20];
+  const colWidths = [25, 15, 15, 15, 15, 15, 12, 12, 15, 15, 12, 20];
   wsEmployees['!cols'] = colWidths.map(w => ({ wch: w }));
 
   XLSX.utils.book_append_sheet(wb, wsEmployees, 'Empleados');
@@ -130,7 +131,7 @@ export function exportEmployeesToExcel(employees: Employee[], employeePayments: 
 /**
  * Exporta un solo empleado a Excel con total acumulado de pagos
  */
-export function exportEmployeeToExcel(employee: Employee, totalPayments: number): void {
+export function exportEmployeeToExcel(employee: Employee, totalPayments: number, totalHours: number): void {
   const wb = XLSX.utils.book_new();
 
   const employeeData = [
@@ -139,6 +140,7 @@ export function exportEmployeeToExcel(employee: Employee, totalPayments: number)
       Cédula: employee.cedula,
       'Tipo Contrato': employee.contract_type,
       'Salario Base': employee.monthly_salary,
+      'Total Horas': totalHours,
       'Total Pagos': totalPayments,
       'Desc. Salud': employee.deduct_health ? 'Sí' : 'No',
       'Desc. Pensión': employee.deduct_pension ? 'Sí' : 'No',
@@ -155,6 +157,7 @@ export function exportEmployeeToExcel(employee: Employee, totalPayments: number)
     { wch: 15 },
     { wch: 15 },
     { wch: 18 },
+    { wch: 15 },
     { wch: 15 },
     { wch: 12 },
     { wch: 12 },
