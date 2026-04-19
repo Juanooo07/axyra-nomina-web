@@ -6,6 +6,8 @@ import { exportEmployeesToExcel } from '../../utils/excelExport';
 
 interface Employee {
   id: string;
+  user_id?: string;
+  company_id?: string;
   full_name: string;
   cedula: string;
   contract_type: 'FIJO' | 'TEMPORAL';
@@ -40,26 +42,39 @@ export function Employees() {
   });
 
   useEffect(() => {
-    if (user && selectedCompanyId) {
+    if (user) {
       loadEmployees();
     }
-  }, [user, selectedCompanyId]);
+  }, [user]);
 
   const loadEmployees = async () => {
-    if (!user || !selectedCompanyId) return;
+    if (!user) return;
 
-    const { data, error } = await supabase
-      .from('employees')
-      .select('*')
-      .eq('company_id', selectedCompanyId)
-      .order('full_name');
+    setError('');
+    setLoading(true);
 
-    if (error) {
-      console.error('Error loading employees:', error);
-      return;
+    try {
+      const { data, error } = await supabase
+        .from('employees')
+        .select('id, user_id, company_id, full_name, cedula, contract_type, monthly_salary, comments, deduct_health, deduct_pension, deduct_transport, receives_transport_allowance, status')
+        .eq('user_id', user.id)
+        .order('full_name');
+
+      if (error) {
+        console.error('Error loading employees:', error);
+        setError('Error al cargar empleados: ' + error.message);
+        setEmployees([]);
+        return;
+      }
+
+      setEmployees(data || []);
+    } catch (err: any) {
+      console.error('Unexpected error loading employees:', err);
+      setError('Error inesperado al cargar empleados: ' + (err.message || 'Sin detalles'));
+      setEmployees([]);
+    } finally {
+      setLoading(false);
     }
-
-    setEmployees(data || []);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -109,7 +124,8 @@ export function Employees() {
         setSuccess('Empleado actualizado exitosamente');
       } else {
         const { error: insertError } = await supabase.from('employees').insert({
-          company_id: selectedCompanyId,
+          user_id: user.id,
+          company_id: selectedCompanyId || undefined,
           ...employeeData,
           status: 'active',
         });
