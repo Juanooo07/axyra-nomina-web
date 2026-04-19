@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, X, Trash2, Check, Edit } from 'lucide-react';
+import { Plus, X, Trash2, Check, Edit, Download } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { exportEmployeesToExcel } from '../../utils/excelExport';
 
 interface Employee {
   id: string;
@@ -18,7 +19,7 @@ interface Employee {
 }
 
 export function Employees() {
-  const { user } = useAuth();
+  const { user, selectedCompanyId } = useAuth();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
@@ -39,18 +40,18 @@ export function Employees() {
   });
 
   useEffect(() => {
-    if (user) {
+    if (user && selectedCompanyId) {
       loadEmployees();
     }
-  }, [user]);
+  }, [user, selectedCompanyId]);
 
   const loadEmployees = async () => {
-    if (!user) return;
+    if (!user || !selectedCompanyId) return;
 
     const { data, error } = await supabase
       .from('employees')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('company_id', selectedCompanyId)
       .order('full_name');
 
     if (error) {
@@ -96,8 +97,7 @@ export function Employees() {
         const { error: updateError } = await supabase
           .from('employees')
           .update(employeeData)
-          .eq('id', editingEmployee.id)
-          .eq('user_id', user?.id);
+          .eq('id', editingEmployee.id);
 
         if (updateError) {
           console.error('Error updating employee:', updateError);
@@ -109,7 +109,7 @@ export function Employees() {
         setSuccess('Empleado actualizado exitosamente');
       } else {
         const { error: insertError } = await supabase.from('employees').insert({
-          user_id: user?.id,
+          company_id: selectedCompanyId,
           ...employeeData,
           status: 'active',
         });
@@ -202,13 +202,29 @@ export function Employees() {
           </h2>
           <p className="text-slate-600 text-lg">Gestiona los empleados de tu empresa</p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg font-semibold"
-        >
-          <Plus className="w-5 h-5" />
-          <span>Nuevo Empleado</span>
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              if (employees.length === 0) {
+                alert('No hay empleados para exportar');
+                return;
+              }
+              exportEmployeesToExcel(employees);
+            }}
+            className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-xl hover:from-green-700 hover:to-green-800 transition-all transform hover:scale-105 shadow-lg font-semibold"
+            title="Descargar Excel con todos los empleados"
+          >
+            <Download className="w-5 h-5" />
+            <span>Exportar Excel</span>
+          </button>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg font-semibold"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Nuevo Empleado</span>
+          </button>
+        </div>
       </div>
 
       {success && (

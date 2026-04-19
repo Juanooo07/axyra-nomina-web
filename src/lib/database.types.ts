@@ -44,6 +44,10 @@ export interface Database {
           contract_type: 'FIJO' | 'TEMPORAL';
           monthly_salary: number;
           comments: string;
+          deduct_health: boolean;
+          deduct_pension: boolean;
+          deduct_transport: boolean;
+          receives_transport_allowance: boolean;
           status: 'active' | 'inactive';
           created_at: string;
         };
