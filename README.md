@@ -1,6 +1,6 @@
 # AXYRA Nómina
 
-Sistema completo de gestión y cálculo de nómina colombiana con arquitectura multi-tenant (SaaS).
+Sistema de gestión y cálculo de nómina colombiana con arquitectura multi-tenant (SaaS).
 
 ## Características Principales
 
