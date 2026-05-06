@@ -127,8 +127,8 @@ Neto a pagar = Devengado + Auxilio - Deducciones
 
 ## Soporte
 
-Para soporte técnico o consultas, contactar a Villa Venecia.
+Para soporte técnico o consultas, contactar a AXYRA.
 
 ## Licencia
 
-Propiedad de Villa Venecia - Todos los derechos reservados
+Propiedad de AXYRA - Todos los derechos reservados
