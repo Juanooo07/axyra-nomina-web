@@ -1,24 +1,8 @@
 import { useState } from 'react';
 import { History, Eye, Download, Trash2, AlertTriangle } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
-
-interface PayrollHistory {
-  id: string;
-  employee_id: string;
-  period_start: string;
-  period_end: string;
-  total_hours: number;
-  base_salary: number;
-  total_surcharges: number;
-  transport_allowance: number;
-  health_deduction: number;
-  pension_deduction: number;
-  total_deductions: number;
-  net_salary: number;
-  created_at: string;
-  employee_name?: string;
-  employee_cedula?: string;
-}
+import { PayrollHistory } from '../types';
+import { formatCurrency, formatDate } from '../utils';
 
 interface PayrollHistoryProps {
   payrollHistory: PayrollHistory[];
@@ -29,18 +13,6 @@ interface PayrollHistoryProps {
 export function PayrollHistoryComponent({ payrollHistory, onViewPayroll, onRefresh }: PayrollHistoryProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0
-    }).format(amount);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CO');
-  };
 
   const handleDeletePayroll = async (payrollId: string) => {
     setDeletingId(payrollId);

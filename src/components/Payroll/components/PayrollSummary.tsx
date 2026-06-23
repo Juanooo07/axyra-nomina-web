@@ -1,23 +1,6 @@
 import { DollarSign, TrendingUp, TrendingDown, FileText } from 'lucide-react';
-
-interface HourBreakdown {
-  hour_type: string;
-  hours: number;
-  surcharge_percent: number;
-  hourly_rate: number;
-  total: number;
-}
-
-interface PayrollCalculation {
-  employee_id: string;
-  employee_name: string;
-  employee_cedula: string;
-  period_start: string;
-  period_end: string;
-  total_hours: number;
-  base_salary: number;
-  hour_breakdowns: HourBreakdown[];
-  total_surcharges: number;
+import { PayrollCalculation, UserSettings } from '../types';
+import { formatCurrency, formatDate } from '../utils';
   transport_allowance: number;
   health_deduction: number;
   pension_deduction: number;
@@ -46,18 +29,6 @@ export function PayrollSummary({ calculation, userSettings }: PayrollSummaryProp
       </div>
     );
   }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0
-    }).format(amount);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CO');
-  };
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">

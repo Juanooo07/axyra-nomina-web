@@ -2,32 +2,7 @@ import { useState } from 'react';
 import { Calculator, DollarSign, FileText, AlertCircle, CheckCircle } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { supabase } from '../../../lib/supabase';
-
-interface Employee {
-  id: string;
-  full_name: string;
-  cedula: string;
-  contract_type: 'FIJO' | 'TEMPORAL';
-  monthly_salary: number;
-  receives_transport_allowance: boolean;
-  deduct_health: boolean;
-  deduct_pension: boolean;
-}
-
-interface HourBreakdown {
-  hour_type: string;
-  hours: number;
-  surcharge_percent: number;
-  hourly_rate: number;
-  total: number;
-}
-
-interface PayrollCalculation {
-  employee_id: string;
-  employee_name: string;
-  employee_cedula: string;
-  period_start: string;
-  period_end: string;
+import { Employee, HourBreakdown, PayrollCalculation } from '../types';
   total_hours: number;
   base_salary: number;
   hour_breakdowns: HourBreakdown[];

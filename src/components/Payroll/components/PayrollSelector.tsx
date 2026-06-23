@@ -2,17 +2,8 @@ import { useState, useEffect } from 'react';
 import { Calendar, User } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { supabase } from '../../../lib/supabase';
-
-interface Employee {
-  id: string;
-  full_name: string;
-  cedula: string;
-  contract_type: 'FIJO' | 'TEMPORAL';
-  monthly_salary: number;
-  receives_transport_allowance: boolean;
-  deduct_health: boolean;
-  deduct_pension: boolean;
-}
+import { Employee } from '../types';
+import { initializeFortnightDates } from '../utils';
 
 interface PayrollSelectorProps {
   selectedEmployee: string;
@@ -39,19 +30,9 @@ export function PayrollSelector({
 
   // Initialize dates to current fortnight (1st to 15th or 16th to end of month)
   useEffect(() => {
-    const today = new Date();
-    const day = today.getDate();
-    const year = today.getFullYear();
-    const month = today.getMonth() + 1;
-
-    if (day <= 15) {
-      onStartDateChange(`${year}-${String(month).padStart(2, '0')}-01`);
-      onEndDateChange(`${year}-${String(month).padStart(2, '0')}-15`);
-    } else {
-      const lastDay = new Date(year, month, 0).getDate();
-      onStartDateChange(`${year}-${String(month).padStart(2, '0')}-16`);
-      onEndDateChange(`${year}-${String(month).padStart(2, '0')}-${lastDay}`);
-    }
+    const { startDate, endDate } = initializeFortnightDates();
+    onStartDateChange(startDate);
+    onEndDateChange(endDate);
   }, [onStartDateChange, onEndDateChange]);
 
   const handleEmployeeChange = (employeeId: string) => {
